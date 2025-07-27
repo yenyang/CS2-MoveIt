@@ -19,7 +19,7 @@
 	
 	<!--Imports must be after PropertyGroup block-->
 	<Import Project="$([System.Environment]::GetEnvironmentVariable('CSII_TOOLPATH', 'EnvironmentVariableTarget.User'))\Mod.props" />
-	<Import Project="..\..\..\..\QCommon\Repo\Code\QCommon\QCommon\Shared\QCommonShared.projitems" Label="Shared" />
+	<Import Project="..\..\..\QCommon2\Code\QCommon\QCommon\Shared\QCommonShared.projitems" Label="Shared" />
 	<Import Project="$([System.Environment]::GetEnvironmentVariable('CSII_TOOLPATH', 'EnvironmentVariableTarget.User'))\Mod.targets" />
 	
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -129,6 +129,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Reference Update="C:\Program Files %28x86%29\Steam\steamapps\common\Cities Skylines II\Cities2_Data\Managed\mscorlib.dll">
+		  <Private>False</Private>
+		</Reference>
 		<Reference Update="System">
 			<Private>False</Private>
 		</Reference>
