@@ -7,6 +7,8 @@ import icon from "../img/MoveIt_Active.svg";
 import stylesMain from "../mit-mainpanel/panel.module.scss";
 import styles from "./rebindConfirm.module.scss";
 import mod from "../../mod.json";
+import locale from "../lang/en-US.json";
+import { useLocalization } from "cs2/l10n";
 
 function ButtonPressed(doRebind : boolean)
 {
@@ -17,6 +19,9 @@ export const MIT_RebindConfirm = () =>
 {
     const showRebindConfirm = useValue(MIT_ShowRebindConfirm$);
     const rebindExistingMsg = useValue(MIT_RebindExistingMsg$);
+
+    // translation handling. Translates using locale keys that are defined in C# or fallback string here.
+    const { translate } = useLocalization();
 
     if (!showRebindConfirm) return null;
 
@@ -29,7 +34,7 @@ export const MIT_RebindConfirm = () =>
                     header={(
                         <div className={styles.header}>
                             <img src={icon} className={stylesMain.headerIcon} />
-                            <span className={stylesMain.headerText}>Move It - Use 'M' Key?</span>
+                            <span className={stylesMain.headerText}>{translate("MoveIt.SECTION_TITLE[UseMKey]", locale["MoveIt.SECTION_TITLE[UseMKey]"])}</span>
                         </div>
                     )}>
                     <PanelSection className={styles.section}>
@@ -40,21 +45,21 @@ export const MIT_RebindConfirm = () =>
                     <PanelSection className={styles.section}> */}
                         <div className={styles.buttonRow}>
                             <div className={styles.buttonContainer}>
-                            <Tooltip tooltip="Yes, Move It will use 'M'">
+                            <Tooltip tooltip={translate("MoveIt.TOOLTIP_DESCRIPTION[YesUseMKey]", locale["MoveIt.TOOLTIP_DESCRIPTION[YesUseMKey]"])}>
                             <Button
                                 className={styles.button}
                                 focusKey={VanillaComponentResolver.instance.FOCUS_DISABLED}
                                 onSelect={() => ButtonPressed(true)}
-                                variant="primary">Yes</Button>
+                                variant="primary">{translate("MoveIt.TEXT_LABEL[Yes]", locale["MoveIt.TEXT_LABEL[Yes]"])}</Button>
                             </Tooltip>
                             </div>
                             <div className={styles.buttonContainer}>
-                            <Tooltip tooltip="No, Move It will use 'Shift + M'">
+                            <Tooltip tooltip={translate("MoveIt.TOOLTIP_DESCRIPTION[NoUseMKey]", locale["MoveIt.TOOLTIP_DESCRIPTION[NoUseMKey]"])}>
                             <Button
                                 className={styles.button}
                                 focusKey={VanillaComponentResolver.instance.FOCUS_DISABLED}
                                 onSelect={() => ButtonPressed(false)}
-                                variant="primary">No</Button>
+                                variant="primary">{translate("MoveIt.TEXT_LABEL[No]", locale["MoveIt.TEXT_LABEL[No]"])}</Button>
                             </Tooltip>
                             </div>
                         </div>

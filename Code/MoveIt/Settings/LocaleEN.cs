@@ -1,4 +1,5 @@
 ﻿using Colossal;
+using Colossal.IO.AssetDatabase.Internal;
 using System.Collections.Generic;
 
 namespace MoveIt.Settings
@@ -21,7 +22,7 @@ namespace MoveIt.Settings
 
                 // General options
                 { m_Settings.GetOptionTabLocaleID(Settings.tabMain), "Options" },
-                { m_Settings.GetOptionGroupLocaleID(Settings.groupGeneral), $"General Options | {Mod.MOD_NAME} {Mod.Version}" },
+                { m_Settings.GetOptionGroupLocaleID(Settings.groupGeneral), $"General Options | {Mod.MOD_NAME}" },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(Settings.InvertRotation)), "Invert Rotation" },
                 { m_Settings.GetOptionDescLocaleID(nameof(Settings.InvertRotation)), "Set rotation direction to vanilla CS2 relocate. If unticked, use CS1 Move It's direction." },
@@ -43,7 +44,7 @@ namespace MoveIt.Settings
 
                 // Hotkeys
                 { m_Settings.GetOptionTabLocaleID(Settings.tabKeys), "Hotkeys" },
-                { m_Settings.GetOptionGroupLocaleID(Settings.groupHotkeys), $"Hotkeys Options | {Mod.MOD_NAME} {Mod.Version}" },
+                { m_Settings.GetOptionGroupLocaleID(Settings.groupHotkeys), $"Hotkeys Options | {Mod.MOD_NAME}" },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(Settings.Key_ToggleTool)), "Open Move It" },
                 { m_Settings.GetOptionDescLocaleID(nameof(Settings.Key_ToggleTool)), "Enable or disable Move It" },
@@ -121,6 +122,56 @@ namespace MoveIt.Settings
                 { m_Settings.GetOptionLabelLocaleID(nameof(Settings.Key_TB_ObjAngleIndiv)), "Align To Angle (Individual)" },
                 { m_Settings.GetOptionDescLocaleID(nameof(Settings.Key_TB_ObjAngleIndiv)), "Turn selected objects to face the same angle as the next clicked object. This tool rotates all selected objects in place." },
                 { m_Settings.GetBindingKeyLocaleID(nameof(Settings.Key_TB_ObjAngleIndiv)), "\"Angle (Individual)\"" },
+
+                { m_Settings.GetOptionLabelLocaleID(nameof(Settings.Version)), "Version" },
+                { m_Settings.GetOptionDescLocaleID(nameof(Settings.Version)), $"Version number for the {Mod.MOD_NAME} mod installed." },
+
+                { SectionLabel("UseMKey"), "Move It - Use 'M' Key?" },
+                { TooltipDescriptionKey("YesUseMKey"), "Yes, Move It will use 'M'" },
+                { TooltipDescriptionKey("NoUseMKey"), "No, Move It will use 'Shift + M'" },
+                { TextLabel("Yes"), "Yes" },
+                { TextLabel("No"), "No" },
+
+                { TooltipTitleKey("Undo"), "Undo" },
+                { TooltipDescriptionKey("Undo"), "Undoes the last Move It Action." },
+                { TooltipTitleKey("Single"), "Single Mode" },
+                { TooltipDescriptionKey("Single"), "Select Moveables one at a time." },
+                { TooltipTitleKey("Marquee"), "Marquee Mode" },
+                { TooltipDescriptionKey("Marquee"), "Select Moveables by drawing a box." },
+                { TooltipTitleKey("Manipulation"), "Manipulation Mode" },
+                { TooltipDescriptionKey("Manipulation"), "Select a network to manipulate its control points to change it's shape." },
+                { TooltipTitleKey("Redo"), "Redo" },
+                { TooltipDescriptionKey("Redo"), "Redoes a Move It Action that was undone." },
+
+                { TextLabel ("Filters"), "Filters" },
+                { TooltipDescriptionKey("Filters"), "Choose object types" },
+                { TextLabel("Buildings"), "Buildings" },
+                { TooltipDescriptionKey("BuildingsFilter"), "Select Buildings" },
+                { TextLabel("Plants"), "Plants" },
+                { TooltipDescriptionKey("PlantsFilter"), "Select Plants" },
+                { TextLabel("Decals"), "Decals" },
+                { TooltipDescriptionKey("DecalsFilter"), "Select Decals" },
+                { TextLabel("Props"), "Props" },
+                { TooltipDescriptionKey("PropsFilter"), "Select Props" },
+                { TextLabel("Surfaces"), "Surfaces" },
+                { TooltipDescriptionKey("SurfacesFilter"), "Select Surfaces" },
+                { TextLabel("Nodes"), "Nodes" },
+                { TooltipDescriptionKey("NodesFilter"), "Select Nodes" },
+                { TextLabel("Segments"), "Segments" },
+                { TooltipDescriptionKey("SegmentsFilter"), "Select Segments" },
+                { TextLabel("NetLanes"), "NetLanes" },
+                { TooltipDescriptionKey("NetLanesFilter"), "Select NetLanes" },
+
+                { TextLabel("Toolbox"), "Toolbox" },
+                { TooltipDescriptionKey("Toolbox"), "Additional tools to control the behavior of Move It Tool on the selected elements." },
+                { TextLabel("TerrainHeight"), "To Terrain Height" },
+                { TooltipDescriptionKey("TerrainHeight"), "Move selected objects to the terrain height. Does not work with buildings or on-ground networks." },
+                { TextLabel("ObjectHeight"), "To Object Height" },
+                { TooltipDescriptionKey("ObjectHeight"), "Move selected objects to the height of the next clicked object." },
+                { TextLabel("RotateAtCenter"), "Rotate at Center" },
+                { TooltipDescriptionKey("RotateAtCenter"), "Turn selected objects to face the same angle as the next clicked object. This tool rotates all selected objects around the central point." },
+                { TextLabel("RotateInPlace"), "Rotate in-Place" },
+                { TooltipDescriptionKey("RotateInPlace") , "Turn selected objects to face the same angle as the next clicked object. This tool rotates all selected objects in place." },
             };
 
             #region Gooee Warning
@@ -166,5 +217,25 @@ namespace MoveIt.Settings
 
         public void Unload()
         { }
+
+        private string TooltipDescriptionKey(string key)
+        {
+            return $"{Mod.MOD_UI}.TOOLTIP_DESCRIPTION[{key}]";
+        }
+
+        private string SectionLabel(string key)
+        {
+            return $"{Mod.MOD_UI}.SECTION_TITLE[{key}]";
+        }
+
+        private string TooltipTitleKey(string key)
+        {
+            return $"{Mod.MOD_UI}.TOOLTIP_TITLE[{key}]";
+        }
+
+        private string TextLabel(string key)
+        {
+            return $"{Mod.MOD_UI}.TEXT_LABEL[{key}]";
+        }
     }
 }

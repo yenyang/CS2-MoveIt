@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import classNames from "classnames";
 import { Button, Tooltip } from "cs2/ui";
 import { VanillaComponentResolver } from "classes/VanillaComponentResolver";
 import { ButtonState, TopRowButtonStates } from "mit-mainpanel/panelState";
 import { ButtonPressed } from "bindings";
+import locale from "../lang/en-US.json";
+import mod from "../../mod.json";
 
 import styles from "./panel.module.scss";
 // Ugly code to force these images to build
@@ -21,12 +23,17 @@ import icA from "../img/icon_FoldoutOpen.svg";
 import icB from "../img/icon_FoldoutClose.svg";
 import icC from "../img/icon_PopoutOpen.svg";
 import icD from "../img/icon_PopoutClose.svg";
+import { getModule } from "cs2/modding";
+import { useLocalization } from "cs2/l10n";
 
-export function ButtonRowTop(topRowState : TopRowButtonStates) {
+export const ButtonRowTop = (props: {topRowState : TopRowButtonStates}) => {
     const classes = classNames({
         [styles.row]: true,
         [styles.buttonRow]: true,
     });
+
+    // translation handling. Translates using locale keys that are defined in C# or fallback string from en-US.json.
+    const { translate } = useLocalization();
 
     // Ugly code to force these images to build
     var x = ic0; x = ic1; x = ic2; x = ic3; x = ic4; x = ic5; x = ic6; 
@@ -34,24 +41,40 @@ export function ButtonRowTop(topRowState : TopRowButtonStates) {
 
     return (
         <div className={classes}>
-            {ButtonRowButton(TopButtonsData[0], topRowState.ButtonUndo)}
+            {ButtonRowButton(TopButtonsData[0], props.topRowState.ButtonUndo, DescriptionTooltip( translate("MoveIt.TOOLTIP_TITLE[Undo]", locale["MoveIt.TOOLTIP_TITLE[Undo]"]), translate("MoveIt.TOOLTIP_DESCRIPTION[Undo]", locale["MoveIt.TOOLTIP_DESCRIPTION[Undo]"]) ))}
             <div className={styles.separator}></div>
-            {ButtonRowButton(TopButtonsData[1], topRowState.ButtonSingle)}
+            {ButtonRowButton(TopButtonsData[1], props.topRowState.ButtonSingle, DescriptionTooltip( translate("MoveIt.TOOLTIP_TITLE[Single]", locale["MoveIt.TOOLTIP_TITLE[Single]"]), translate("MoveIt.TOOLTIP_DESCRIPTION[Single]", locale["MoveIt.TOOLTIP_DESCRIPTION[Single]"]) ))}
             <div className={styles.separator}></div>
-            {ButtonRowButton(TopButtonsData[2], topRowState.ButtonMarquee)}
+            {ButtonRowButton(TopButtonsData[2], props.topRowState.ButtonMarquee, DescriptionTooltip( translate("MoveIt.TOOLTIP_TITLE[Marquee]", locale["MoveIt.TOOLTIP_TITLE[Marquee]"]), translate("MoveIt.TOOLTIP_DESCRIPTION[Marquee]", locale["MoveIt.TOOLTIP_DESCRIPTION[Marquee]"]) ))}
             <div className={styles.separator}></div>
-            {ButtonRowButton(TopButtonsData[3], topRowState.ButtonManipulation)}
+            {ButtonRowButton(TopButtonsData[3], props.topRowState.ButtonManipulation, DescriptionTooltip( translate("MoveIt.TOOLTIP_TITLE[Manipulation]", locale["MoveIt.TOOLTIP_TITLE[Manipulation]"]), translate("MoveIt.TOOLTIP_DESCRIPTION[Manipulation]", locale["MoveIt.TOOLTIP_DESCRIPTION[Manipulation]"]) ))}
             <div className={styles.separator}></div>
-            {ButtonRowButton(TopButtonsData[4], topRowState.ButtonRedo)}
+            {ButtonRowButton(TopButtonsData[4], props.topRowState.ButtonRedo, DescriptionTooltip( translate("MoveIt.TOOLTIP_TITLE[Redo]", locale["MoveIt.TOOLTIP_TITLE[Redo]"]), translate("MoveIt.TOOLTIP_DESCRIPTION[Redo]", locale["MoveIt.TOOLTIP_DESCRIPTION[Redo]"]) ))}
         </div>
     );
 }
 
-function ButtonRowButton(data : ButtonData, state : ButtonState)
-{
+
+
+export const descriptionToolTipStyle = getModule("game-ui/common/tooltip/description-tooltip/description-tooltip.module.scss", "classes");
+
+
+// This is working, but it's possible a better solution is possible.
+export function DescriptionTooltip(tooltipTitle: string | null, tooltipDescription: string | null) : JSX.Element {
+    return (
+        <>
+            <div className={descriptionToolTipStyle.title}>{tooltipTitle}</div>
+            <div className={descriptionToolTipStyle.content}>{tooltipDescription}</div>
+        </>
+    );
+}
+
+function ButtonRowButton(data : ButtonData, state : ButtonState, tooltip: ReactNode)
+{   
+    
     return (
         <div className={styles.buttonContainer}>
-        <Tooltip tooltip={data.Tooltip}>
+        <Tooltip tooltip={tooltip}>
         <Button
             disabled={!state.IsEnabled}
             className={styles.button}
@@ -70,14 +93,12 @@ class ButtonData
     Section : string;
     Id : string;
     Icon : string;
-    Tooltip : string;
 
-    constructor(section : string, id : string, icon : string, tooltip : string)
+    constructor(section : string, id : string, icon : string)
     {
         this.Section = section;
         this.Id = id;
         this.Icon = icon;
-        this.Tooltip = tooltip;
     }
 
     public GetIconPath(state : ButtonState) : string
@@ -90,9 +111,9 @@ class ButtonData
 }
 
 const TopButtonsData : ButtonData[] = [
-    new ButtonData("toprow",    "undo",          "Undo",         "Undo"),
-    new ButtonData("toprow",    "single",        "Single",       "Single Mode"),
-    new ButtonData("toprow",    "marquee",       "Marquee",      "Marquee Mode"),
-    new ButtonData("toprow",    "manipulation",  "Manipulation", "Manipulation Mode"),
-    new ButtonData("toprow",    "redo",          "Redo",         "Redo"),
+    new ButtonData("toprow",    "undo",          "Undo"),
+    new ButtonData("toprow",    "single",        "Single"),
+    new ButtonData("toprow",    "marquee",       "Marquee"),
+    new ButtonData("toprow",    "manipulation",  "Manipulation"),
+    new ButtonData("toprow",    "redo",          "Redo"),
 ];

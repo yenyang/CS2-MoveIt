@@ -5,12 +5,13 @@ using Game.Settings;
 using MoveIt.Input;
 using MoveIt.Tool;
 using QCommonLib;
+using static Game.Prefabs.CompositionFlags;
 
 namespace MoveIt.Settings
 {
     [FileLocation(nameof(MoveIt))]
     [SettingsUITabOrder(tabMain, tabKeys)]
-    [SettingsUIGroupOrder(groupGeneral, groupHotkeys, groupMovement, groupToolbox)]
+    [SettingsUIGroupOrder(groupGeneral, groupHotkeys, groupMovement, groupToolbox, groupAbout)]
     [SettingsUIShowGroupName(groupGeneral, groupHotkeys, groupMovement, groupToolbox)]
     [SettingsUIMouseAction(QInputSystem.MOUSE_APPLY,    ActionType.Button, false, false, new string[] { "MoveIt_Input" })]
     [SettingsUIMouseAction(QInputSystem.MOUSE_CANCEL,   ActionType.Button, false, false, new string[] { "MoveIt_Input" })]
@@ -38,6 +39,7 @@ namespace MoveIt.Settings
         public const string groupHotkeys    = "groupHotkeys";
         public const string groupMovement   = "groupMovement";
         public const string groupToolbox    = "groupToolbox";
+        public const string groupAbout = "groupAbout";
 
         public Settings(IMod mod) : base(mod)
         { }
@@ -91,6 +93,12 @@ namespace MoveIt.Settings
             // ReSharper disable once ValueParameterNotUsed
             set => FileUtils.OpenLocalModsFolder();
         }
+
+        /// <summary>
+        /// Gets a value indicating the version.
+        /// </summary>
+        [SettingsUISection(tabMain, groupAbout)]
+        public string Version => Mod.Version;
 
         [SettingsUISection(tabMain, groupGeneral)]
         [SettingsUIHidden]

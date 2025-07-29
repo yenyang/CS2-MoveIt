@@ -1,88 +1,49 @@
 import { CheckboxData } from "mit-mainpanel/checkbox/cbData";
+import { ReactNode } from "react";
 
 // Main Foldout menu
 
-export class FoldoutData {
+export interface FoldoutData {
     Title: FOTitleData;
     Entries: FOMainEntryData[];
-
-    constructor(title: FOTitleData, entries: FOMainEntryData[]) {
-        this.Title = title;
-        this.Entries = entries;
-    }
 }
 
-export class FOTitleData
+export interface FOTitleData
 {
     Section : string;
     Id : string;
-    Label : string;
-    Tooltip : string;
-    Checkbox? : CheckboxData;
-    CBWhenClosed? : boolean;
-    CBWhenOpen? : boolean;
-
-    constructor(section : string, id : string, label : string, tooltip : string, checkbox? : CheckboxData, cbWhenClosed? : boolean, cbWhenOpen? : boolean)
-    {
-        this.Section = section;
-        this.Id = id;
-        this.Label = label;
-        this.Tooltip = tooltip;
-        this.Checkbox = checkbox;
-        this.CBWhenClosed = cbWhenClosed;
-        this.CBWhenOpen = cbWhenOpen;
-    }
+    LabelFallback : string | undefined;
+    LabelLocaleKey: string;
+    Tooltip?: ReactNode | string;
+    Checkbox? : CheckboxData | undefined;
+    CBWhenClosed? : boolean | undefined;
+    CBWhenOpen? : boolean | undefined;
 }
 
-export class FOEntryDataBase
+export interface FOEntryDataBase
 {
     Section : string;
     Id : string;
     RawId : string;
-    Label : string;
-    Tooltip : string;
-    Checkbox? : CheckboxData;
-
-    constructor(section : string, rawId : string, label : string, tooltip : string, checkbox? : CheckboxData)
-    {
-        this.Section = section;
-        this.Id = rawId + "Row";
-        this.RawId = rawId;
-        this.Label = label;
-        this.Tooltip = tooltip;
-        this.Checkbox = checkbox;
-    }
+    LabelFallback? : string | undefined;
+    LabelLocaleKey : string;    
+    Tooltip?: ReactNode | string;
+    Checkbox? : CheckboxData | undefined;
 }
 
-export class FOMainEntryData extends FOEntryDataBase
+export interface FOMainEntryData extends FOEntryDataBase
 {
     Popout? : FOPopoutData;
-
-    constructor(section : string, rawId : string, label : string, tooltip : string, checkbox? : CheckboxData, popout? : FOPopoutData)
-    {
-        super(section, rawId, label, tooltip, checkbox);
-        this.Popout = popout;
-    }
 }
 
 // Popout submenu
 
-export class FOPopoutData
+export interface FOPopoutData
 {
     Entries: FOPopoutEntryData[];
-
-    constructor(entries: FOPopoutEntryData[]) {
-        this.Entries = entries;
-    }
 }
 
-export class FOPopoutEntryData extends FOEntryDataBase
+export interface FOPopoutEntryData extends FOEntryDataBase
 {
     SubSection : string;
-
-    constructor(section : string, subSection : string, rawId : string, label : string, tooltip : string, checkbox? : CheckboxData)
-    {
-        super(section, rawId, label, tooltip, checkbox);
-        this.SubSection = subSection;
-    }
 }

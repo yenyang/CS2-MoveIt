@@ -2,19 +2,18 @@
 
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
-		<TargetFramework>net481</TargetFramework>
 		<LangVersion>9</LangVersion>
 		<Configurations>Debug;Release</Configurations>
 		<Deterministic>False</Deterministic>
 		
 		<!--The folder where Game.dll is located. Set it only if the game is not installed in the default location, otherwise keep it empty-->
-		<CustomManagedPath>C:\Games\Steam\steamapps\common\Cities Skylines II\Cities2_Data\Managed</CustomManagedPath>
+		<CustomManagedPath></CustomManagedPath>
 		
 		<!--The file where mod information which is required for publishing mod on PDX mods are stored-->
 		<PublishConfigurationPath>Properties\PublishConfiguration.xml</PublishConfigurationPath>
-    <Version>0.5.6</Version>
-    <AssemblyVersion>0.5.6.*</AssemblyVersion>
-    <FileVersion>0.5.6</FileVersion>
+    <Version>0.5.7</Version>
+    <AssemblyVersion>0.5.7.*</AssemblyVersion>
+    <FileVersion>0.5.7</FileVersion>
 	</PropertyGroup>
 	
 	<!--Imports must be after PropertyGroup block-->
@@ -51,75 +50,78 @@
 
 	<ItemGroup>
 		<Reference Include="Colossal.Collections">
-		  <HintPath>C:\Games\Steam\steamapps\common\Cities Skylines II\Cities2_Data\Managed\Colossal.Collections.dll</HintPath>
+		  <HintPath>$(ManagedPath)\Colossal.Collections.dll</HintPath>
 		  <Private>False</Private>
 		</Reference>
 		<Reference Include="Colossal.Core">
-		  <HintPath>C:\Games\Steam\steamapps\common\Cities Skylines II\Cities2_Data\Managed\Colossal.Core.dll</HintPath>
+		  <HintPath>$(ManagedPath)\Colossal.Core.dll</HintPath>
 		  <Private>False</Private>
 		</Reference>
 		<Reference Include="Colossal.IO.AssetDatabase">
-		  <HintPath>C:\Games\Steam\steamapps\common\Cities Skylines II\Cities2_Data\Managed\Colossal.IO.AssetDatabase.dll</HintPath>
+		  <HintPath>$(ManagedPath)\Colossal.IO.AssetDatabase.dll</HintPath>
 		  <Private>False</Private>
 		</Reference>
 		<Reference Include="Colossal.Localization">
-		  <HintPath>C:\Games\Steam\steamapps\common\Cities Skylines II\Cities2_Data\Managed\Colossal.Localization.dll</HintPath>
+		  <HintPath>$(ManagedPath)\Colossal.Localization.dll</HintPath>
 		  <Private>False</Private>
 		</Reference>
 		<Reference Include="Colossal.Logging">
-		  <HintPath>C:\Games\Steam\steamapps\common\Cities Skylines II\Cities2_Data\Managed\Colossal.Logging.dll</HintPath>
+		  <HintPath>$(ManagedPath)\Colossal.Logging.dll</HintPath>
 		  <Private>False</Private>
 		</Reference>
 		<Reference Include="Colossal.Mathematics">
-		  <HintPath>C:\Games\Steam\steamapps\common\Cities Skylines II\Cities2_Data\Managed\Colossal.Mathematics.dll</HintPath>
+		  <HintPath>$(ManagedPath)\Colossal.Mathematics.dll</HintPath>
 		  <Private>False</Private>
 		</Reference>
 		<Reference Include="Colossal.PSI.Common">
-		  <HintPath>C:\Games\Steam\steamapps\common\Cities Skylines II\Cities2_Data\Managed\Colossal.PSI.Common.dll</HintPath>
+		  <HintPath>$(ManagedPath)\Colossal.PSI.Common.dll</HintPath>
 		  <Private>False</Private>
 		</Reference>
 		<Reference Include="Colossal.UI">
-		  <HintPath>C:\Games\Steam\steamapps\common\Cities Skylines II\Cities2_Data\Managed\Colossal.UI.dll</HintPath>
+		  <HintPath>$(ManagedPath)\Colossal.UI.dll</HintPath>
 		  <Private>False</Private>
 		</Reference>
 		<Reference Include="Colossal.UI.Binding">
-		  <HintPath>C:\Games\Steam\steamapps\common\Cities Skylines II\Cities2_Data\Managed\Colossal.UI.Binding.dll</HintPath>
+		  <HintPath>$(ManagedPath)\Colossal.UI.Binding.dll</HintPath>
 		  <Private>False</Private>
 		</Reference>
 		<Reference Include="Game">
-		  <HintPath>C:\Games\Steam\steamapps\common\Cities Skylines II\Cities2_Data\Managed\Game.dll</HintPath>
+		  <HintPath>$(ManagedPath)\Game.dll</HintPath>
 		  <Private>False</Private>
 		</Reference>
+		<Reference Include="Newtonsoft.Json">
+		  <HintPath>$(ManagedPath)\Newtonsoft.Json.dll</HintPath>
+		</Reference>
 		<Reference Include="Unity.Burst">
-		  <HintPath>C:\Games\Steam\steamapps\common\Cities Skylines II\Cities2_Data\Managed\Unity.Burst.dll</HintPath>
+		  <HintPath>$(ManagedPath)\Unity.Burst.dll</HintPath>
 		  <Private>False</Private>
 		</Reference>
 		<Reference Include="Unity.Collections">
-		  <HintPath>C:\Games\Steam\steamapps\common\Cities Skylines II\Cities2_Data\Managed\Unity.Collections.dll</HintPath>
+		  <HintPath>$(ManagedPath)\Unity.Collections.dll</HintPath>
 		  <Private>False</Private>
 		</Reference>
 		<Reference Include="Unity.Entities">
-		  <HintPath>C:\Games\Steam\steamapps\common\Cities Skylines II\Cities2_Data\Managed\Unity.Entities.dll</HintPath>
+		  <HintPath>$(ManagedPath)\Unity.Entities.dll</HintPath>
 		  <Private>False</Private>
 		</Reference>
 		<Reference Include="Unity.InputSystem">
-		  <HintPath>C:\Games\Steam\steamapps\common\Cities Skylines II\Cities2_Data\Managed\Unity.InputSystem.dll</HintPath>
+		  <HintPath>$(ManagedPath)\Unity.InputSystem.dll</HintPath>
 		  <Private>False</Private>
 		</Reference>
 		<Reference Include="Unity.Mathematics">
-		  <HintPath>C:\Games\Steam\steamapps\common\Cities Skylines II\Cities2_Data\Managed\Unity.Mathematics.dll</HintPath>
+		  <HintPath>$(ManagedPath)\Unity.Mathematics.dll</HintPath>
 		  <Private>False</Private>
 		</Reference>
 		<Reference Include="UnityEngine">
-		  <HintPath>C:\Games\Steam\steamapps\common\Cities Skylines II\Cities2_Data\Managed\UnityEngine.dll</HintPath>
+		  <HintPath>$(ManagedPath)\UnityEngine.dll</HintPath>
 		  <Private>False</Private>
 		</Reference>
 		<Reference Include="UnityEngine.CoreModule">
-		  <HintPath>C:\Games\Steam\steamapps\common\Cities Skylines II\Cities2_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+		  <HintPath>$(ManagedPath)\UnityEngine.CoreModule.dll</HintPath>
 		  <Private>False</Private>
 		</Reference>
 		<Reference Include="UnityEngine.IMGUIModule">
-		  <HintPath>C:\Games\Steam\steamapps\common\Cities Skylines II\Cities2_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
+		  <HintPath>$(ManagedPath)\UnityEngine.IMGUIModule.dll</HintPath>
 		  <Private>False</Private>
 		</Reference>
 		<Reference Include="mscorlib">
@@ -129,9 +131,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Reference Update="C:\Program Files %28x86%29\Steam\steamapps\common\Cities Skylines II\Cities2_Data\Managed\mscorlib.dll">
-		  <Private>False</Private>
-		</Reference>
 		<Reference Update="System">
 			<Private>False</Private>
 		</Reference>
@@ -150,6 +149,12 @@
 
 	<ItemGroup>
 	  <PackageReference Include="System.IO.Compression" Version="4.3.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="LICENSE.txt">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
   
 	<ItemGroup>
@@ -186,6 +191,10 @@
 	  <Reference Update="System.Xml.Linq">
 	    <Private>False</Private>
 	  </Reference>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="l10n\" />
 	</ItemGroup>
 
 </Project>

@@ -24,7 +24,7 @@ import styles from "./moveit-button.module.scss";
 
 function toggle_ToolEnabled()
 {
-    console.log("MoveIt icon clicked");
+    // console.log("MoveIt icon clicked");
     trigger(mod.id, 'MIT_EnableToggle');
 }
 

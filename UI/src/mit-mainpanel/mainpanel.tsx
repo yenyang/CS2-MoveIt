@@ -18,39 +18,32 @@ export const MIT_MainPanel = () =>
     const panelRef = useRef(null);
     const position = {x: CalculateXPosition(), y: 0.875};
 
-    if (!toolEnabled) return null;
-    if (typeof panelState === 'undefined') {
-        console.log("MOVE IT: Error reading PanelState, UI will close. Bye. [MIT01]");
-        return null;
-    }
-
     return (
         <>
-            <Portal>
-                <Panel
-                    draggable
-                    className={styles.panel}
-                    initialPosition={position}
-                    header={(
-                        <div className={styles.header}>
-                            <img src={icon} className={styles.headerIcon} />
-                            <span className={styles.headerText}>Move It</span>
-                        </div>
-                    )}>
-                    <PanelSection className={styles.section}>
-                        <div ref={panelRef}>
-                            {ButtonRowTop(panelState.TopRow)}
-                            {/* {CheckboxRow("Hello", "hello")}
-                            {CheckboxRow("World", "world")} */}
-                            {FiltersFoldout(panelState.FilterSection)}
-                            {ToolboxFoldout(panelState.ToolboxSection)}
-                        </div>
-                    </PanelSection>
-                </Panel>
-            </Portal>
+            {toolEnabled && typeof panelState !== 'undefined' && 
+            (
+                <Portal>
+                    <Panel
+                        draggable
+                        className={styles.panel}
+                        initialPosition={position}
+                        header={(
+                            <div className={styles.header}>
+                                <img src={icon} className={styles.headerIcon} />
+                                <span className={styles.headerText}>Move It</span>
+                            </div>
+                        )}>
+                        <PanelSection className={styles.section}>
+                                <ButtonRowTop topRowState={panelState.TopRow}></ButtonRowTop>                                
+                                <FiltersFoldout state={panelState.FilterSection}></FiltersFoldout>
+                                <ToolboxFoldout state={panelState.ToolboxSection}></ToolboxFoldout>
+                        </PanelSection>
+                    </Panel>
+                </Portal>
+            ) }
         </>
     );
-
+    
     function CalculateXPosition() : number
     {
         // if (panelRef === null || panelRef.current === null) {

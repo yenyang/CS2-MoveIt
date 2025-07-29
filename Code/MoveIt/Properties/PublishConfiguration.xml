@@ -91,7 +91,7 @@ Icons from SVG Repo, and from WishForge.Games under CC Attribution License.</Lon
   <!--Link to the forum post where the mod can be discussed-->
   <ForumLink Value="https://forum.paradoxplaza.com/forum/threads/move-it.1684140/" />
   <!--Version of the mod-->
-  <ModVersion Value="0.5.6" />
+  <ModVersion Value="0.5.7" />
   <!--Recommended version of the base game to use the mod-->
   <GameVersion Value="1.*" />
   <!--Dependency for the mod, can be set multiple-->

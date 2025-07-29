@@ -3,30 +3,21 @@ import { FoldoutData } from "./foData";
 import { FoldoutState } from "./foState";
 import { FOEntryRow, FOTitleRow } from "./foRow";
 
-export function Foldout(data: FoldoutData, state: FoldoutState) : JSX.Element
-{
-    var title = FOTitleRow(data.Title, state);
-
-    var result : JSX.Element[] = [];
-
-    if (state.IsOpen && state.Entries.length > 0)
-    {
-        for (var i = 0; i < data.Entries.length; i++)
-        {
-            result.push(FOEntryRow(data.Entries[i], state.Entries[i]));
-        }
-
-        return (
-            <div className={foStyles.container}>
-                {title}
-                <div className={foStyles.entries}>{result}</div>
-            </div>
-        );
-    }
-
-    return (
+export const Foldout = (props : {data: FoldoutData, state: FoldoutState})  : JSX.Element => {
+    return (  
         <div className={foStyles.container}>
-            {title}
+            <FOTitleRow data={props.data.Title} state={props.state}></FOTitleRow>
+            <div className={foStyles.entries}>
+            {
+                props.data.Entries.map((entry, index) => (
+                    <FOEntryRow
+                        data ={entry}
+                        state ={props.state.Entries[index]}
+                        isOpen={props.state.IsOpen}
+                    ></FOEntryRow>
+                ))
+            }
+            </div>
         </div>
     );
 }
