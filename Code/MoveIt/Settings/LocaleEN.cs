@@ -1,4 +1,9 @@
-﻿using Colossal;
+﻿// <copyright>
+// Copyright (c) Yenyang. MIT License See LICENSE.txt
+// Forked with permission from Quboid's CS2-MoveIt project.
+// </copyright>
+
+using Colossal;
 using Colossal.IO.AssetDatabase.Internal;
 using System.Collections.Generic;
 
@@ -172,6 +177,8 @@ namespace MoveIt.Settings
                 { TooltipDescriptionKey("RotateAtCenter"), "Turn selected objects to face the same angle as the next clicked object. This tool rotates all selected objects around the central point." },
                 { TextLabel("RotateInPlace"), "Rotate in-Place" },
                 { TooltipDescriptionKey("RotateInPlace") , "Turn selected objects to face the same angle as the next clicked object. This tool rotates all selected objects in place." },
+
+                { TextLabel("MConflictMessage"), "Do you want the '**M**' key to open Move It?\nIt will be removed from:" },
             };
 
             #region Gooee Warning

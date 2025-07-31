@@ -112,6 +112,7 @@
   "MoveIt.TOOLTIP_DESCRIPTION[RotateAtCenter]": "Turn selected objects to face the same angle as the next clicked object. This tool rotates all selected objects around the central point.",
   "MoveIt.TEXT_LABEL[RotateInPlace]": "Rotate in-Place",
   "MoveIt.TOOLTIP_DESCRIPTION[RotateInPlace]": "Turn selected objects to face the same angle as the next clicked object. This tool rotates all selected objects in place.",
+  "MoveIt.TEXT_LABEL[MConflictMessage]": "Do you want the '**M**' key to open Move It?\nIt will be removed from:",
   "Options.OPTION[MoveIt.MoveIt.Mod.Settings.GooeeWarning]": "\n**Warning: Gooee Detected**\n\nGooee is an abandoned mod dependency that **will** cause problems with Move It and other mods, and should be removed. However after removal parts of it may remain in your local ModsData folder which must be cleaned up.\n\n1. Close the game.\n 2. Remove Gooee if it exists.\n 3. Delete the Gooee folder in your local ModsData folder.",
   "Options.OPTION[MoveIt.MoveIt.Mod.Settings.OpenLocalModsFolderBtn]": "Open Local ModsData Folders",
   "Options.OPTION_DESCRIPTION[MoveIt.MoveIt.Mod.Settings.OpenLocalModsFolderBtn]": "Open the local ModsData folder - you should close the game before deleting the Gooee folder."

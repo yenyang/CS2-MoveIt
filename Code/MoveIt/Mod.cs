@@ -1,4 +1,4 @@
-﻿// <copyright file="Mod.cs">
+﻿// <copyright>
 // Copyright (c) Yenyang. MIT License See LICENSE.txt
 // Forked with permission from Quboid's CS2-MoveIt project.
 // </copyright>

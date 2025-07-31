@@ -97,8 +97,8 @@ Icons from SVG Repo, and from WishForge.Games under CC Attribution License.</Lon
   <!--Dependency for the mod, can be set multiple-->
   <Dependency Id="" DisplayName="" Version="" />
   <!--Change log for new version. Single line or multi line. Supports minimal markdown subset-->
-  <ChangeLog>0.5.6
-- Fixed snapping control points to straight line</ChangeLog>
+  <ChangeLog># Patch v0.5.7
+- Added Localization Support.</ChangeLog>
   <!--External link. supported types are discord, github, youtube, twitch, x, paypal, patreon-->
   <ExternalLink Type="discord" Url="https://discord.gg/nURB9MQ" />
   <ExternalLink Type="paypal" Url="https://www.paypal.me/QuboidCSL1" />

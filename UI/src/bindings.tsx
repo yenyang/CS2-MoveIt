@@ -2,6 +2,7 @@ import { bindValue } from "cs2/api";
 import { trigger, useValue } from "cs2/api";
 import { PanelState } from "mit-mainpanel/panelState";
 import mod from "../mod.json";
+import { BindingConflicts } from "Domain/BindingConflicts";
 
 export const MIT_ToolEnabled$           = bindValue<boolean>(mod.id,    'MIT_ToolEnabled', false);
 export const MIT_PanelState$            = bindValue<PanelState>(mod.id, 'MIT_PanelState', undefined);
@@ -9,7 +10,7 @@ export const MIT_ShowDebugPanel$        = bindValue<boolean>(mod.id,    'MIT_Sho
 export const MIT_DebugPanelContents$    = bindValue<string>(mod.id,     'MIT_DebugPanelContents', "Move It Debug Panel");
 export const MIT_HideMoveItIcon$        = bindValue<boolean>(mod.id,    'MIT_HideMoveItIcon', false);
 export const MIT_ShowRebindConfirm$     = bindValue<boolean>(mod.id,    'MIT_ShowRebindConfirm', false);
-export const MIT_RebindExistingMsg$     = bindValue<string>(mod.id,     'MIT_RebindExistingMsg', "[error]");
+export const MIT_BindingConflicts$     = bindValue<BindingConflicts>(mod.id,     'MIT_BindingConflicts');
 
 
 export function ButtonPressed(section : string, id : string)

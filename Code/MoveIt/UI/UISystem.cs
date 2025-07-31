@@ -1,4 +1,9 @@
-﻿using Colossal.UI.Binding;
+﻿// <copyright>
+// Copyright (c) Yenyang. MIT License See LICENSE.txt
+// Forked with permission from Quboid's CS2-MoveIt project.
+// </copyright>
+
+using Colossal.UI.Binding;
 using Game.Input;
 using Game.UI;
 using MoveIt.Moveables;
@@ -21,13 +26,13 @@ namespace MoveIt.Systems
     {
         protected readonly MIT _MIT = MIT.m_Instance;
 
-        private ValueBinding<bool>          _ToolEnabledBinding;
-        private ValueBinding<PanelState>    _PanelStateBinding;
-        private ValueBinding<bool>          _ShowDebugPanelBinding;
-        private ValueBinding<string>        _DebugPanelContentsBinding;
-        private ValueBinding<bool>          _HideMoveItIcon;
-        private ValueBinding<bool>          _ShowMConflict;
-        private ValueBinding<string>        _RebindExistingMsg;
+        private ValueBinding<bool>                  _ToolEnabledBinding;
+        private ValueBinding<PanelState>            _PanelStateBinding;
+        private ValueBinding<bool>                  _ShowDebugPanelBinding;
+        private ValueBinding<string>                _DebugPanelContentsBinding;
+        private ValueBinding<bool>                  _HideMoveItIcon;
+        private ValueBinding<bool>                  _ShowMConflict;
+        private ValueBinding<BindingConflicts>      _BindingConflictsBinding;
         private PanelState _DefaultState;
         private PanelState _PanelState;
 
@@ -50,7 +55,7 @@ namespace MoveIt.Systems
             AddBinding(_DebugPanelContentsBinding   = new ValueBinding<string>(Mod.MOD_UI,      "MIT_DebugPanelContents", "Hello World"));
             AddBinding(_HideMoveItIcon              = new ValueBinding<bool>(Mod.MOD_UI,        "MIT_HideMoveItIcon", false));
             AddBinding(_ShowMConflict               = new ValueBinding<bool>(Mod.MOD_UI,        "MIT_ShowRebindConfirm", false));
-            AddBinding(_RebindExistingMsg           = new ValueBinding<string>(Mod.MOD_UI,      "MIT_RebindExistingMsg", "[Error]"));
+            AddBinding(_BindingConflictsBinding           = new ValueBinding<BindingConflicts>(Mod.MOD_UI,      "MIT_BindingConflicts", new BindingConflicts() { conflicts = new List<BindingConflict>() }));
             AddBinding(new TriggerBinding(Mod.MOD_UI, "MIT_EnableToggle", MIT_EnableToggle));
             AddBinding(new TriggerBinding<string, string>(Mod.MOD_UI, "MIT_PanelButtonPress", MIT_PanelButtonPress));
             AddBinding(new TriggerBinding<string, string, bool>(Mod.MOD_UI, "MIT_PanelCheckboxChange", MIT_PanelCheckboxChange));
@@ -72,17 +77,17 @@ namespace MoveIt.Systems
             bool hasShownMConflictPanel = Mod.Settings.HasShownMConflictPanel;
             List<ProxyBinding> conflicts = GetActionKeyConflicts(Inputs.KEY_TOGGLETOOL);
             bool showMConflictPanel = !hasShownMConflictPanel && conflicts.Count > 0;
+            
             _ShowMConflict.Update(showMConflictPanel);
-            StringBuilder msg = new();
             if (showMConflictPanel)
             {
-                msg.AppendFormat("Do you want the '**M**' key to open Move It?\nIt will be removed from:");
+                BindingConflicts bindingConflicts = new BindingConflicts() { conflicts = new List<BindingConflict>() };
                 foreach (ProxyBinding binding in conflicts)
                 {
-                    msg.AppendFormat("\n - {0}: **{1}**", binding.mapName, binding.actionName);
+                    bindingConflicts.AddBindingConflict(binding);                    
                 }
+                _BindingConflictsBinding.Update(bindingConflicts);
             }
-            _RebindExistingMsg.Update(msg.ToString());
         }
 
         /// <summary>

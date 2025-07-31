@@ -1,2 +1,2 @@
-﻿0.5.6
-- Fixed snapping control points to straight line
+﻿# Patch v0.5.7
+- Added Localization Support.
