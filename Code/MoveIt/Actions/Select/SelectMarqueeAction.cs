@@ -3,6 +3,7 @@ using MoveIt.Moveables;
 using MoveIt.Selection;
 using System.Collections.Generic;
 using Unity.Entities;
+using Unity.Jobs;
 
 namespace MoveIt.Actions.Select
 {
@@ -36,9 +37,9 @@ namespace MoveIt.Actions.Select
             }
         }
 
-        public override void Do()
+        public override void Do(ref JobHandle jobHandle, ref EntityCommandBuffer buffer)
         {
-            base.Do();
+            base.Do(ref jobHandle, ref buffer);
 
             if (!_IsAppend)
             {

@@ -5,6 +5,8 @@ using MoveIt.Selection;
 using MoveIt.Tool;
 using QCommonLib;
 using System.Text;
+using Unity.Entities;
+using Unity.Jobs;
 
 namespace MoveIt.Managers
 {
@@ -90,7 +92,7 @@ namespace MoveIt.Managers
             MIT.Log.Info($"Push {Index}:{_Actions[Index].Name}");
         }
 
-        public void FireAction()
+        public void FireAction(ref JobHandle jobHandle, ref EntityCommandBuffer buffer)
         {
             switch (Action.Phase)
             {
@@ -100,7 +102,7 @@ namespace MoveIt.Managers
                     break;
 
                 case Phases.Do:
-                    Do();
+                    Do(ref jobHandle, ref buffer);
                     break;
 
                 case Phases.Undo:
@@ -136,10 +138,10 @@ namespace MoveIt.Managers
             _Actions[Index].Initialise();
         }
 
-        public void Do()
+        public void Do(ref JobHandle jobHandle, ref EntityCommandBuffer buffer)
         {
             //MIT.Log.Debug($"{UnityEngine.Time.frameCount} Do {Debug()}");
-            _Actions[Index].Do();
+            _Actions[Index].Do(ref jobHandle, ref buffer);
         }
 
         public bool CanUndo()

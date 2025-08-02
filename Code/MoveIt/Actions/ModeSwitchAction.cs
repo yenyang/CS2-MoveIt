@@ -2,6 +2,8 @@
 using MoveIt.Selection;
 using MoveIt.Tool;
 using System.Collections.Generic;
+using Unity.Entities;
+using Unity.Jobs;
 
 namespace MoveIt.Actions
 {
@@ -24,9 +26,9 @@ namespace MoveIt.Actions
         /// Maintain the selection for this mode by searching back in the queue for the last switch and use it's initial (pre-mode switch) selection
         /// If no last switch found, selection is empty.
         /// </summary>
-        public override void Do()
+        public override void Do(ref JobHandle jobHandle, ref EntityCommandBuffer buffer)
         {
-            base.Do();
+            base.Do(ref jobHandle, ref buffer);
             List<MVDefinition> fromSelection = _InitialSelectionState.Definitions;
             ModeSwitchAction prev = _MIT.Queue.GetPrevious<ModeSwitchAction>();// GetPrecedingModeSwitchActionFromQueue(false);
             List<MVDefinition> toSelection = prev is null ? new() : prev.GetInitialSelectionStates();
