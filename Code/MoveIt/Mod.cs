@@ -74,13 +74,9 @@ namespace MoveIt
 
             Colossal.IO.AssetDatabase.AssetDatabase.global.LoadSettings(nameof(MoveIt), Settings, new Settings.Settings(this));
 
-            //updateSystem.UpdateAt<MIT_HoverSystem>(SystemUpdatePhase.ToolUpdate);
             updateSystem.UpdateAt<Tool.MIT>(SystemUpdatePhase.ToolUpdate);
             updateSystem.UpdateAt<MIT_InputSystem>(SystemUpdatePhase.PreTool);
             updateSystem.UpdateAt<MIT_PostToolSystem>(SystemUpdatePhase.PostTool);
-            updateSystem.UpdateBefore<MIT_RemoveOverriddenSystem>(SystemUpdatePhase.ModificationEnd);
-            updateSystem.UpdateBefore<MIT_VanillaOverlaySystem>(SystemUpdatePhase.Rendering);
-            //updateSystem.UpdateAt<MIT_RenderSystem>(SystemUpdatePhase.Rendering);
             updateSystem.UpdateAt<Overlays.MIT_OverlaySystem>(SystemUpdatePhase.Rendering);
             updateSystem.UpdateAt<MIT_UISystem>(SystemUpdatePhase.UIUpdate);
             updateSystem.UpdateAt<MIT_ToolTipSystem>(SystemUpdatePhase.UITooltip);

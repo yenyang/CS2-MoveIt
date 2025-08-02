@@ -66,19 +66,10 @@ namespace MoveIt.Tool
 
                     UpdateMarqueeList(m_Marquee);
                     sma.AddMarqueeSelection(m_Marquee, true);
-                    //ToolAction = ToolActions.Do;
                     break;
             }
 
             Queue.FireAction();
-
-            //DebugDumpSelections();
-
-            //MIT_ToolTipSystem.instance.Set(
-            //    $"Hov:{Hovered.Definition.m_Entity.DX()}/Norm:{Hover.Normal.Definition.m_Entity.DX()}/Child:{Hover.Child.Definition.m_Entity.DX()}/ChildPar:{Hover.Child.Definition.m_Parent.DX()}, " +
-            //    $"Press:{Hover.TopPressed.m_Entity.DX()}/{Hover.Normal.OnPress.m_Entity.DX()}/{Hover.Child.OnPress.m_Entity.DX()}");
-
-            //Moveables.DebugDumpFullBundle("ONUPDATE");
 
             return m_InputDeps;
         }
