@@ -14,6 +14,7 @@ namespace MoveIt.Tool
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
             m_InputDeps = base.OnUpdate(inputDeps);
+            EntityCommandBuffer buffer = m_ToolOutputBarrier.CreateCommandBuffer();
             //ClearDebugOverlays();
 
             // If tool is opened before OnUpdate runs, m_RaycastTerrain won't be set. Skip this frame.
@@ -69,7 +70,7 @@ namespace MoveIt.Tool
                     break;
             }
 
-            Queue.FireAction();
+            Queue.FireAction(ref inputDeps, ref buffer);
 
             return m_InputDeps;
         }

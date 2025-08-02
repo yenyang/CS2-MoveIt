@@ -6,6 +6,7 @@ using QCommonLib;
 using System;
 using System.Collections.Generic;
 using Unity.Entities;
+using Unity.Jobs;
 
 namespace MoveIt.Actions
 {
@@ -121,7 +122,7 @@ namespace MoveIt.Actions
         /// <summary>
         /// Run the action, called once per frame as long as needed
         /// </summary>
-        public virtual void Do() { }
+        public virtual void Do(ref JobHandle jobHandle, ref EntityCommandBuffer buffer) { }
         /// <summary>
         /// Undo the action
         /// </summary>

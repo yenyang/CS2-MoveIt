@@ -165,7 +165,7 @@ namespace MoveIt.Actions.Transform
             throw new Exception($"Failed to find state for {mvd} in TransformAction {ToString()}");
         }
 
-        public override void Do()
+        public override void Do(ref JobHandle jobHandle, ref EntityCommandBuffer buffer)
         {
             QLookupFactory.Init(_MIT);
 
