@@ -11,6 +11,7 @@ using System.Reflection;
 using System;
 using Unity.Mathematics;
 using UnityEngine;
+using MoveIt.Settings;
 
 namespace MoveIt.Tool
 {
@@ -100,7 +101,7 @@ namespace MoveIt.Tool
                 mode = m_MarqueeSelect ? "Marquee" : "Single";
             }
 
-            Systems.MIT_ToolTipSystem.instance.Set($"Mode: {mode}", 1.25f);
+            Systems.MIT_ToolTipSystem.instance.Set(LocaleEN.TooltipTitleKey(mode), $"{mode} Mode", 1.25f);
         }
 
         internal void MoveStart()

@@ -1,5 +1,6 @@
 ﻿using Game.Input;
 using MoveIt.Actions.Select;
+using MoveIt.Settings;
 using MoveIt.Tool;
 using QCommonLib;
 
@@ -54,7 +55,7 @@ namespace MoveIt.Input
 
             if (_MIT.m_IsManipulateMode && !_MIT.Hovered.IsManipulatable)
             {
-                Systems.MIT_ToolTipSystem.instance.Set($"Right-Click to exit Manipulation Mode", 1.5f);
+                Systems.MIT_ToolTipSystem.instance.Set(LocaleEN.TooltipDescriptionKey("ExitManipulationMode") ,"Right-Click to exit Manipulation Mode", 1.5f);
                 return;
             }
 

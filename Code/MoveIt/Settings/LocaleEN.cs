@@ -179,6 +179,8 @@ namespace MoveIt.Settings
                 { TooltipDescriptionKey("RotateInPlace") , "Turn selected objects to face the same angle as the next clicked object. This tool rotates all selected objects in place." },
 
                 { TextLabel("MConflictMessage"), "Do you want the '**M**' key to open Move It?\nIt will be removed from:" },
+
+                { TooltipDescriptionKey("ExitManipulationMode"), "Right-Click to exit Manipulation Mode" },
             };
 
             #region Gooee Warning
@@ -225,7 +227,23 @@ namespace MoveIt.Settings
         public void Unload()
         { }
 
-        private string TooltipDescriptionKey(string key)
+
+        /// <summary>
+        /// Gets a tooltip title locale key.
+        /// </summary>
+        /// <param name="key">Inside brackets part of key.</param>
+        /// <returns>Locale Key string for tooltip title.</returns>
+        public static string TooltipTitleKey(string key)
+        {
+            return $"{Mod.MOD_UI}.TOOLTIP_TITLE[{key}]";
+        }
+
+        /// <summary>
+        /// Gets a tooltip description locale key.
+        /// </summary>
+        /// <param name="key">Inside brackets part of key.</param>
+        /// <returns>Locale key string for tooltip description.</returns>
+        public static string TooltipDescriptionKey(string key)
         {
             return $"{Mod.MOD_UI}.TOOLTIP_DESCRIPTION[{key}]";
         }
@@ -235,10 +253,6 @@ namespace MoveIt.Settings
             return $"{Mod.MOD_UI}.SECTION_TITLE[{key}]";
         }
 
-        private string TooltipTitleKey(string key)
-        {
-            return $"{Mod.MOD_UI}.TOOLTIP_TITLE[{key}]";
-        }
 
         private string TextLabel(string key)
         {

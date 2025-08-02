@@ -1,4 +1,5 @@
 ﻿using Game.Tools;
+using Game.UI.Localization;
 using Game.UI.Tooltip;
 
 namespace MoveIt.Systems
@@ -12,20 +13,20 @@ namespace MoveIt.Systems
         public static MIT_ToolTipSystem instance;
 
         private float _TTL;
-        private string _Text;
+        private LocalizedString _Text;
 
         internal void EnableIfPopulated()
         {
             UpdateForTTL();
 
-            Enabled = _Text != string.Empty;
+            Enabled = _Text.value != string.Empty;
         }
 
-        public void Set(string msg, float expires = 0)
+        public void Set(string localeKey, string fallback, float expires = 0)
         {
-            _Text = msg;
+            _Text = LocalizedString.IdWithFallback(localeKey, fallback);
             _TTL = (expires > 0) ? UnityEngine.Time.time + expires : 0f;
-            Enabled = !msg.Equals(string.Empty);
+            Enabled = !_Text.value.Equals(string.Empty);
         }
 
         private void UpdateForTTL()

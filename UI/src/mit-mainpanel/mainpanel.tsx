@@ -1,4 +1,3 @@
-import { useRef } from "react";
 import { Portal, Panel, PanelSection } from "cs2/ui";
 import { bindValue, trigger, useValue } from "cs2/api";
 import { MIT_ToolEnabled$, MIT_PanelState$ } from "bindings";
@@ -10,15 +9,18 @@ import styles from "./panel.module.scss";
 import { ButtonRowTop } from "./buttonRow";
 import { FiltersFoldout } from "./filtersFoldout";
 import { ToolboxFoldout } from "./toolboxFoldout";
+import { useLocalization } from "cs2/l10n";
+import locale from "../lang/en-US.json";
 
 export const MIT_MainPanel = () =>
 {
     const toolEnabled = useValue(MIT_ToolEnabled$);
     const panelState = useValue<PanelState>(MIT_PanelState$);
-    const panelRef = useRef(null);
     const position = {x: CalculateXPosition(), y: 0.875};
 
-    return (
+    const { translate }  = useLocalization();
+
+    return (      
         <>
             {toolEnabled && typeof panelState !== 'undefined' && 
             (
@@ -30,7 +32,7 @@ export const MIT_MainPanel = () =>
                         header={(
                             <div className={styles.header}>
                                 <img src={icon} className={styles.headerIcon} />
-                                <span className={styles.headerText}>Move It</span>
+                                <span className={styles.headerText}>{translate("Options.SECTION[MoveIt.MoveIt.Mod]",   locale["Options.SECTION[MoveIt.MoveIt.Mod]"])}</span>
                             </div>
                         )}>
                         <PanelSection className={styles.section}>
@@ -46,16 +48,6 @@ export const MIT_MainPanel = () =>
     
     function CalculateXPosition() : number
     {
-        // if (panelRef === null || panelRef.current === null) {
-        //     console.log("MOVE IT: Error reading Panel reference. [MIT02]");
-        //     return 0;
-        // }
-        // let rect = (panelRef.current as any).getBoundingClientRect();
-        // if (rect === null) {
-        //     console.log("MOVE IT: Error reading Panel rectangle. [MIT03]");
-        //     return 0;
-        // }
-
         let panelStyleWidth = 200;
         let xOffset = 15;
         let uiScale = window.innerHeight / 1080;
