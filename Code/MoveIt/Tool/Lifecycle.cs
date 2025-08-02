@@ -24,8 +24,6 @@ namespace MoveIt.Tool
             Enabled = false;
 
             m_OverlaySystem = World.GetOrCreateSystemManaged<Overlays.MIT_OverlaySystem>();
-            m_VanillaOverlaySystem = World.GetOrCreateSystemManaged<Systems.MIT_VanillaOverlaySystem>();
-            m_RemoveOverriddenSystem = World.GetOrCreateSystemManaged<Systems.MIT_RemoveOverriddenSystem>();
             m_UISystem = World.GetOrCreateSystemManaged<Systems.MIT_UISystem>();
             m_PostToolSystem = World.GetOrCreateSystemManaged<Systems.MIT_PostToolSystem>();
             m_InputSystem = World.GetOrCreateSystemManaged<Systems.MIT_InputSystem>();
@@ -86,9 +84,7 @@ namespace MoveIt.Tool
 
             m_ToolTipSystem.Enabled = true;
             m_InputSystem.OnToolEnable();
-            m_RemoveOverriddenSystem.Start();
             m_PostToolSystem.Start();
-            m_VanillaOverlaySystem.Start();
             m_OverlaySystem.Start();
             InputManager.OnToolEnable();
 
@@ -105,9 +101,7 @@ namespace MoveIt.Tool
             Hover.Clear();
             InputManager.OnToolDisable();
             m_OverlaySystem.End();
-            m_VanillaOverlaySystem.End();
             m_PostToolSystem.End();
-            m_RemoveOverriddenSystem.End();
             m_InputSystem.OnToolDisable();
             m_ToolTipSystem.Enabled = false;
 

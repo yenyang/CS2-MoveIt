@@ -51,13 +51,9 @@ namespace MoveIt.Tool
         internal ToolboxManager ToolboxManager;
         internal FilterManager Filtering;
 
-        internal MIT_VanillaOverlaySystem m_VanillaOverlaySystem;
-        internal MIT_RemoveOverriddenSystem m_RemoveOverriddenSystem;
-        //internal MIT_RenderSystem m_RenderSystem;
         internal MIT_UISystem m_UISystem;
         internal MIT_PostToolSystem m_PostToolSystem;
         internal MIT_InputSystem m_InputSystem;
-        //internal MIT_HoverSystem m_HoverSystem;
         internal Overlays.MIT_OverlaySystem m_OverlaySystem;
         internal Systems.MIT_ToolTipSystem m_ToolTipSystem;
 
