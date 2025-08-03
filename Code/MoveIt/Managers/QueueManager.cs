@@ -24,7 +24,13 @@ namespace MoveIt.Managers
             _MIT.Selection ??= new SelectionNormal();
             _Actions[Index] = new SelectAction();
             _CreationAction = null;
-            Do();
+            JobHandle jobHandle = _MIT.Dependencies;
+            EntityCommandBuffer buffer = new EntityCommandBuffer();
+            Do(ref jobHandle, ref buffer);
+            if (!buffer.IsEmpty)
+            {
+                buffer.Playback(_MIT.EntityManager);
+            }
         }
 
         private readonly Action[] _Actions = new Action[QUEUE_LENGTH];
@@ -140,7 +146,7 @@ namespace MoveIt.Managers
 
         public void Do(ref JobHandle jobHandle, ref EntityCommandBuffer buffer)
         {
-            //MIT.Log.Debug($"{UnityEngine.Time.frameCount} Do {Debug()}");
+            MIT.Log.Debug($"{UnityEngine.Time.frameCount} Do Index: {Index} _Actions[Index]:{_Actions[Index].Name} ");
             _Actions[Index].Do(ref jobHandle, ref buffer);
         }
 

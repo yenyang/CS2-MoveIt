@@ -3,6 +3,8 @@ using MoveIt.Actions.Select;
 using MoveIt.Actions.Transform;
 using MoveIt.Tool;
 using QCommonLib;
+using Unity.Entities;
+using Unity.Jobs;
 
 namespace MoveIt.Input
 {
@@ -38,7 +40,9 @@ namespace MoveIt.Input
             }
 
             _MIT.Queue.Push(new SelectAction());
-            _MIT.Queue.Do();
+            JobHandle jobHandle = _MIT.Dependencies;
+            EntityCommandBuffer buffer = _Barrier.CreateCommandBuffer();
+            _MIT.Queue.Do(ref jobHandle, ref buffer);
 
             Actions.Action.Phase = Actions.Phases.Cleanup;
 

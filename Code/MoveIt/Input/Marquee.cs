@@ -1,10 +1,13 @@
 ﻿using Colossal.Mathematics;
+using Game;
+using Game.Tools;
 using MoveIt.Actions.Select;
 using MoveIt.Overlays.Children;
 using MoveIt.Tool;
 using QCommonLib;
 using System.Collections.Generic;
 using Unity.Entities;
+using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
 using Debug = System.Diagnostics.Debug;
@@ -22,6 +25,7 @@ namespace MoveIt.Input
         internal HashSet<Entity> m_EntitiesPrev;
         internal Bounds3 m_LastBounds;
         internal bool m_HasMoved;
+        internal ToolOutputBarrier m_Barrier;
 
         private readonly OverlayMarquee _Overlay;
 
@@ -34,6 +38,7 @@ namespace MoveIt.Input
             m_EntitiesPrev = null;
             m_LastBounds = new(float.MaxValue, float.MaxValue);
             m_HasMoved = false;
+            m_Barrier = World.DefaultGameObjectInjectionWorld?.GetOrCreateSystemManaged<ToolOutputBarrier>();
 
             _Overlay = new OverlayMarquee(2);
         }
@@ -44,7 +49,9 @@ namespace MoveIt.Input
             if (position.Equals(m_StartPosition)) return false;
 
             _MIT.Queue.Push(new SelectMarqueeAction(QKeyboard.Shift));
-            _MIT.Queue.Do();
+            JobHandle jobHandle = MIT.m_Instance.Dependencies;
+            EntityCommandBuffer buffer = m_Barrier.CreateCommandBuffer();
+            _MIT.Queue.Do(ref jobHandle, ref buffer);
             m_HasMoved = true;
             return true;
         }

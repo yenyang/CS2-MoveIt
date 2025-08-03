@@ -1,7 +1,10 @@
-﻿using Game.Input;
+﻿using Game;
+using Game.Input;
+using Game.Tools;
 using MoveIt.Tool;
 using QCommonLib;
 using System.Diagnostics;
+using Unity.Entities;
 using Unity.Mathematics;
 
 namespace MoveIt.Input
@@ -17,6 +20,7 @@ namespace MoveIt.Input
         protected ButtonStatus m_Status     = ButtonStatus.None;
         protected float2 m_PressedPosition  = float.MaxValue;
         protected bool m_IsDragging         = false;
+        internal ToolOutputBarrier _Barrier;
 
         internal bool Enabled
         {
@@ -27,11 +31,13 @@ namespace MoveIt.Input
         internal InputButton(ProxyAction action)
         {
             Action = action;
+            _Barrier = World.DefaultGameObjectInjectionWorld.GetOrCreateSystemManaged<ToolOutputBarrier>();
         }
 
         internal InputButton(string mapName, string actionName)
         {
             Action = InputManager.instance.FindAction(mapName, actionName);
+            _Barrier = World.DefaultGameObjectInjectionWorld.GetOrCreateSystemManaged<ToolOutputBarrier>();
         }
 
         internal void Update()

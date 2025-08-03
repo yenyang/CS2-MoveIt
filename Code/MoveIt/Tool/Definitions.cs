@@ -95,6 +95,11 @@ namespace MoveIt.Tool
         /// </summary>
         public HashSet<Entity> SelectedEntities => Selection.Definitions.Select(mvd => mvd.m_Entity).ToHashSet();
 
+        public JobHandle Dependencies
+        {
+            get { return Dependency; }
+        }
+
         /// <summary>
         /// Raycaster which only hits terrain
         /// </summary>
