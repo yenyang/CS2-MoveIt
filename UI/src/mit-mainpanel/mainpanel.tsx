@@ -40,6 +40,7 @@ export const MIT_MainPanel = () =>
                                 <FiltersFoldout state={panelState.FilterSection}></FiltersFoldout>
                                 <ToolboxFoldout state={panelState.ToolboxSection}></ToolboxFoldout>
                         </PanelSection>
+                        
                     </Panel>
                 </Portal>
             ) }

@@ -1,12 +1,13 @@
 import foStyles from "./foldout.module.scss";
 import classNames from "classnames";
-import { Button, HTMLImageElement, Tooltip } from "cs2/ui";
+import { Button, HTMLImageElement, Icon, Tooltip } from "cs2/ui";
 import { LabelMouseUp } from "bindings";
 import { FOTitleData, FOMainEntryData } from "./foData";
 import { FoldoutState, FOMainEntryState } from "./foState";
 import { VanillaComponentResolver } from "classes/VanillaComponentResolver";
 import { BuildCheckbox } from "mit-mainpanel/checkbox/checkbox";
 import { useLocalization } from "cs2/l10n";
+import { getModule } from "cs2/modding";
 
 const FoldoutOpenSrc = `coui://ui-mods/images/icon_FoldoutOpen.svg`;
 const FoldoutClosedSrc = `coui://ui-mods/images/icon_FoldoutClose.svg`;
@@ -30,6 +31,7 @@ export const FOTitleRow = (props: {data: FOTitleData, state: FoldoutState}) : JS
     const labelClasses = classNames({
         [foStyles.label]: true,
         [foStyles.labelCB]: showCB,
+        [foStyles.rowGroup]: true,
     })
 
     return (
@@ -43,8 +45,16 @@ export const FOTitleRow = (props: {data: FOTitleData, state: FoldoutState}) : JS
                 onMouseUpCapture={(e) => LabelMouseUp(props.data.Section, props.data.Id, e.button)}
                 variant="icon">
                     <Tooltip tooltip={props.data.Tooltip}>
-                        <div className={labelClasses}>{translate(props.data.LabelLocaleKey, props.data.LabelFallback)}</div>
+                        <>
+                            <div className={labelClasses}>
+                                {translate(props.data.LabelLocaleKey, props.data.LabelFallback)}
+                                <span className={foStyles.smSpacer}></span>
+                                <img src={props.data.Icon} className={foStyles.icon}></img>
+                            </div>
+                            
+                        </>
                     </Tooltip>
+                   
             </Button>
         </div>
     );
@@ -70,6 +80,7 @@ export const FOEntryRow = (props: {data: FOMainEntryData, state: FOMainEntryStat
         [foStyles.label]: true,
         [foStyles.labelCB]: showCB,
         [foStyles.labelPO]: showPO,
+        [foStyles.rowGroup]: true,
     })
 
     return (
@@ -88,7 +99,11 @@ export const FOEntryRow = (props: {data: FOMainEntryData, state: FOMainEntryStat
                             className={labelClasses}
                             onMouseUp={(e) => LabelMouseUp(props.data.Section, props.data.RawId, e.button)}
                             >
-                                {translate(props.data.LabelLocaleKey, props.data.LabelFallback)}
+                                <>
+                                    {translate(props.data.LabelLocaleKey, props.data.LabelFallback)}                                    
+                                    <span className={foStyles.smSpacer}></span>
+                                    <img src={props.data.Icon} className={foStyles.icon}></img>
+                                </>
                         </div>
                     </Tooltip>
                 </div>

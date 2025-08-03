@@ -5,12 +5,17 @@
 
 using Colossal;
 using Colossal.IO.AssetDatabase.Internal;
+using MoveIt.Actions.Toolbox;
 using System.Collections.Generic;
 
 namespace MoveIt.Settings
 {
     public class LocaleEN : IDictionarySource
     {
+        public const string kSingle = "Single";
+        public const string kMarquee = "Marquee";
+        public const string kManipulation = "Manipulation";
+
         private readonly Settings m_Settings;
 
         public LocaleEN(Settings settings)
@@ -139,12 +144,12 @@ namespace MoveIt.Settings
 
                 { TooltipTitleKey("Undo"), "Undo" },
                 { TooltipDescriptionKey("Undo"), "Undoes the last Move It Action." },
-                { TooltipTitleKey("Single"), "Single Mode" },
-                { TooltipDescriptionKey("Single"), "Select Moveables one at a time." },
-                { TooltipTitleKey("Marquee"), "Marquee Mode" },
-                { TooltipDescriptionKey("Marquee"), "Select Moveables by drawing a box." },
-                { TooltipTitleKey("Manipulation"), "Manipulation Mode" },
-                { TooltipDescriptionKey("Manipulation"), "Select a network to manipulate its control points to change it's shape." },
+                { TooltipTitleKey(kSingle), "Single Mode" },
+                { TooltipDescriptionKey(kSingle), "Select Moveables one at a time." },
+                { TooltipTitleKey(kMarquee), "Marquee Mode" },
+                { TooltipDescriptionKey(kMarquee), "Select Moveables by drawing a box." },
+                { TooltipTitleKey(kManipulation), "Manipulation Mode" },
+                { TooltipDescriptionKey(kManipulation), "Select a network to manipulate its control points to change it's shape." },
                 { TooltipTitleKey("Redo"), "Redo" },
                 { TooltipDescriptionKey("Redo"), "Redoes a Move It Action that was undone." },
 
@@ -169,14 +174,14 @@ namespace MoveIt.Settings
 
                 { TextLabel("Toolbox"), "Toolbox" },
                 { TooltipDescriptionKey("Toolbox"), "Additional tools to control the behavior of Move It Tool on the selected elements." },
-                { TextLabel("TerrainHeight"), "To Terrain Height" },
-                { TooltipDescriptionKey("TerrainHeight"), "Move selected objects to the terrain height. Does not work with buildings or on-ground networks." },
-                { TextLabel("ObjectHeight"), "To Object Height" },
-                { TooltipDescriptionKey("ObjectHeight"), "Move selected objects to the height of the next clicked object." },
-                { TextLabel("RotateAtCenter"), "Rotate at Center" },
-                { TooltipDescriptionKey("RotateAtCenter"), "Turn selected objects to face the same angle as the next clicked object. This tool rotates all selected objects around the central point." },
-                { TextLabel("RotateInPlace"), "Rotate in-Place" },
-                { TooltipDescriptionKey("RotateInPlace") , "Turn selected objects to face the same angle as the next clicked object. This tool rotates all selected objects in place." },
+                { TextLabel(nameof(TerrainHeight)), "To Terrain Height" },
+                { TooltipDescriptionKey(nameof(TerrainHeight)), "Moves selected objects to the terrain height. Does not work with buildings or on-ground networks." },
+                { TextLabel(nameof(ObjectHeight)), "To Object Height" },
+                { TooltipDescriptionKey(nameof(ObjectHeight)), "Click on an object to move selected objects to that object's height" },
+                { TextLabel(nameof(RotateAtCenter)), "Rotate at Center" },
+                { TooltipDescriptionKey(nameof(RotateAtCenter)), "Click on an object to rotate selected objects about their centroid to face the same angle as that object." },
+                { TextLabel(nameof(RotateInPlace)), "Rotate in-Place" },
+                { TooltipDescriptionKey(nameof(RotateInPlace)) , "Click on an object to rotate selected objects in place to face the same angle as that object." },
 
                 { TextLabel("MConflictMessage"), "Do you want the '**M**' key to open Move It?\nIt will be removed from:" },
 

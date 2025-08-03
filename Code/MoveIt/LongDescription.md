@@ -1,4 +1,4 @@
-﻿# Move It Beta for Cities Skylines 2.
+﻿# Move It for Cities Skylines 2.
 
 You can move trees, props, decals, buildings, surfaces, nodes, and segment curves.
 
@@ -6,10 +6,7 @@ Press **M** or click on the Move It icon at the bottom right to enable the tool.
 
 
 ## Important Update on Development:
-
-Due to a number of personal factors, I have decided to end Move It development. Move It is important to the way I have always played Cities Skylines and I know I am not alone in this, and I feel that I have been letting down the community in recent months so it is time for someone else to take up the mantle. I am arranging moving the project to another modder. I will remain around the scene to ensure the mod's compatibility with game updates and fix critical errors, however I will not be able to provide support or general bug fixes. Hopefully at a later date I will return to modding with new projects.
-
-I am very grateful for the support I have received. Even when the community has seemed divided I have received almost uniformly positive feedback and constructive criticism and I thank everyone who has given praise, given donations, given suggestions, and given complaints that are borne of a genuine desire to see Move It improve.
+I have taken over development of Move It. This first version is still mostly Quboid's Move It, but over time this fork may or may not diverge from where it started.
 
 ## Selecting:
 
@@ -57,7 +54,7 @@ Manipulating segments - you can move the control points in all three axis; the 2
 
 Hotkeys: view and change any keyboard settings here.
 
-This is an beta version of Move It. Save often, save different.
+Save often, save different.
 
 
 ## Known Issues
@@ -66,7 +63,9 @@ This is an beta version of Move It. Save often, save different.
 * Some players experience an occasional crashes relating to undo/redo manipulation mode changes.
 
 ## Credits:
-
-Big thanks to SamSamTS, Krzychu124, Yenyang, T.D.W., Klyte45, REV0, BadPeanut, Sully, Algernon, CanadianMoosePlays!
+Original Author: Quboid
+Current Author: Yenyang
+Big thanks to SamSamTS, Krzychu124, T.D.W., Klyte45, REV0, BadPeanut, Sully, Algernon, CanadianMoosePlays!
 
 Icons from SVG Repo, and from WishForge.Games under CC Attribution License.
+Unified Icon Library icons by Chameleon TBN

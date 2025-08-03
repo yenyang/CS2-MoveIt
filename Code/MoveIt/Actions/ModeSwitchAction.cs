@@ -80,8 +80,6 @@ namespace MoveIt.Actions
             _MIT.Moveables.UpdateAllControlPoints();
             _MIT.Moveables.UpdateAllOverlays();
             _MIT.Selection.CalculateCenter();
-
-            _MIT.SetModesTooltip();
         }
 
         private void ProcessModeSelectionChange(List<MVDefinition> fromSelection, List<MVDefinition> toSelection)

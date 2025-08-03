@@ -115,7 +115,6 @@ namespace MoveIt.Tool
                     hitDesc = $"{cp.m_OriginalEntity.D()} \"{prefabInfo.m_Name}\"";
                 }
             }
-            Systems.MIT_ToolTipSystem.instance.Set("" , $"{hasHit} {cp.m_Position.D()}, {cp.m_HitPosition.D()} {hitDesc}");
         }
 
         private void DebugControlPointLog(ControlPoint cp)

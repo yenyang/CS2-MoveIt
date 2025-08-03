@@ -75,7 +75,6 @@ namespace MoveIt.Tool
             m_MarqueeSelect = toMarquee;
 
             SetManipulationMode(false);
-            SetModesTooltip();
         }
 
         internal void ToggleManipulationMode() => SetManipulationMode(!m_IsManipulateMode);
@@ -88,22 +87,7 @@ namespace MoveIt.Tool
             Queue.Do();
         }
 
-        internal void SetModesTooltip()
-        {
-            string mode;
-
-            if (m_IsManipulateMode)
-            {
-                mode = "Manipulation";
-            }
-            else
-            {
-                mode = m_MarqueeSelect ? "Marquee" : "Single";
-            }
-
-            Systems.MIT_ToolTipSystem.instance.Set(LocaleEN.TooltipTitleKey(mode), $"{mode} Mode", 1.25f);
-        }
-
+        
         internal void MoveStart()
         {
             //QLog.Debug($"MOVESTART OnPress:{Hover.TopPressed.E()}-Null:{Hover.TopPressed.IsNull} :: {Hover.Normal.OnPress.E()}/{Hover.Child.OnPress.E()} (sel:{Selection.Has(Hover.TopPressed)})\n{QCommon.GetStackTrace(3)}");

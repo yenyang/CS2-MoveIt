@@ -1,4 +1,9 @@
-﻿using Colossal.Serialization.Entities;
+﻿// <copyright>
+// Copyright (c) Yenyang. MIT License See LICENSE.txt
+// Forked with permission from Quboid's CS2-MoveIt project.
+// </copyright>
+
+using Colossal.Serialization.Entities;
 using Game;
 using Game.Tools;
 using MoveIt.Components;
@@ -21,11 +26,10 @@ namespace MoveIt.Tool
             m_OverlaySystem = World.GetOrCreateSystemManaged<Overlays.MIT_OverlaySystem>();
             m_VanillaOverlaySystem = World.GetOrCreateSystemManaged<Systems.MIT_VanillaOverlaySystem>();
             m_RemoveOverriddenSystem = World.GetOrCreateSystemManaged<Systems.MIT_RemoveOverriddenSystem>();
-            //m_RenderSystem = World.GetOrCreateSystemManaged<Systems.MIT_RenderSystem>();
             m_UISystem = World.GetOrCreateSystemManaged<Systems.MIT_UISystem>();
             m_PostToolSystem = World.GetOrCreateSystemManaged<Systems.MIT_PostToolSystem>();
             m_InputSystem = World.GetOrCreateSystemManaged<Systems.MIT_InputSystem>();
-            //m_HoverSystem = World.GetOrCreateSystemManaged<MIT_HoverSystem>();
+            m_ToolTipSystem = World.GetOrCreateSystemManaged<Systems.MIT_ToolTipSystem>();
 
             m_RaycastSystem = World.GetOrCreateSystemManaged<Game.Common.RaycastSystem>();
 
@@ -54,7 +58,6 @@ namespace MoveIt.Tool
 
             m_Instance = this;
             Enabled = false;
-            //m_HotkeySystem.Initialise();
 
             m_InputSystem.Initialise(Mod.Settings);
             ControlPointManager = new();
@@ -72,8 +75,6 @@ namespace MoveIt.Tool
             m_IsManipulateMode = false;
             Selection ??= new SelectionNormal();
 
-            //m_RenderSystem.m_Widgets.Clear();
-
             m_OverlaySystem.DestroyAllEntities();
         }
 
@@ -83,14 +84,12 @@ namespace MoveIt.Tool
             Log.Info("Tool.OnStartRunning()");
             base.OnStartRunning();
 
-            Systems.MIT_ToolTipSystem.instance.EnableIfPopulated();
-            //m_HoverSystem.Start();
+            m_ToolTipSystem.Enabled = true;
             m_InputSystem.OnToolEnable();
             m_RemoveOverriddenSystem.Start();
             m_PostToolSystem.Start();
             m_VanillaOverlaySystem.Start();
             m_OverlaySystem.Start();
-            //m_RenderSystem.Start();
             InputManager.OnToolEnable();
 
             Moveables.Refresh();
@@ -105,14 +104,12 @@ namespace MoveIt.Tool
 
             Hover.Clear();
             InputManager.OnToolDisable();
-            //m_RenderSystem.End();
             m_OverlaySystem.End();
             m_VanillaOverlaySystem.End();
             m_PostToolSystem.End();
             m_RemoveOverriddenSystem.End();
             m_InputSystem.OnToolDisable();
-            //m_HoverSystem.End();
-            Systems.MIT_ToolTipSystem.instance.Enabled = false;
+            m_ToolTipSystem.Enabled = false;
 
             QLog.FlushBundle();
         }
@@ -120,7 +117,6 @@ namespace MoveIt.Tool
         protected override void OnDestroy()
         {
             Log.Info($"Tool.OnDestroy() {(ControlPointManager is null ? "(CPM destroyed)" : "(CPM closing)")}");
-            //ControlPointManager?.DestroyAll();
             Log.Shutdown();
             base.OnDestroy();
         }

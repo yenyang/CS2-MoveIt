@@ -1,4 +1,9 @@
-﻿using MoveIt.Actions.Toolbox;
+﻿// <copyright>
+// Copyright (c) Yenyang. MIT License See LICENSE.txt
+// Forked with permission from Quboid's CS2-MoveIt project.
+// </copyright>
+
+using MoveIt.Actions.Toolbox;
 using MoveIt.Tool;
 using MoveIt.UI.Foldout;
 using System;
@@ -18,10 +23,47 @@ namespace MoveIt.Managers
             Finalise,
         }
 
-        internal Phases Phase { get; set; } = Phases.None;
-        private ToolBoxTool _ActiveTool { get; set; }
-
         private Moveables.Moveable _Clicked;
+        private ToolBoxTool _ActiveTool;
+
+        private static List<ToolBoxTool> _ToolList = null;
+
+        internal static List<ToolBoxTool> ToolList
+        {
+            get
+            {
+                _ToolList ??= new List<ToolBoxTool>()
+                {
+                    new TerrainHeight(),
+                    new ObjectHeight(),
+                    new RotateAtCenter(),
+                    new RotateInPlace(),
+                };
+                return _ToolList;
+            }
+        }
+
+        internal static List<FoldoutEntry> GetUIEntries()
+        {
+            //ToolList.Select(FoldoutEntry (t) => t.m_UI).ToList();
+
+            List<FoldoutEntry> list = new();
+            foreach (var t in ToolList)
+            {
+                list.Add(t.m_UI);
+            }
+            return list;
+        }
+
+        internal Phases Phase { get; set; } = Phases.None;
+
+        /// <summary>
+        /// Gets the name of the Active tool or string.Empty if null.
+        /// </summary>
+        public string ActiveToolName
+        {
+            get { return _ActiveTool is null ? string.Empty : FirstCharToUpper(_ActiveTool.m_Id); }
+        }
 
         internal ToolboxManager()
         { }
@@ -102,6 +144,13 @@ namespace MoveIt.Managers
             return true;
         }
 
+        internal Searcher.Filters GetMask()
+        {
+            if (_ActiveTool is null) return Searcher.Utils.FilterAll;
+
+            return _ActiveTool.m_Filters;
+        }
+
         private bool Fire()
         {
             try
@@ -136,39 +185,16 @@ namespace MoveIt.Managers
             return true;
         }
 
-        internal Searcher.Filters GetMask()
+        private string FirstCharToUpper(string input)
         {
-            if (_ActiveTool is null) return Searcher.Utils.FilterAll;
-
-            return _ActiveTool.m_Filters;
-        }
-
-
-        private static List<ToolBoxTool> _ToolList = null;
-        internal static List<ToolBoxTool> ToolList
-        {
-            get
+            if (input == null || input == string.Empty) 
             {
-                _ToolList ??= new List<ToolBoxTool>()
-                {
-                    new TerrainHeight(),
-                    new ObjectHeight(),
-                    new RotateAtCentre(),
-                    new RotateInPlace(),
-                };
-                return _ToolList;
+                return string.Empty;
             }
-        }
-        internal static List<FoldoutEntry> GetUIEntries()
-        {
-            //ToolList.Select(FoldoutEntry (t) => t.m_UI).ToList();
-
-            List<FoldoutEntry> list = new();
-            foreach (var t in ToolList)
+            else
             {
-                list.Add(t.m_UI);
+               return input[0].ToString().ToUpper() + input.Substring(1);
             }
-            return list;
         }
     }
 }

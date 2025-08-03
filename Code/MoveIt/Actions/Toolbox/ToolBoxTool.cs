@@ -1,4 +1,9 @@
-﻿using System;
+﻿// <copyright>
+// Copyright (c) Yenyang. MIT License See LICENSE.txt
+// Forked with permission from Quboid's CS2-MoveIt project.
+// </copyright>
+
+using System;
 using MoveIt.Input;
 
 namespace MoveIt.Actions.Toolbox
@@ -36,12 +41,12 @@ namespace MoveIt.Actions.Toolbox
         }
     }
 
-    internal class RotateAtCentre : ToolBoxTool
+    internal class RotateAtCenter : ToolBoxTool
     {
-        internal RotateAtCentre() : base(typeof(AlignRotateAtCentre))
+        internal RotateAtCenter() : base(typeof(AlignRotateAtCenter))
         {
-            m_Id        = "rotateAtCentre";
-            m_UI        = new("rotateAtCentre", typeof(AlignRotateAtCentre));
+            m_Id        = "rotateAtCenter";
+            m_UI        = new("rotateAtCenter", typeof(AlignRotateAtCenter));
             m_Hotkey    = Inputs.KEY_TB_OBJANGLEGROUP;
             m_Filters   = Searcher.Utils.FilterAll & ~(Searcher.Filters.Nodes | Searcher.Filters.ControlPoints);
             m_Settings  = new()

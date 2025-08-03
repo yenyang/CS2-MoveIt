@@ -53,12 +53,6 @@ namespace MoveIt.Input
             _MIT.MITState = MITStates.Default;
             _MIT.Hovered.MV.OnClick();
 
-            if (_MIT.m_IsManipulateMode && !_MIT.Hovered.IsManipulatable)
-            {
-                Systems.MIT_ToolTipSystem.instance.Set(LocaleEN.TooltipDescriptionKey("ExitManipulationMode") ,"Right-Click to exit Manipulation Mode", 1.5f);
-                return;
-            }
-
             if (_MIT.IsManipulating && _MIT.Hovered.IsManipulatable)
             {
                 _MIT.SetManipulationMode(true);

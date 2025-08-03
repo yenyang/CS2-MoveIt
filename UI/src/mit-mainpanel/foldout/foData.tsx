@@ -18,6 +18,7 @@ export interface FOTitleData
     Checkbox? : CheckboxData | undefined;
     CBWhenClosed? : boolean | undefined;
     CBWhenOpen? : boolean | undefined;
+    Icon? : string | undefined;
 }
 
 export interface FOEntryDataBase
@@ -29,6 +30,7 @@ export interface FOEntryDataBase
     LabelLocaleKey : string;    
     Tooltip?: ReactNode | string;
     Checkbox? : CheckboxData | undefined;
+    Icon? : string | undefined;
 }
 
 export interface FOMainEntryData extends FOEntryDataBase
