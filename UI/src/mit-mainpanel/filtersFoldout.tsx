@@ -40,7 +40,7 @@ export const FiltersFoldout = (props: {state: FoldoutState}) : JSX.Element => {
         Id: "buildingsRow",
         LabelLocaleKey: "MoveIt.TEXT_LABEL[Buildings]",
         LabelFallback: locale["MoveIt.TEXT_LABEL[Buildings]"],
-        Tooltip: translate("MoveIt.TOOLTIP_DESCRIPTION[Buildings]", locale["MoveIt.TOOLTIP_DESCRIPTION[BuildingsFilter]"]),
+        Tooltip: translate("MoveIt.TOOLTIP_DESCRIPTION[BuildingsFilter]", locale["MoveIt.TOOLTIP_DESCRIPTION[BuildingsFilter]"]),
         Checkbox: { Id: "buildings"},
         Icon: buildingSrc,
     }
@@ -53,7 +53,7 @@ export const FiltersFoldout = (props: {state: FoldoutState}) : JSX.Element => {
         Id: "plantsRow",
         LabelLocaleKey: "MoveIt.TEXT_LABEL[Plants]",
         LabelFallback: locale["MoveIt.TEXT_LABEL[Plants]"],
-        Tooltip: translate("MoveIt.TOOLTIP_DESCRIPTION[Plants]", locale["MoveIt.TOOLTIP_DESCRIPTION[PlantsFilter]"]),
+        Tooltip: translate("MoveIt.TOOLTIP_DESCRIPTION[PlantsFilter]", locale["MoveIt.TOOLTIP_DESCRIPTION[PlantsFilter]"]),
         Checkbox: {Id: "plants"},
         Icon: plantsSrc,
     }
@@ -65,7 +65,7 @@ export const FiltersFoldout = (props: {state: FoldoutState}) : JSX.Element => {
         Id: "decalsRow",
         LabelLocaleKey: "MoveIt.TEXT_LABEL[Decals]",
         LabelFallback: locale["MoveIt.TEXT_LABEL[Decals]"],
-        Tooltip: translate("MoveIt.TOOLTIP_DESCRIPTION[Decals]", locale["MoveIt.TOOLTIP_DESCRIPTION[DecalsFilter]"]),
+        Tooltip: translate("MoveIt.TOOLTIP_DESCRIPTION[DecalsFilter]", locale["MoveIt.TOOLTIP_DESCRIPTION[DecalsFilter]"]),
         Checkbox: {Id: "decals"},
         Icon: decalsSrc,
     }
@@ -77,7 +77,7 @@ export const FiltersFoldout = (props: {state: FoldoutState}) : JSX.Element => {
         Id: "propsRow",
         LabelLocaleKey: "MoveIt.TEXT_LABEL[Props]",
         LabelFallback: locale["MoveIt.TEXT_LABEL[Props]"],
-        Tooltip: translate("MoveIt.TOOLTIP_DESCRIPTION[Props]", locale["MoveIt.TOOLTIP_DESCRIPTION[PropsFilter]"]),
+        Tooltip: translate("MoveIt.TOOLTIP_DESCRIPTION[PropsFilter]", locale["MoveIt.TOOLTIP_DESCRIPTION[PropsFilter]"]),
         Checkbox: {Id: "props"},
         Icon: propsSrc,
     }
@@ -89,7 +89,7 @@ export const FiltersFoldout = (props: {state: FoldoutState}) : JSX.Element => {
         Id: "surfacesRow",
         LabelLocaleKey: "MoveIt.TEXT_LABEL[Surfaces]",
         LabelFallback: locale["MoveIt.TEXT_LABEL[Surfaces]"],
-        Tooltip: translate("MoveIt.TOOLTIP_DESCRIPTION[Surfaces]", locale["MoveIt.TOOLTIP_DESCRIPTION[SurfacesFilter]"]),
+        Tooltip: translate("MoveIt.TOOLTIP_DESCRIPTION[SurfacesFilter]", locale["MoveIt.TOOLTIP_DESCRIPTION[SurfacesFilter]"]),
         Checkbox: {Id: "surfaces"},
         Icon: surfacesSrc,
     }
@@ -101,7 +101,7 @@ export const FiltersFoldout = (props: {state: FoldoutState}) : JSX.Element => {
         Id: "nodesRow",
         LabelLocaleKey: "MoveIt.TEXT_LABEL[Nodes]",
         LabelFallback: locale["MoveIt.TEXT_LABEL[Nodes]"],
-        Tooltip: translate("MoveIt.TOOLTIP_DESCRIPTION[Nodes]", locale["MoveIt.TOOLTIP_DESCRIPTION[NodesFilter]"]),
+        Tooltip: translate("MoveIt.TOOLTIP_DESCRIPTION[NodesFilter]", locale["MoveIt.TOOLTIP_DESCRIPTION[NodesFilter]"]),
         Checkbox: {Id: "nodes"},
         Icon: nodesSrc,
     }
@@ -113,7 +113,7 @@ export const FiltersFoldout = (props: {state: FoldoutState}) : JSX.Element => {
         Id: "segmentsRow",
         LabelLocaleKey: "MoveIt.TEXT_LABEL[Segments]",
         LabelFallback: locale["MoveIt.TEXT_LABEL[Segments]"],
-        Tooltip: translate("MoveIt.TOOLTIP_DESCRIPTION[Segments]", locale["MoveIt.TOOLTIP_DESCRIPTION[SegmentsFilter]"]),
+        Tooltip: translate("MoveIt.TOOLTIP_DESCRIPTION[SegmentsFilter]", locale["MoveIt.TOOLTIP_DESCRIPTION[SegmentsFilter]"]),
         Checkbox: {Id: "segments"},
         Icon: networkSrc,
     }
@@ -125,7 +125,7 @@ export const FiltersFoldout = (props: {state: FoldoutState}) : JSX.Element => {
         Id: "netlanesRow",
         LabelLocaleKey: "MoveIt.TEXT_LABEL[NetLanes]",
         LabelFallback: locale["MoveIt.TEXT_LABEL[NetLanes]"],
-        Tooltip: translate("MoveIt.TOOLTIP_DESCRIPTION[NetLanes]", locale["MoveIt.TOOLTIP_DESCRIPTION[NetLanesFilter]"]),
+        Tooltip: translate("MoveIt.TOOLTIP_DESCRIPTION[NetLanesFilter]", locale["MoveIt.TOOLTIP_DESCRIPTION[NetLanesFilter]"]),
         Checkbox: {Id: "netlanes"},
         Icon: lanesSrc,
     }
