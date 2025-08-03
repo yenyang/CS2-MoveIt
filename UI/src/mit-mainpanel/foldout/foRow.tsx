@@ -45,14 +45,11 @@ export const FOTitleRow = (props: {data: FOTitleData, state: FoldoutState}) : JS
                 onMouseUpCapture={(e) => LabelMouseUp(props.data.Section, props.data.Id, e.button)}
                 variant="icon">
                     <Tooltip tooltip={props.data.Tooltip}>
-                        <>
                             <div className={labelClasses}>
                                 {translate(props.data.LabelLocaleKey, props.data.LabelFallback)}
                                 <span className={foStyles.smSpacer}></span>
                                 <img src={props.data.Icon} className={foStyles.icon}></img>
                             </div>
-                            
-                        </>
                     </Tooltip>
                    
             </Button>
