@@ -12,6 +12,8 @@ using System;
 using Unity.Mathematics;
 using UnityEngine;
 using MoveIt.Settings;
+using Unity.Jobs;
+using Unity.Entities;
 
 namespace MoveIt.Tool
 {
@@ -84,7 +86,7 @@ namespace MoveIt.Tool
             if (m_IsManipulateMode == toManipulate) return;
 
             Queue.Push(new ModeSwitchAction());
-            Queue.Do();
+            // Queue.Do();
         }
 
         
@@ -103,7 +105,9 @@ namespace MoveIt.Tool
             {
                 // Requires OnHold to have fired, causing a 250ms delay
                 Queue.Push(new SelectAction());
-                Queue.Do();
+                JobHandle jobHandle = Dependency;
+                EntityCommandBuffer buffer = m_ToolOutputBarrier.CreateCommandBuffer();
+                Queue.Do(ref jobHandle,  ref buffer);
 
                 action = new TransformAction();
                 Queue.Push(action);

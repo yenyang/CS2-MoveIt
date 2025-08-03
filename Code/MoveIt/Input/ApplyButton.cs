@@ -1,8 +1,11 @@
-﻿using Game.Input;
+﻿using Game;
+using Game.Input;
 using MoveIt.Actions.Select;
 using MoveIt.Settings;
 using MoveIt.Tool;
 using QCommonLib;
+using Unity.Entities;
+using Unity.Jobs;
 
 namespace MoveIt.Input
 {
@@ -38,6 +41,8 @@ namespace MoveIt.Input
 
         private void ObjectClicked()
         {
+            JobHandle jobHandle = _MIT.Dependencies;
+            EntityCommandBuffer buffer = _Barrier.CreateCommandBuffer();
             QLog.Debug($"OBJCLICKED Hov:{_MIT.Hovered.Definition.E()} HovManip:{_MIT.Hovered.IsManipulatable} HovSel:{_MIT.Hovered.IsSelected} Press:{_MIT.Hovered.OnPress.E()} HovChild:{_MIT.Hovered.Definition.IsChild} ToolManip:{_MIT.m_IsManipulateMode}");
             if (_MIT.MITState == MITStates.ToolActive)
             {
@@ -59,15 +64,15 @@ namespace MoveIt.Input
                 if (!_MIT.Hovered.IsSelected)
                 {
                     _MIT.Queue.Push(new SelectAction(true, QKeyboard.Shift, _MIT.Hovered.MV.IsManipChild));
-                    _MIT.Queue.Do();
+                    _MIT.Queue.Do(ref jobHandle, ref buffer);
                 }
             }
             else
             {
                 if (!_MIT.Hovered.IsSelected || QKeyboard.Shift)
                 {
-                    _MIT.Queue.Push(new SelectAction(false, QKeyboard.Shift));
-                    _MIT.Queue.Do();
+                    _MIT.Queue.Push(new SelectAction(false, QKeyboard.Shift));                    
+                    _MIT.Queue.Do(ref jobHandle, ref buffer );
                 }
             }
 
