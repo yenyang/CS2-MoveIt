@@ -6,13 +6,28 @@ Press **M** or click on the Move It icon at the bottom right to enable the tool.
 
 
 ## Important Update on Development:
-I have taken over development of Move It. This first version is still mostly Quboid's Move It, but over time this fork may or may not diverge from where it started.
+I am continuing the developing for Move It. This first version is still mostly Quboid's Move It, but over time this fork may or may not diverge from where it started.
+
+The first patch in the new fork has the following changes:
+* Added Localization Support.
+* Added Unified Icon Library Dependency
+* Added Icons to filters and toolbox actions.
+* Added Tooltip Icons and Toolbox tooltips.
+
+## Dependencies
+Unified Icon Library
+
+## Donations
+If you want to say thank you with a donation you can do so on Paypal.
+
+## Translations
+I am looking for volunteers to help translate the mod into the other languages. For those interested please discuss the translation project in the discord link. CSL2:CODEMODS -> mods-wip -> Move It: Public Beta and Translations. CrowdIn Link available here.
 
 ## Selecting:
 
 Left-click to select, shift+click on unselected object to add to selection or on selected object to remove from selection. Press Control+M or check options to toggle Marquee mode; when enabled you can drag out a rectangle to select multiple objects. Right-click to clear selection and hide all control points.
 
-You can limit what times of objects are selected by opening the Filters foldout menu and unticking whatever you don't want. The tick box at the top toggles all filters on or off, and you can right-click on any filter to enable it and disable all others. If the Filters foldout menu is closed filtering doesn't apply.
+You can limit what types of objects are selected by opening the Filters foldout menu and unticking whatever you don't want. The tick box at the top toggles all filters on or off, and you can right-click on any filter to enable it and disable all others. If the Filters foldout menu is closed filtering doesn't apply.
 
 
 ## Mode Icons:
@@ -40,7 +55,7 @@ Manipulating segments - you can move the control points in all three axis; the 2
 ## Toolbox
 * Align to Terrain Height [Control+G] - Selected objects move up or down to terrain height. This does **not** work with objects that affect terrain, which includes buildings and ground-level networks.
 * Align to Object Height [Control+H] - Selected objects move up or down to the height of whatever object you click on.
-* Rotate at Centre [Alt+A] - Selected objects rotate to face the same direction as whatever object you click on, rotating around the selection's central point.
+* Rotate at Center [Alt+A] - Selected objects rotate to face the same direction as whatever object you click on, rotating around the selection's central point.
 * Rotate in-Place [Shift+A] - Selected objects rotate to face the same direction as whatever object you click on, without changing their position.
 
 
