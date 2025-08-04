@@ -33,6 +33,8 @@ namespace MoveIt.Tool
 
             QKeyboard.Init();
 
+            m_DefinitionGroup = GetDefinitionQuery();
+
             m_TempQuery = SystemAPI.QueryBuilder()
                 .WithAll<Temp, Game.Objects.Transform>()
                 .WithNone<Game.Common.Owner>()
@@ -45,6 +47,11 @@ namespace MoveIt.Tool
             m_SurfacesQuery = SystemAPI.QueryBuilder()
                 .WithAll<Game.Areas.Area, Game.Areas.Surface>()
                 .WithNone<Game.Common.Owner>()
+                .Build();
+
+            m_MIT_SelectedQuery = SystemAPI.QueryBuilder()
+                .WithAll<MIT_Selected>()
+                .WithNone<Game.Tools.Temp, Game.Common.Overridden, Game.Common.Deleted, MIT_ControlPoint, Game.Tools.Hidden>()
                 .Build();
         }
 

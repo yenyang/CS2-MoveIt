@@ -1,5 +1,6 @@
 ﻿using Game.Prefabs;
 using MoveIt.Actions.Select;
+using MoveIt.Input;
 using MoveIt.Managers;
 using MoveIt.Systems;
 using QCommonLib;
@@ -72,7 +73,16 @@ namespace MoveIt.Tool
 
             Queue.FireAction(ref inputDeps, ref buffer);
 
-            return m_InputDeps;
+            if (MITState == MITStates.ToolActive &&
+               !m_MIT_SelectedQuery.IsEmptyIgnoreFilter)
+            {
+                return UpdateDefinitions(inputDeps);
+            } else if (this.m_InputSystem.MouseApply.WasPerformedThisFrame())
+            {
+
+            }
+
+                return m_InputDeps;
         }
 
         internal PrefabInfo GetPrefabInfo(Entity e)
