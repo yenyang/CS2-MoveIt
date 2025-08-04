@@ -77,6 +77,8 @@ namespace MoveIt.Tool
         internal EntityQuery m_TempQuery;
         internal EntityQuery m_ControlPointQuery;
         internal EntityQuery m_SurfacesQuery;
+        internal EntityQuery m_MIT_SelectedQuery;
+        private EntityQuery m_DefinitionGroup;
 
         // Options
         internal bool ShowDebugPanel        => Mod.Settings.ShowDebugPanel;
