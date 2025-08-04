@@ -1,8 +1,8 @@
 {
   "Options.SECTION[MoveIt.MoveIt.Mod]": "Move It",
   "Options.INPUT_MAP[MoveIt.MoveIt.Mod]": "Move It",
-  "Options.TAB[MoveIt.MoveIt.Mod.tabMain]": "Options",
-  "Options.GROUP[MoveIt.MoveIt.Mod.groupGeneral]": "General Options | Move It",
+  "Options.TAB[MoveIt.MoveIt.Mod.tabMain]": "Opties",
+  "Options.GROUP[MoveIt.MoveIt.Mod.groupGeneral]": "Algemene Opties | Move It",
   "Options.OPTION[MoveIt.MoveIt.Mod.Settings.InvertRotation]": "Invert Rotation",
   "Options.OPTION_DESCRIPTION[MoveIt.MoveIt.Mod.Settings.InvertRotation]": "Set rotation direction to vanilla CS2 relocate. If unticked, use CS1 Move It's direction.",
   "Options.OPTION[MoveIt.MoveIt.Mod.Settings.ShowDebugPanel]": "Show Debug Panel",
