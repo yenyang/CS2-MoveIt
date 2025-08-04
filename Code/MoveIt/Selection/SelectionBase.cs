@@ -1,5 +1,7 @@
 ﻿using Colossal.IO.AssetDatabase.Internal;
 using Colossal.Mathematics;
+using Game.Tools;
+using MoveIt.Components;
 using MoveIt.Moveables;
 using MoveIt.Overlays.Children;
 using MoveIt.Tool;
@@ -141,6 +143,9 @@ namespace MoveIt.Selection
 
             _Buffer.Add(mvd);
             mv.OnSelect();
+
+            EntityCommandBuffer buffer = _MIT.m_Barrier.CreateCommandBuffer();
+            buffer.AddComponent<MIT_Selected>(mvd.m_Entity);
             return true;
         }
 

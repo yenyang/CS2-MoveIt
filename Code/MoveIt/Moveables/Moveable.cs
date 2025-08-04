@@ -1,6 +1,9 @@
-﻿using Colossal.Mathematics;
+﻿using Colossal.Entities;
+using Colossal.Mathematics;
 using Game.Prefabs;
+using Game.Tools;
 using MoveIt.Actions.Transform;
+using MoveIt.Components;
 using MoveIt.Overlays;
 using MoveIt.Tool;
 using QCommonLib;
@@ -115,15 +118,13 @@ namespace MoveIt.Moveables
 
         internal virtual Bounds3 GetBounds()
         {
-            try
+            if (_MIT.EntityManager.TryGetComponent<Game.Rendering.CullingInfo>(m_Entity, out Game.Rendering.CullingInfo cullingInfo))
             {
-                Game.Rendering.CullingInfo cullingInfo = _MIT.EntityManager.GetComponentData<Game.Rendering.CullingInfo>(m_Entity);
                 Bounds3 bounds = cullingInfo.m_Bounds;
                 return bounds;
             }
-            catch (Exception ex)
+            else
             {
-                MIT.Log.Error($"Failed to get CullingInfo on {m_Entity.D()} for GetBounds ({ex.Message})");
                 return new Bounds3(Vector3.zero, Vector3.zero);
             }
         }
@@ -199,6 +200,11 @@ namespace MoveIt.Moveables
                 mv.m_Overlay.RemoveFlag(IsManipulatable ? InteractionFlags.ParentManipulating : InteractionFlags.ParentSelected);
             }
             _MIT.Moveables.RemoveIfUnused(Definition);
+            if (m_Entity != Entity.Null)
+            {
+                EntityCommandBuffer buffer = _MIT.m_Barrier.CreateCommandBuffer();
+                buffer.RemoveComponent<MIT_Selected>(m_Entity);
+            }
         }
 
         public bool OverlayHasFlag(InteractionFlags flag)
@@ -207,15 +213,23 @@ namespace MoveIt.Moveables
             if (m_Overlay is null) return false;
             if (m_Overlay.m_Entity.Equals(Entity.Null)) return false;
 
-            MIO_Common common = _MIT.EntityManager.GetComponentData<MIO_Common>(m_Overlay.m_Entity);
-            return (common.m_Flags & flag) != 0;
+            if (_MIT.EntityManager.TryGetComponent(m_Overlay.m_Entity, out MIO_Common common))
+            {
+                return (common.m_Flags & flag) != 0;
+            }
+
+            return false;
         }
 
         internal virtual float GetRadius()
         {
-            PrefabRef prefab = _MIT.EntityManager.GetComponentData<PrefabRef>(m_Entity);
-            ObjectGeometryData geoData = _MIT.EntityManager.GetComponentData<ObjectGeometryData>(prefab);
-            return math.max(math.cmax(new float2(geoData.m_Size.x, geoData.m_Size.z)), 2f) / 2;
+            if (_MIT.EntityManager.TryGetComponent(m_Entity, out PrefabRef prefab) &&
+                _MIT.EntityManager.TryGetComponent(prefab.m_Prefab, out ObjectGeometryData geoData))
+            {
+                return math.max(math.cmax(new float2(geoData.m_Size.x, geoData.m_Size.z)), 2f) / 2;
+            }
+
+            return 10f;
         }
 
         internal virtual List<MVDefinition> GetAllChildren() => new();
