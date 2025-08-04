@@ -56,6 +56,7 @@ namespace MoveIt.Tool
         internal MIT_InputSystem m_InputSystem;
         internal Overlays.MIT_OverlaySystem m_OverlaySystem;
         internal Systems.MIT_ToolTipSystem m_ToolTipSystem;
+        internal ToolOutputBarrier m_Barrier;
 
         internal Game.Common.RaycastSystem m_RaycastSystem;
 

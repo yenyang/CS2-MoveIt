@@ -28,7 +28,7 @@ namespace MoveIt.Tool
             m_PostToolSystem = World.GetOrCreateSystemManaged<Systems.MIT_PostToolSystem>();
             m_InputSystem = World.GetOrCreateSystemManaged<Systems.MIT_InputSystem>();
             m_ToolTipSystem = World.GetOrCreateSystemManaged<Systems.MIT_ToolTipSystem>();
-
+            m_Barrier = World.GetOrCreateSystemManaged<ToolOutputBarrier>();
             m_RaycastSystem = World.GetOrCreateSystemManaged<Game.Common.RaycastSystem>();
 
             QKeyboard.Init();
