@@ -20,6 +20,7 @@ namespace MoveIt.Tool
         SecondaryButtonHeld,
         DrawingSelection,
         ToolActive,
+        ModificationsPrepared,
     }
 
     [Flags]
@@ -100,6 +101,9 @@ namespace MoveIt.Tool
         /// </summary>
         public HashSet<Entity> SelectedEntities => Selection.Definitions.Select(mvd => mvd.m_Entity).ToHashSet();
 
+        /// <summary>
+        /// Gets current depenencies for MIT.
+        /// </summary>
         public JobHandle Dependencies
         {
             get { return Dependency; }
@@ -177,5 +181,38 @@ namespace MoveIt.Tool
         public bool m_SelectionDirty = true;
 
         internal const float TERRAIN_UPDATE_MARGIN = 16f;
+
+        /// <summary>
+        /// Gets a value indicating whether objects are following terrain or moving along a flat plane.
+        /// </summary>
+        internal bool m_FollowingTerrain;
+
+        private Game.Tools.CreationFlags m_CreationFlags;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether MIT is copying.
+        /// </summary>
+        public bool Copying
+        {
+            get { return m_CreationFlags == 0; }
+            set { m_CreationFlags = value ? 0 : CreationFlags.Relocate; }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether objects are selected and therefore can be copied or deleted.
+        /// </summary>
+        public bool CanCopyOrDelete
+        {
+            get { return !m_MIT_SelectedQuery.IsEmptyIgnoreFilter; }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether MIT is deleting or preparing to delete.
+        /// </summary>
+        public bool Deleting
+        {
+            get { return m_CreationFlags == CreationFlags.Delete; }
+            set { m_CreationFlags = value ? CreationFlags.Delete : CreationFlags.Relocate; }
+        }
     }
 }

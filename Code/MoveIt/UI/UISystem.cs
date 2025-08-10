@@ -143,6 +143,18 @@ namespace MoveIt.Systems
                     _MIT.SetManipulationMode(true);
                     break;
 
+                case "FollowTerrain":
+                    _MIT.m_FollowingTerrain = !_MIT.m_FollowingTerrain;
+                    break;
+
+                case "Copy":
+                    _MIT.Copying = !_MIT.Copying;
+                    break;
+
+                case "Delete":
+                    _MIT.Deleting = !_MIT.Deleting;
+                    break;
+
                 default:
                     MIT.Log.Debug($"UIButton: {buttonId}");
                     break;

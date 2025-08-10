@@ -1,5 +1,5 @@
 .panel {
-    width: 180rem;
+    width: 280rem;
 }
 
 .header {
@@ -78,4 +78,9 @@
 .checkboxRow:hover
 {
     background-color: #00000022;
+}
+
+.filterActive
+{
+    filter: invert(52%) sepia(81%) saturate(898%) hue-rotate(47deg) brightness(102%) contrast(101%);
 }
