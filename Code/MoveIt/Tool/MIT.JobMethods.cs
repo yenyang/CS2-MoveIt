@@ -8,8 +8,10 @@ using Game.Common;
 using Game.Prefabs;
 using Game.Rendering;
 using Game.Tools;
+using MoveIt.Moveables;
 using Unity.Entities;
 using Unity.Jobs;
+using static Game.Tools.NetToolSystem;
 
 namespace MoveIt.Tool
 {
@@ -31,13 +33,53 @@ namespace MoveIt.Tool
                 m_EditorContainterLookup = SystemAPI.GetComponentLookup<Game.Tools.EditorContainer>(isReadOnly: true),
                 m_PseudoRandomSeedLookup = SystemAPI.GetComponentLookup<Game.Common.PseudoRandomSeed>(isReadOnly: true),
                 m_AttachedLookup = SystemAPI.GetComponentLookup<Game.Objects.Attached>(isReadOnly: true),
-                m_CreationFlags = CreationFlags.Dragging,
+                m_CreationFlags = CreationFlags.Relocate,
+                m_EdgeLookup = SystemAPI.GetComponentLookup<Game.Net.Edge>(isReadOnly: true),
+                m_NetElevationLookup = SystemAPI.GetComponentLookup<Game.Net.Elevation>(isReadOnly: true),
+                m_StartPoint = m_StartPoint,
+                m_EndPoint = m_LastRaycastPoint,
             };
             inputDeps = createDefinitionJob.Schedule(m_MIT_SelectedQuery, inputDeps);
             m_Barrier.AddJobHandleForProducer(inputDeps);
 
             return inputDeps;
         }
+
+        private JobHandle Update(JobHandle inputDeps)
+        {
+            if (GetRaycastResult(out ControlPoint controlPoint, out bool forceUpdate))
+            {
+                if (m_InputSystem.MouseApply.WasPressedThisFrame())
+                {
+                    applyMode = ApplyMode.Clear;
+                    m_StartPoint = controlPoint;
+                    m_LastRaycastPoint = controlPoint;
+                    return UpdateDefinitions(inputDeps);
+                }
+                if (m_LastRaycastPoint.Equals(controlPoint) &&
+                    !forceUpdate)
+                {
+                    applyMode = ApplyMode.None;
+                    return inputDeps;
+                }
+                applyMode = ApplyMode.Clear;
+                m_LastRaycastPoint = controlPoint;
+                return UpdateDefinitions(inputDeps);
+            }
+            if (m_LastRaycastPoint.Equals(default) && !forceUpdate)
+            {
+                applyMode = ApplyMode.None;
+                return inputDeps;
+            }
+            
+            applyMode = ApplyMode.Clear;
+            m_StartPoint = default;
+            m_LastRaycastPoint = default;
+
+            return Clear(inputDeps);
+            
+        }
+
 
         private JobHandle Clear(JobHandle inputDeps)
         {

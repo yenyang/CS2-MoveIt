@@ -72,17 +72,20 @@ namespace MoveIt.Tool
             }
 
             Queue.FireAction(ref inputDeps, ref buffer);
-
-            if (MITState == MITStates.ToolActive &&
-               !m_MIT_SelectedQuery.IsEmptyIgnoreFilter)
+            if (MITState == MITStates.Default ||
+                MITState == MITStates.ApplyButtonHeld)
             {
-                return UpdateDefinitions(inputDeps);
-            } else if (this.m_InputSystem.MouseApply.WasPerformedThisFrame())
-            {
-
+                if (m_InputSystem.MouseApply.WasReleasedThisFrame())
+                {
+                    return Apply(inputDeps);
+                }
+                else if (m_InputSystem.MouseApply.IsPressed())
+                {
+                    return Update(inputDeps);
+                }
             }
 
-                return m_InputDeps;
+            return Clear(inputDeps);
         }
 
         internal PrefabInfo GetPrefabInfo(Entity e)

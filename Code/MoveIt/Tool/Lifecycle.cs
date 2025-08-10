@@ -51,7 +51,7 @@ namespace MoveIt.Tool
 
             m_MIT_SelectedQuery = SystemAPI.QueryBuilder()
                 .WithAll<MIT_Selected>()
-                .WithNone<Game.Tools.Temp, Game.Common.Overridden, Game.Common.Deleted, MIT_ControlPoint, Game.Tools.Hidden>()
+                .WithNone<Game.Tools.Temp, Game.Common.Overridden, Game.Common.Deleted, MIT_ControlPoint>()
                 .Build();
         }
 
@@ -94,6 +94,7 @@ namespace MoveIt.Tool
             m_PostToolSystem.Start();
             m_OverlaySystem.Start();
             InputManager.OnToolEnable();
+            m_LastRaycastPoint = default;
 
             Moveables.Refresh();
             Selection.Refresh();
@@ -111,6 +112,7 @@ namespace MoveIt.Tool
             m_PostToolSystem.End();
             m_InputSystem.OnToolDisable();
             m_ToolTipSystem.Enabled = false;
+            // secondaryApplyAction.enabled = false;
 
             QLog.FlushBundle();
         }
