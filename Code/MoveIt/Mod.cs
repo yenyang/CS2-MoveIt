@@ -12,6 +12,7 @@ namespace MoveIt
     using Game.SceneFlow;
     using MoveIt.Settings;
     using MoveIt.Systems;
+    using MoveIt.Tool;
     using Newtonsoft.Json;
     using QCommonLib;
     using System;
@@ -80,6 +81,7 @@ namespace MoveIt
             updateSystem.UpdateAt<Overlays.MIT_OverlaySystem>(SystemUpdatePhase.Rendering);
             updateSystem.UpdateAt<MIT_UISystem>(SystemUpdatePhase.UIUpdate);
             updateSystem.UpdateAt<MIT_ToolTipSystem>(SystemUpdatePhase.UITooltip);
+            updateSystem.UpdateAt<ApplyMoveItTransformationsSystem>(SystemUpdatePhase.ApplyTool);
         }
 
         public void OnDispose()

@@ -16,11 +16,13 @@ using Game.Tools;
 using MoveIt.Components;
 using MoveIt.Selection;
 using QCommonLib;
+using System.Numerics;
 using Unity.Burst;
 using Unity.Burst.Intrinsics;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
+using Unity.Mathematics;
 
 namespace MoveIt.Tool
 {
@@ -55,7 +57,13 @@ namespace MoveIt.Tool
             public ComponentLookup<Game.Common.PseudoRandomSeed> m_PseudoRandomSeedLookup;
             [ReadOnly]
             public ComponentLookup<Game.Objects.Attached> m_AttachedLookup;
+            [ReadOnly]
+            public ComponentLookup<Game.Net.Elevation> m_NetElevationLookup;
+            [ReadOnly]
+            public ComponentLookup<Game.Net.Edge> m_EdgeLookup;
             public CreationFlags m_CreationFlags;
+            public ControlPoint m_StartPoint;
+            public ControlPoint m_EndPoint;
 
 
             public void Execute(in ArchetypeChunk chunk, int unfilteredChunkIndex, bool useEnabledMask, in v128 chunkEnabledMask)
@@ -66,9 +74,20 @@ namespace MoveIt.Tool
                     Entity e = buffer.CreateEntity();
                     CreationDefinition creationDefinition = new()
                     {
-                        m_Original = entityNativeArray[i],
                         m_Flags = m_CreationFlags,
                     };
+
+                    if ((m_CreationFlags & CreationFlags.Relocate) == CreationFlags.Relocate ||
+                        (m_CreationFlags & CreationFlags.Delete) == CreationFlags.Delete)
+                    {
+                        creationDefinition.m_Original = entityNativeArray[i];
+
+                        // Not sure if this should be used for create or not.
+                        if (m_AttachedLookup.HasComponent(entityNativeArray[i]))
+                        {
+                            creationDefinition.m_Attached = m_AttachedLookup[entityNativeArray[i]].m_Parent;
+                        }
+                    }
 
                     if (m_PrefabRefLookup.HasComponent(entityNativeArray[i]))
                     {
@@ -83,11 +102,6 @@ namespace MoveIt.Tool
                         {
                             creationDefinition.m_Prefab = m_PrefabRefLookup[entityNativeArray[i]];
                         }
-                    }
-
-                    if (m_AttachedLookup.HasComponent(entityNativeArray[i]))
-                    {
-                        creationDefinition.m_Attached = m_AttachedLookup[entityNativeArray[i]].m_Parent;
                     }
 
                     if (m_PseudoRandomSeedLookup.HasComponent(entityNativeArray[i]))
@@ -119,13 +133,17 @@ namespace MoveIt.Tool
                             objectDefinition.m_LocalPosition = localTransform.m_Position;
                         }
 
+                        if ((m_CreationFlags & CreationFlags.Relocate) == CreationFlags.Relocate ||
+                            m_CreationFlags == 0)
+                        {
+                            objectDefinition.m_Position.x += m_EndPoint.m_Position.x - m_StartPoint.m_Position.x;
+                            objectDefinition.m_Position.z += m_EndPoint.m_Position.z - m_StartPoint.m_Position.z;
+                        }
+
                         buffer.AddComponent(e, objectDefinition);
                     }
 
-                    if (m_CurveLookup.TryGetComponent(entityNativeArray[i], out Game.Net.Curve curve) &&
-                        m_OwnerLookup.TryGetComponent(entityNativeArray[i], out Owner owner1) &&
-                        owner1.m_Owner != Entity.Null &&
-                        m_EditorContainterLookup.HasComponent(owner1.m_Owner))
+                    if (m_CurveLookup.TryGetComponent(entityNativeArray[i], out Game.Net.Curve curve))
                     {
                         NetCourse netCourse = new NetCourse()
                         {
@@ -135,7 +153,7 @@ namespace MoveIt.Tool
                             {
                                 m_Entity = Entity.Null,
                                 m_Elevation = default,
-                                m_Flags = CoursePosFlags.IsLast | CoursePosFlags.IsLeft | CoursePosFlags.IsRight,
+                                m_Flags = 0,
                                 m_ParentMesh = -1,
                                 m_Position = curve.m_Bezier.d,
                                 m_SplitPosition = 0,
@@ -148,7 +166,7 @@ namespace MoveIt.Tool
                             {
                                 m_Entity = Entity.Null,
                                 m_Elevation = default,
-                                m_Flags = CoursePosFlags.IsFirst | CoursePosFlags.IsLeft | CoursePosFlags.IsRight,
+                                m_Flags = 0,
                                 m_ParentMesh = -1,
                                 m_Position = curve.m_Bezier.a,
                                 m_SplitPosition = 0,
@@ -156,6 +174,24 @@ namespace MoveIt.Tool
                                 m_CourseDelta = 0,
                             },
                         };
+
+                        if (m_EdgeLookup.TryGetComponent(entityNativeArray[i], out Game.Net.Edge edge))
+                        {
+                            netCourse.m_StartPosition.m_Entity = edge.m_Start;
+                            netCourse.m_EndPosition.m_Entity = edge.m_End;
+
+                            if (m_NetElevationLookup.TryGetComponent(edge.m_Start, out Game.Net.Elevation startElevation))
+                            {
+                                netCourse.m_StartPosition.m_Elevation = startElevation.m_Elevation;
+                            }
+
+                            if (m_NetElevationLookup.TryGetComponent(edge.m_Start, out Game.Net.Elevation endElevation))
+                            {
+                                netCourse.m_EndPosition.m_Elevation = endElevation.m_Elevation;
+                            }
+                        }
+
+                        
 
                         buffer.AddComponent(e, netCourse);
                     }
