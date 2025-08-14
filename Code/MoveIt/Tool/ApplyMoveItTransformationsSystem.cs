@@ -3,12 +3,15 @@
 // Forked with permission from Quboid's CS2-MoveIt project.
 // </copyright>
 
+#define BURST
+
 using Game.Common;
 using Game.Rendering;
 using Game.Tools;
 using MoveIt.Components;
 using MoveIt.Systems;
 using QCommonLib;
+using Unity.Burst;
 using Unity.Burst.Intrinsics;
 using Unity.Collections;
 using Unity.Entities;
@@ -21,7 +24,7 @@ namespace MoveIt.Tool
     /// </summary>
     internal partial class ApplyMoveItTransformationsSystem : MIT_System
     {
-        private EntityQuery m_TempMIT_SelectedQuery;
+        private EntityQuery m_TempQuery;
         private ToolOutputBarrier m_Barrier;
         private ToolSystem m_ToolSystem;
 
@@ -34,13 +37,13 @@ namespace MoveIt.Tool
 
             m_ToolSystem.EventToolChanged += OnToolChanged;
 
-            m_TempMIT_SelectedQuery = SystemAPI.QueryBuilder()
+            m_TempQuery = SystemAPI.QueryBuilder()
                .WithAnyRW<Game.Objects.Transform, Game.Net.Curve>()
                .WithAll<Temp>()
                .WithNone<Deleted, Game.Common.Overridden>()
                .Build();
 
-            RequireForUpdate(m_TempMIT_SelectedQuery);
+            RequireForUpdate(m_TempQuery);
 
             QLog.Info($"{nameof(ApplyMoveItTransformationsSystem)}.{nameof(OnCreate)}");
             Enabled = false;
@@ -57,7 +60,7 @@ namespace MoveIt.Tool
                 buffer = m_Barrier.CreateCommandBuffer(),
             };
 
-            JobHandle jobHandle = changeOriginalEntitiesJob.Schedule(m_TempMIT_SelectedQuery, Dependency);
+            JobHandle jobHandle = changeOriginalEntitiesJob.Schedule(m_TempQuery, Dependency);
             m_Barrier.AddJobHandleForProducer(jobHandle);
             Dependency = jobHandle;
         }

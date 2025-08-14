@@ -3,15 +3,18 @@
 // Forked with permission from Quboid's CS2-MoveIt project.
 // </copyright>
 
-// #define BURST
+#define BURST
 
 using Colossal.Mathematics;
 using Colossal.Serialization.Entities;
 using Game;
+using Game.Citizens;
 using Game.Common;
 using Game.Net;
 using Game.Objects;
 using Game.Prefabs;
+using Game.Prefabs.Modes;
+using Game.Simulation;
 using Game.Tools;
 using MoveIt.Components;
 using MoveIt.Selection;
@@ -23,6 +26,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
+using UnityEngine;
 
 namespace MoveIt.Tool
 {
@@ -61,10 +65,14 @@ namespace MoveIt.Tool
             public ComponentLookup<Game.Net.Elevation> m_NetElevationLookup;
             [ReadOnly]
             public ComponentLookup<Game.Net.Edge> m_EdgeLookup;
+            [ReadOnly]
+            public ComponentLookup<Game.Objects.Tree> m_TreeLookup;
             public CreationFlags m_CreationFlags;
             public ControlPoint m_StartPoint;
             public ControlPoint m_EndPoint;
             public ControlPoint m_Centroid;
+            public bool m_FollowTerrain;
+            public TerrainHeightData m_TerrainHeightData;
 
 
             public void Execute(in ArchetypeChunk chunk, int unfilteredChunkIndex, bool useEnabledMask, in v128 chunkEnabledMask)
@@ -138,10 +146,21 @@ namespace MoveIt.Tool
                         {
                             objectDefinition.m_Position.x += m_EndPoint.m_Position.x - m_StartPoint.m_Position.x;
                             objectDefinition.m_Position.z += m_EndPoint.m_Position.z - m_StartPoint.m_Position.z;
-                        } else if (m_CreationFlags == 0)
+                        }
+                        else if (m_CreationFlags == 0)
                         {
                             objectDefinition.m_Position.x += m_EndPoint.m_Position.x - m_Centroid.m_Position.x;
                             objectDefinition.m_Position.z += m_EndPoint.m_Position.z - m_Centroid.m_Position.z;
+                        }
+
+                        if (m_FollowTerrain)
+                        {
+                            objectDefinition.m_Position.y += TerrainUtils.SampleHeight(ref m_TerrainHeightData, objectDefinition.m_Position) - TerrainUtils.SampleHeight(ref m_TerrainHeightData, transform.m_Position);
+                        }
+
+                        if (m_TreeLookup.TryGetComponent(entityNativeArray[i], out Tree tree))
+                        {
+                            objectDefinition.m_Age = GetTreeAge(tree);
                         }
 
                         buffer.AddComponent(e, objectDefinition);
@@ -201,6 +220,30 @@ namespace MoveIt.Tool
                     }
 
                     buffer.AddComponent(e, creationDefinition);
+                }
+            }
+
+            public float GetTreeAge(Tree tree)
+            {
+                if (tree.m_State == 0)
+                {
+                    return Mathf.Lerp(tree.m_Growth / 255f, 0f, ObjectUtils.TREE_AGE_PHASE_CHILD);
+                }
+                else if (tree.m_State == TreeState.Teen)
+                {
+                    return Mathf.Lerp(tree.m_Growth / 255f, ObjectUtils.TREE_AGE_PHASE_CHILD, ObjectUtils.TREE_AGE_PHASE_CHILD + ObjectUtils.TREE_AGE_PHASE_TEEN); ;
+                }
+                else if (tree.m_State == TreeState.Adult)
+                {
+                    return Mathf.Lerp(tree.m_Growth / 255f, ObjectUtils.TREE_AGE_PHASE_CHILD + ObjectUtils.TREE_AGE_PHASE_TEEN, ObjectUtils.TREE_AGE_PHASE_CHILD + ObjectUtils.TREE_AGE_PHASE_TEEN + ObjectUtils.TREE_AGE_PHASE_ADULT); ;
+                } 
+                else if (tree.m_State == TreeState.Elderly)
+                {
+                    return Mathf.Lerp(tree.m_Growth / 255f, ObjectUtils.TREE_AGE_PHASE_CHILD + ObjectUtils.TREE_AGE_PHASE_TEEN + ObjectUtils.TREE_AGE_PHASE_ADULT, ObjectUtils.TREE_AGE_PHASE_CHILD + ObjectUtils.TREE_AGE_PHASE_TEEN + ObjectUtils.TREE_AGE_PHASE_ADULT + ObjectUtils.TREE_AGE_PHASE_ELDERLY); ;
+                }
+                else
+                {
+                    return Mathf.Lerp(tree.m_Growth / 255f, ObjectUtils.TREE_AGE_PHASE_CHILD + ObjectUtils.TREE_AGE_PHASE_TEEN + ObjectUtils.TREE_AGE_PHASE_ADULT + ObjectUtils.TREE_AGE_PHASE_ELDERLY + 0.0001f, ObjectUtils.TREE_AGE_PHASE_CHILD + ObjectUtils.TREE_AGE_PHASE_TEEN + ObjectUtils.TREE_AGE_PHASE_ADULT + ObjectUtils.TREE_AGE_PHASE_ELDERLY + ObjectUtils.TREE_AGE_PHASE_DEAD); ;
                 }
             }
         }

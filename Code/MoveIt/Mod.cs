@@ -9,6 +9,7 @@ namespace MoveIt
     using Colossal;
     using Colossal.Localization;
     using Game;
+    using Game.Net;
     using Game.SceneFlow;
     using MoveIt.Settings;
     using MoveIt.Systems;
@@ -82,6 +83,7 @@ namespace MoveIt
             updateSystem.UpdateAt<MIT_UISystem>(SystemUpdatePhase.UIUpdate);
             updateSystem.UpdateAt<MIT_ToolTipSystem>(SystemUpdatePhase.UITooltip);
             updateSystem.UpdateAt<ApplyMoveItTransformationsSystem>(SystemUpdatePhase.ApplyTool);
+            // updateSystem.UpdateAt<CopyComponentsSystem>(SystemUpdatePhase.Modification2);
         }
 
         public void OnDispose()

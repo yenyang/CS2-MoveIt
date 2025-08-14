@@ -72,17 +72,26 @@ namespace MoveIt.Tool
             }
 
             Queue.FireAction(ref inputDeps, ref buffer);
-            if (MITState == MITStates.Default ||
-                MITState == MITStates.ApplyButtonHeld)
+            if (!UIHasFocus &&
+               (MITState == MITStates.Default ||
+                MITState == MITStates.ApplyButtonHeld) || 
+               (Deleting &&
+                MITState != MITStates.DrawingSelection))
             {
                 if (m_InputSystem.MouseApply.WasReleasedThisFrame())
                 {
                     return Apply(inputDeps);
                 }
-                else if (m_InputSystem.MouseApply.IsPressed())
+                else if (m_InputSystem.MouseApply.IsPressed() ||
+                         Copying)
                 {
                     return Update(inputDeps);
                 }
+            }
+
+            if (MITState == MITStates.Cancelling)
+            {
+                MITState = MITStates.Default;
             }
 
             return Clear(inputDeps);

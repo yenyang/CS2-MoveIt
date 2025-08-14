@@ -61,6 +61,12 @@ namespace MoveIt.Systems
             AddBinding(new TriggerBinding<string, string, bool>(Mod.MOD_UI, "MIT_PanelCheckboxChange", MIT_PanelCheckboxChange));
             AddBinding(new TriggerBinding<string, string, int>(Mod.MOD_UI, "MIT_PanelLabelMouseUp", MIT_PanelLabelMouseUp));
             AddBinding(new TriggerBinding<bool>(Mod.MOD_UI, "MIT_ShowRebindConfirm", MIT_ShowRebindConfirm));
+            AddBinding(new TriggerBinding(Mod.MOD_UI, "DeleteMouseEnter", () => _MIT.Deleting = true));
+            AddBinding(new TriggerBinding(Mod.MOD_UI, "DeleteMouseLeave", () => 
+            { 
+                _MIT.Deleting = false; 
+                _MIT.MITState = MITStates.Cancelling; 
+            }));
 
             Enabled = true;
         }
@@ -152,7 +158,7 @@ namespace MoveIt.Systems
                     break;
 
                 case "Delete":
-                    _MIT.Deleting = !_MIT.Deleting;
+                    _MIT.Deleting = true;
                     break;
 
                 default:

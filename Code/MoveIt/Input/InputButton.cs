@@ -42,8 +42,6 @@ namespace MoveIt.Input
 
         internal void Update()
         {
-            if (_MIT.UIHasFocus) return;
-
             if (m_PressedTime == 0 && Action.WasPressedThisFrame())
             {
                 m_PressedTime = Stopwatch.GetTimestamp();

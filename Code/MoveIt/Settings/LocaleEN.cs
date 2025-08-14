@@ -186,6 +186,13 @@ namespace MoveIt.Settings
                 { TextLabel("MConflictMessage"), "Do you want the '**M**' key to open Move It?\nIt will be removed from:" },
 
                 { TooltipDescriptionKey("ExitManipulationMode"), "Right-Click to exit Manipulation Mode" },
+
+                { TooltipTitleKey("FollowTerrain"), "Follow Terrain" },
+                { TooltipDescriptionKey("FollowTerrain"), "When active, objects moved and copied will be placed relative to terrain height. When inactive, objects moved and copied will stay in a horizontal plane from their original location." },
+                { TooltipTitleKey("Copy"), "Copy" },
+                { TooltipDescriptionKey("Copy"), "Move It Tool will make copies of selected entities." },
+                { TooltipTitleKey("Delete"), "Delete" },
+                { TooltipDescriptionKey("Delete"), "Immediately deletes all selected entities." },
             };
 
             #region Gooee Warning

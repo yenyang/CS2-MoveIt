@@ -114,6 +114,12 @@
   "MoveIt.TOOLTIP_DESCRIPTION[RotateInPlace]": "Click on an object to rotate selected objects in place to face the same angle as that object.",
   "MoveIt.TEXT_LABEL[MConflictMessage]": "Do you want the '**M**' key to open Move It?\nIt will be removed from:",
   "MoveIt.TOOLTIP_DESCRIPTION[ExitManipulationMode]": "Right-Click to exit Manipulation Mode",
+  "MoveIt.TOOLTIP_TITLE[FollowTerrain]": "Follow Terrain",
+  "MoveIt.TOOLTIP_DESCRIPTION[FollowTerrain]": "When active, objects moved and copied will be placed relative to terrain height. When inactive, objects moved and copied will stay in a horizontal plane from their original location.",
+  "MoveIt.TOOLTIP_TITLE[Copy]": "Copy",
+  "MoveIt.TOOLTIP_DESCRIPTION[Copy]": "Move It Tool will make copies of selected entities.",
+  "MoveIt.TOOLTIP_TITLE[Delete]": "Delete",
+  "MoveIt.TOOLTIP_DESCRIPTION[Delete]": "Immediately deletes all selected entities.",
   "Options.OPTION[MoveIt.MoveIt.Mod.Settings.GooeeWarning]": "\n**Warning: Gooee Detected**\n\nGooee is an abandoned mod dependency that **will** cause problems with Move It and other mods, and should be removed. However after removal parts of it may remain in your local ModsData folder which must be cleaned up.\n\n1. Close the game.\n 2. Remove Gooee if it exists.\n 3. Delete the Gooee folder in your local ModsData folder.",
   "Options.OPTION[MoveIt.MoveIt.Mod.Settings.OpenLocalModsFolderBtn]": "Open Local ModsData Folders",
   "Options.OPTION_DESCRIPTION[MoveIt.MoveIt.Mod.Settings.OpenLocalModsFolderBtn]": "Open the local ModsData folder - you should close the game before deleting the Gooee folder."

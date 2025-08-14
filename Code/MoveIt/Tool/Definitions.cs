@@ -10,6 +10,7 @@ using System.Linq;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
+using Game.Simulation;
 
 namespace MoveIt.Tool
 {
@@ -20,7 +21,7 @@ namespace MoveIt.Tool
         SecondaryButtonHeld,
         DrawingSelection,
         ToolActive,
-        ModificationsPrepared,
+        Cancelling,
     }
 
     [Flags]

@@ -49,6 +49,10 @@
 	</Target>
 
 	<ItemGroup>
+	  <Compile Remove="Tool\CopyComponentsSystem.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<Reference Include="Colossal.Collections">
 		  <HintPath>$(ManagedPath)\Colossal.Collections.dll</HintPath>
 		  <Private>False</Private>
@@ -149,6 +153,7 @@
 	<ItemGroup>
 		<None Include="$(ModPropsFile)" Link="Properties\Mod.props" />
 		<None Include="$(ModTargetsFile)" Link="Properties\Mod.targets" />
+		<None Include="Tool\CopyComponentsSystem.cs" />
 	</ItemGroup>
 
 	<ItemGroup>

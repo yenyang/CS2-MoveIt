@@ -39,8 +39,12 @@ namespace MoveIt.Tool
                 m_StartPoint = m_StartPoint,
                 m_EndPoint = m_LastRaycastPoint,
                 m_Centroid = new ControlPoint() { m_Position = _Selection.Center },
+                m_FollowTerrain = m_FollowingTerrain,
+                m_TerrainHeightData = m_TerrainSystem.GetHeightData(false),
+                m_TreeLookup = SystemAPI.GetComponentLookup<Game.Objects.Tree>(isReadOnly: true),
             };
             inputDeps = createDefinitionJob.Schedule(m_MIT_SelectedQuery, inputDeps);
+            m_TerrainSystem.AddCPUHeightReader(inputDeps);
             m_Barrier.AddJobHandleForProducer(inputDeps);
 
             return inputDeps;
@@ -78,9 +82,7 @@ namespace MoveIt.Tool
             applyMode = ApplyMode.Clear;
             m_StartPoint = default;
             m_LastRaycastPoint = default;
-
-            return Clear(inputDeps);
-            
+            return Clear(inputDeps);            
         }
 
 
@@ -94,6 +96,10 @@ namespace MoveIt.Tool
         private JobHandle Apply(JobHandle inputDeps)
         {
             applyMode = ApplyMode.Apply;
+            if (Deleting)
+            {
+                Deleting = false;
+            }
             return inputDeps;
         }
 

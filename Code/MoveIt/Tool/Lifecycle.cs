@@ -5,6 +5,8 @@
 
 using Colossal.Serialization.Entities;
 using Game;
+using Game.Common;
+using Game.Simulation;
 using Game.Tools;
 using MoveIt.Components;
 using MoveIt.Selection;
@@ -36,8 +38,8 @@ namespace MoveIt.Tool
             m_DefinitionGroup = GetDefinitionQuery();
 
             m_TempQuery = SystemAPI.QueryBuilder()
-                .WithAll<Temp, Game.Objects.Transform>()
-                .WithNone<Game.Common.Owner>()
+                .WithAll<Temp>()
+                .WithNone<Deleted, Game.Common.Overridden>()
                 .Build();
 
             m_ControlPointQuery = SystemAPI.QueryBuilder()
