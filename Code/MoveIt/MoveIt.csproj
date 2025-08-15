@@ -91,6 +91,7 @@
 		</Reference>
 		<Reference Include="Newtonsoft.Json">
 		  <HintPath>$(ManagedPath)\Newtonsoft.Json.dll</HintPath>
+		  <Private>False</Private>
 		</Reference>
 		<Reference Include="Unity.Burst">
 		  <HintPath>$(ManagedPath)\Unity.Burst.dll</HintPath>
@@ -131,6 +132,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Reference Update="C:\Program Files %28x86%29\Steam\steamapps\common\Cities Skylines II\Cities2_Data\Managed\mscorlib.dll">
+		  <Private>False</Private>
+		</Reference>
 		<Reference Update="System">
 			<Private>False</Private>
 		</Reference>

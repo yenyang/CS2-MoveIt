@@ -1,27 +1,20 @@
-﻿# Move It for Cities Skylines 2.
+﻿# Move It Beta for Cities Skylines 2.
 
 You can move trees, props, decals, buildings, surfaces, nodes, and segment curves.
 
 Press **M** or click on the Move It icon at the bottom right to enable the tool.
 
-
 ## Important Update on Development:
 I am continuing the development of Move It with permission from Quboid. This first version is still mostly Quboid's Move It, but over time this fork may or may not diverge from where it started.
-
-The first patch in the new fork has the following changes:
-* Added Localization Support.
-* Added Unified Icon Library Dependency
-* Added Icons to filters and toolbox actions.
-* Added Tooltip Icons and Toolbox tooltips.
 
 ## Dependencies
 Unified Icon Library
 
 ## Donations
-If you want to say thank you with a donation you can do so on Paypal.
+If you want to say thank you to **Quboid** with a donation you can do so on Paypal. I will replace the donation link once I've implemented sufficient changes.
 
 ## Translations
-I am looking for volunteers to help translate the mod into the other languages. For those interested please discuss the translation project in the discord link. CSL2:CODEMODS -> mods-wip -> Move It: Public Beta and Translations. CrowdIn Link available here.
+I am looking for volunteers to help translate the mod into the other languages. For those interested please discuss the translation project in the discord link. CSM Community Projects -> move-it -> Move It: Translations. CrowdIn Link available here.
 
 ## Selecting:
 
@@ -73,7 +66,7 @@ Save often, save different.
 
 
 ## Known Issues
-* Align to terrain height does yet not work with objects that affect terrain, e.g. buildings and on-ground roads.
+* Align to terrain height does not yet work with objects that affect terrain, e.g. buildings and on-ground roads.
 * Page Up/Down do not work in the editor. Use Numpad 9 and 3 instead, or rebind the move up/down keys.
 * Some players experience an occasional crashes relating to undo/redo manipulation mode changes.
 
@@ -84,3 +77,5 @@ Big thanks to SamSamTS, Krzychu124, T.D.W., Klyte45, REV0, BadPeanut, Sully, Alg
 
 Icons from SVG Repo, and from WishForge.Games under CC Attribution License.
 Unified Icon Library icons by Chameleon TBN
+
+Translators: Pingwin_PL and karmel68 (Polish), elGendo87 (Spanish), ti4goc (Portuguese), Morgan, aidan taylor and prospr (French), nemoriees and 0belix (Portugese, Brazilian), ExpedientFalcon and allegretic (Japenese), Nullpinter and RilkeXS (Chinese Simplified), allegretic (Chinese Traditional), MyNameIsntRealHere and WISSAH (Dutch)

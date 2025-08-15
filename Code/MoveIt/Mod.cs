@@ -3,7 +3,7 @@
 // Forked with permission from Quboid's CS2-MoveIt project.
 // </copyright>
 
-#define EXPORT_EN_US
+// #define EXPORT_EN_US
 namespace MoveIt
 {
     using Colossal;

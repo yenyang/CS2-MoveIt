@@ -19,8 +19,8 @@
 
         public const string KEY_TB_TERRAINHEIGHT    = "Key_TB_TerrainHeight";
         public const string KEY_TB_OBJECTHEIGHT     = "Key_TB_ObjectHeight";
-        public const string KEY_TB_OBJANGLEINDIV    = "Key_TB_ObjectAngleIndividual";
-        public const string KEY_TB_OBJANGLEGROUP    = "Key_TB_ObjectAngleGroup";
+        public const string KEY_TB_OBJANGLEINDIV    = "Key_TB_ObjAngleIndiv";
+        public const string KEY_TB_OBJANGLEGROUP    = "Key_TB_ObjAngleGroup";
 
         public const string KEY_MOVEDOWN            = "Key_MoveDown";
         public const string KEY_MOVEUP              = "Key_MoveUp";
