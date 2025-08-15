@@ -49,6 +49,30 @@
 	</Target>
 
 	<ItemGroup>
+	  <None Remove="l10n\de-DE.json" />
+	  <None Remove="l10n\es-ES.json" />
+	  <None Remove="l10n\fr-FR.json" />
+	  <None Remove="l10n\ja-JP.json" />
+	  <None Remove="l10n\nl-NL.json" />
+	  <None Remove="l10n\pl-PL.json" />
+	  <None Remove="l10n\pt-BR.json" />
+	  <None Remove="l10n\pt-PT.json" />
+	  <None Remove="l10n\zh-HANS.json" />
+	  <None Remove="l10n\zh-HANT.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Include="l10n\de-DE.json" />
+	  <EmbeddedResource Include="l10n\es-ES.json" />
+	  <EmbeddedResource Include="l10n\fr-FR.json" />
+	  <EmbeddedResource Include="l10n\ja-JP.json" />
+	  <EmbeddedResource Include="l10n\pl-PL.json" />
+	  <EmbeddedResource Include="l10n\pt-BR.json" />
+	  <EmbeddedResource Include="l10n\zh-HANS.json" />
+	  <EmbeddedResource Include="l10n\zh-HANT.json" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<Reference Include="Colossal.Collections">
 		  <HintPath>$(ManagedPath)\Colossal.Collections.dll</HintPath>
 		  <Private>False</Private>
@@ -156,7 +180,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Update="lang\pt-PT.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
 	  <None Update="LICENSE.txt">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="UnofficialLocales\nl-NL.json">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
 	</ItemGroup>
@@ -195,10 +225,6 @@
 	  <Reference Update="System.Xml.Linq">
 	    <Private>False</Private>
 	  </Reference>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="l10n\" />
 	</ItemGroup>
 
 </Project>
