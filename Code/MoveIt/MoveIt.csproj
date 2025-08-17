@@ -49,7 +49,6 @@
 	</Target>
 
 	<ItemGroup>
-	  <Compile Remove="Systems\FindCopiedOwnersSystem.cs" />
 	  <Compile Remove="Tool\CopyComponentsSystem.cs" />
 	</ItemGroup>
 
@@ -154,7 +153,6 @@
 	<ItemGroup>
 		<None Include="$(ModPropsFile)" Link="Properties\Mod.props" />
 		<None Include="$(ModTargetsFile)" Link="Properties\Mod.targets" />
-		<None Include="Systems\FindCopiedOwnersSystem.cs" />
 		<None Include="Tool\CopyComponentsSystem.cs" />
 	</ItemGroup>
 
