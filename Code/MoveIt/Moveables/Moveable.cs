@@ -19,7 +19,7 @@ namespace MoveIt.Moveables
     {
         protected const int CURVE_CPS = 4;
 
-        protected static readonly MIT _MIT = MIT.m_Instance;
+        protected static readonly MoveItToolSystem _MIT = MoveItToolSystem.m_Instance;
 
         /// <summary>
         /// The game object (building/node/CP/etc)'s entity
@@ -148,7 +148,7 @@ namespace MoveIt.Moveables
         /// </summary>
         public virtual void OnUnhover()
         {
-            MIT.Log.Debug($"{m_Entity.D()} {Name} OnUnhover {m_Overlay.Common.m_Flags} {QCommon.GetCallerDebug()}");
+            MoveItToolSystem.Log.Debug($"{m_Entity.D()} {Name} OnUnhover {m_Overlay.Common.m_Flags} {QCommon.GetCallerDebug()}");
 
             m_Overlay.RemoveFlag(InteractionFlags.Hovering | InteractionFlags.ToolHover);
             OnUnhoverChildren();
@@ -161,7 +161,7 @@ namespace MoveIt.Moveables
 
         public virtual void OnUnhoverChildren()
         {
-            MIT.Log.Debug($"{m_Entity.D()} {Name} OnUnhoverChildren {QCommon.GetCallerDebug()}");
+            MoveItToolSystem.Log.Debug($"{m_Entity.D()} {Name} OnUnhoverChildren {QCommon.GetCallerDebug()}");
 
             // Don't use GetChildMoveablesForOverlays as it will always create the Moveable, creating orphaned CPs
             foreach (MVDefinition mvd in GetAllChildren())
@@ -193,7 +193,7 @@ namespace MoveIt.Moveables
         /// </summary>
         public virtual void OnDeselect()
         {
-            MIT.Log.Debug($"{m_Entity.D()} {Name} OnDeselect {QCommon.GetCallerDebug()}");
+            MoveItToolSystem.Log.Debug($"{m_Entity.D()} {Name} OnDeselect {QCommon.GetCallerDebug()}");
             m_Overlay.RemoveFlag(InteractionFlags.Selected);
             foreach (Moveable mv in GetChildMoveablesForOverlays<Moveable>())
             {

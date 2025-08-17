@@ -33,7 +33,7 @@ namespace MoveIt.Actions
 
     internal class ActionState : IDisposable
     {
-        protected readonly MIT _MIT = MIT.m_Instance;
+        protected readonly MoveItToolSystem _MIT = MoveItToolSystem.m_Instance;
 
         public virtual void Dispose() { }
 
@@ -61,7 +61,7 @@ namespace MoveIt.Actions
         public static Phases Phase { get => _Phase; set => _Phase = value; }
         protected static Phases _Phase = Phases.None;
 
-        protected static readonly MIT _MIT = MIT.m_Instance;
+        protected static readonly MoveItToolSystem _MIT = MoveItToolSystem.m_Instance;
 
         public abstract string Name { get; }
         public int m_InitialFrame;
@@ -154,7 +154,7 @@ namespace MoveIt.Actions
             string moveables = _MIT.Selection.DebugSelection();
             _SelectionState = SelectionState.SelectionToState(_MIT.m_IsManipulateMode, _MIT.Selection.Definitions);
             string newSelection = _SelectionState.Debug();
-            MIT.Log.Debug($"ARCHIVE {idx}:{_MIT.Queue.Current.Name} OldPhase:{phase} Definitions:{old}/{oldFull}->{_SelectionState.Count}\nOld: {oldSelState}\nNew: {newSelection}\nAll Moveables: {moveables}");
+            MoveItToolSystem.Log.Debug($"ARCHIVE {idx}:{_MIT.Queue.Current.Name} OldPhase:{phase} Definitions:{old}/{oldFull}->{_SelectionState.Count}\nOld: {oldSelState}\nNew: {newSelection}\nAll Moveables: {moveables}");
         }
 
         /// <summary>
@@ -170,7 +170,7 @@ namespace MoveIt.Actions
             string moveables = _MIT.Selection.DebugSelection();
             _SelectionState = _SelectionState.CleanDefinitions();
             string newSelection = _SelectionState.Debug();
-            MIT.Log.Debug($"UNARCHIVE {idx}:{_MIT.Queue.Current.Name} OldPhase:{phase} Definitions:{oldSelStateC}->{_SelectionState.Count}\nOld: {oldSelState}\nNew: {newSelection}\nAll Moveables: {moveables}");
+            MoveItToolSystem.Log.Debug($"UNARCHIVE {idx}:{_MIT.Queue.Current.Name} OldPhase:{phase} Definitions:{oldSelStateC}->{_SelectionState.Count}\nOld: {oldSelState}\nNew: {newSelection}\nAll Moveables: {moveables}");
         }
 
         /// <summary>
@@ -200,7 +200,7 @@ namespace MoveIt.Actions
                 }
                 else
                 {
-                    MIT.Log.Warning($"Tried to Deselect {mvd}, but no Moveable found.\n{_MIT.Moveables.DebugFull()}\n{QCommon.GetStackTrace()}");
+                    MoveItToolSystem.Log.Warning($"Tried to Deselect {mvd}, but no Moveable found.\n{_MIT.Moveables.DebugFull()}\n{QCommon.GetStackTrace()}");
                 }
             }
         }

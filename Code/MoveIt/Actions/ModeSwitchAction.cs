@@ -48,7 +48,7 @@ namespace MoveIt.Actions
         {
             _SelectionState.CleanDefinitions();
             _InitialSelectionState.CleanDefinitions();
-            MIT.Log.Debug($"MSA.Unarchive {idx}:{_MIT.Queue.Current.Name} ToolAction:{phase}");
+            MoveItToolSystem.Log.Debug($"MSA.Unarchive {idx}:{_MIT.Queue.Current.Name} ToolAction:{phase}");
         }
 
         /// <summary>
@@ -88,10 +88,10 @@ namespace MoveIt.Actions
         {
             SelectionState newSelectionStates = new(_MIT.m_IsManipulateMode, toSelection);
 
-            MIT.Log.Debug($"ModeSwitchAction.ProcessModeSelectionChange" +
-                $"\n FromSelection: {MIT.DebugDefinitions(fromSelection)}" +
-                $"\n   ToSelection: {MIT.DebugDefinitions(toSelection)}" +
-                $"\n         Final: {MIT.DebugDefinitions(newSelectionStates.Definitions)}");
+            MoveItToolSystem.Log.Debug($"ModeSwitchAction.ProcessModeSelectionChange" +
+                $"\n FromSelection: {MoveItToolSystem.DebugDefinitions(fromSelection)}" +
+                $"\n   ToSelection: {MoveItToolSystem.DebugDefinitions(toSelection)}" +
+                $"\n         Final: {MoveItToolSystem.DebugDefinitions(newSelectionStates.Definitions)}");
 
             try
             {
@@ -100,7 +100,7 @@ namespace MoveIt.Actions
             }
             catch (System.Exception ex)
             {
-                MIT.Log.Error($"Failed ProcessModeSelectionChange toSel:{toSelection.Count}, newSelStates:{newSelectionStates.Count}\n" + ex);
+                MoveItToolSystem.Log.Error($"Failed ProcessModeSelectionChange toSel:{toSelection.Count}, newSelStates:{newSelectionStates.Count}\n" + ex);
 
                 _MIT.Selection = _MIT.m_IsManipulateMode ? new SelectionManip() : new SelectionNormal();
                 _MIT.Selection.Refresh();

@@ -7,7 +7,7 @@ namespace MoveIt.UI.Foldout
 {
     public abstract class FOSectionContainerStateBase : IJsonWritable
     {
-        protected readonly MIT _MIT = MIT.m_Instance;
+        protected readonly MoveItToolSystem _MIT = MoveItToolSystem.m_Instance;
 
         internal List<FoldoutEntry> m_Entries;
 
@@ -111,7 +111,7 @@ namespace MoveIt.UI.Foldout
 
         internal void DebugDumpSectionStates(string prefix = "")
         {
-            MIT.Log.Debug(prefix + DebugSectionStates());
+            MoveItToolSystem.Log.Debug(prefix + DebugSectionStates());
         }
     }
 }

@@ -15,7 +15,7 @@ using static Game.Tools.NetToolSystem;
 
 namespace MoveIt.Tool
 {
-    public partial class MIT : ObjectToolBaseSystem
+    public partial class MoveItToolSystem : ObjectToolBaseSystem
     {
         private JobHandle UpdateDefinitions(JobHandle inputDeps)
         {
@@ -26,7 +26,7 @@ namespace MoveIt.Tool
             {
                 buffer = buffer,
                 m_EntityType = SystemAPI.GetEntityTypeHandle(),
-                m_TransformData = SystemAPI.GetComponentLookup<Game.Objects.Transform>(isReadOnly: true),
+                m_TransformLookup = SystemAPI.GetComponentLookup<Game.Objects.Transform>(isReadOnly: true),
                 m_PrefabRefLookup = SystemAPI.GetComponentLookup<PrefabRef>(isReadOnly: true),
                 m_OwnerLookup = SystemAPI.GetComponentLookup<Owner>(isReadOnly: true),
                 m_CurveLookup = SystemAPI.GetComponentLookup<Game.Net.Curve>(isReadOnly: true),
@@ -42,6 +42,9 @@ namespace MoveIt.Tool
                 m_FollowTerrain = m_FollowingTerrain,
                 m_TerrainHeightData = m_TerrainSystem.GetHeightData(false),
                 m_TreeLookup = SystemAPI.GetComponentLookup<Game.Objects.Tree>(isReadOnly: true),
+                m_AreasNodeLookup = SystemAPI.GetBufferLookup<Game.Areas.Node>(isReadOnly: true),
+                m_SubAreaLookup = SystemAPI.GetBufferLookup<Game.Areas.SubArea>(isReadOnly: true),
+                m_SubNetLookup = SystemAPI.GetBufferLookup<Game.Net.SubNet>(isReadOnly: true),
             };
             inputDeps = createDefinitionJob.Schedule(m_MIT_SelectedQuery, inputDeps);
             m_TerrainSystem.AddCPUHeightReader(inputDeps);
@@ -73,7 +76,8 @@ namespace MoveIt.Tool
                 m_LastRaycastPoint = controlPoint;
                 return UpdateDefinitions(inputDeps);
             }
-            if (m_LastRaycastPoint.Equals(default) && !forceUpdate)
+            if (m_LastRaycastPoint.Equals(default) &&
+                !forceUpdate )
             {
                 applyMode = ApplyMode.None;
                 return inputDeps;

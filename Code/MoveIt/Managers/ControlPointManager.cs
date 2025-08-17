@@ -14,7 +14,7 @@ namespace MoveIt.Managers
 {
     public class ControlPointManager
     {
-        protected static readonly MIT _MIT = MIT.m_Instance;
+        protected static readonly MoveItToolSystem _MIT = MoveItToolSystem.m_Instance;
 
         private static EntityArchetype _ControlPointArchetype;
 
@@ -147,7 +147,7 @@ namespace MoveIt.Managers
             }
             catch (Exception e)
             {
-                MIT.Log.Warning(e);
+                MoveItToolSystem.Log.Warning(e);
             }
             return new();
         }
@@ -192,7 +192,7 @@ namespace MoveIt.Managers
         {
             int oldCount = _MIT.m_ControlPointQuery.CalculateEntityCount();
             _MIT.EntityManager.DestroyEntity(_MIT.m_ControlPointQuery);
-            MIT.Log.Info($"Removing {oldCount} entities (new count:{_MIT.m_ControlPointQuery.CalculateEntityCount()})");
+            MoveItToolSystem.Log.Info($"Removing {oldCount} entities (new count:{_MIT.m_ControlPointQuery.CalculateEntityCount()})");
         }
 
 
@@ -209,7 +209,7 @@ namespace MoveIt.Managers
 
         internal void DebugDumpControlPoints(string prefix = "")
         {
-            MIT.Log.Bundle("CPM", prefix + DebugControlPoints());
+            MoveItToolSystem.Log.Bundle("CPM", prefix + DebugControlPoints());
         }
     }
 }

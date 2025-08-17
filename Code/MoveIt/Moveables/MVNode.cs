@@ -129,7 +129,7 @@ namespace MoveIt.Moveables
             }
             catch (Exception ex)
             {
-                MIT.Log.Error($"Failed to get CullingInfo on node {m_Entity.D()} for GetBounds ({ex.Message})");
+                MoveItToolSystem.Log.Error($"Failed to get CullingInfo on node {m_Entity.D()} for GetBounds ({ex.Message})");
                 return new Bounds3(Vector3.zero, Vector3.zero);
             }
         }

@@ -25,7 +25,7 @@ namespace MoveIt.Overlays.Children
             if (mcp.m_Overlay is not null)
             {
                 if (mcp.m_Overlay != this) throw new System.Exception($"CP ManipOverlay is not own Moveable's overlay! (mv:{mcp.m_Entity.DX()}, mv.cp:{mcp.m_Overlay.E()}, this:{E()})");
-                if (!mcp.m_Overlay.m_Entity.Equals(Entity.Null)) { MIT.Log.Debug($"CP ManipOverlay creating but already exists {m_Entity.D()}/{mcp.m_Overlay.m_Entity.D()}\n{QCommon.GetStackTrace()}"); return true; }
+                if (!mcp.m_Overlay.m_Entity.Equals(Entity.Null)) { MoveItToolSystem.Log.Debug($"CP ManipOverlay creating but already exists {m_Entity.D()}/{mcp.m_Overlay.m_Entity.D()}\n{QCommon.GetStackTrace()}"); return true; }
             }
 
             m_Entity = _MIT.EntityManager.CreateEntity(_Archetype);

@@ -68,7 +68,7 @@ namespace MoveIt.Moveables
             if (!m_Entity.Exists(_MIT.EntityManager))
             {
                 sb.AppendFormat(" NoCPEntity!");
-                MIT.Log.Warning($"ERROR no CP entity ({m_Entity.D()}) with parent {m_Parent.DX()}~{m_ParentKey}");
+                MoveItToolSystem.Log.Warning($"ERROR no CP entity ({m_Entity.D()}) with parent {m_Parent.DX()}~{m_ParentKey}");
                 valid = false;
             }
 
@@ -141,14 +141,14 @@ namespace MoveIt.Moveables
 
         public override void OnUnhover()
         {
-            MIT.Log.Debug($"OnUnhover {ToString()} {QCommon.GetCallerDebug()}");
+            MoveItToolSystem.Log.Debug($"OnUnhover {ToString()} {QCommon.GetCallerDebug()}");
             m_Overlay.RemoveFlag(InteractionFlags.Hovering | InteractionFlags.ToolHover);
             DisposeIfUnused();
         }
 
         public override void OnDeselect()
         {
-            MIT.Log.Debug($"OnDeselect {ToString()}");
+            MoveItToolSystem.Log.Debug($"OnDeselect {ToString()}");
             m_Overlay.RemoveFlag(InteractionFlags.Selected);
             DisposeIfUnused();
         }

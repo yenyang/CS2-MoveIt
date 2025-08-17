@@ -28,7 +28,7 @@ namespace MoveIt.Overlays.Children
         {
             if (_Moveable is not MVSegment seg)
             {
-                MIT.Log.Error($"ERROR OlaySeg.CreateOlayE {_Moveable} is not segment.");
+                MoveItToolSystem.Log.Error($"ERROR OlaySeg.CreateOlayE {_Moveable} is not segment.");
                 return false;
             }
 
@@ -68,7 +68,7 @@ namespace MoveIt.Overlays.Children
             // If the segment has been deleted, return now
             if (!GetMoveable<MVSegment>().IsValid)
             {
-                MIT.Log.Debug($"UpdateRelatedNodes called for segment {E()} that isn't valid {QCommon.GetCallerDebug()}.");
+                MoveItToolSystem.Log.Debug($"UpdateRelatedNodes called for segment {E()} that isn't valid {QCommon.GetCallerDebug()}.");
                 return;
             }
 
@@ -88,7 +88,7 @@ namespace MoveIt.Overlays.Children
             // If the segment has been deleted, return now
             if (!GetMoveable<MVSegment>().IsValid)
             {
-                MIT.Log.Error($"UpdateRelatedCPs called for segment {E()} that isn't valid.");
+                MoveItToolSystem.Log.Error($"UpdateRelatedCPs called for segment {E()} that isn't valid.");
                 return;
             }
 

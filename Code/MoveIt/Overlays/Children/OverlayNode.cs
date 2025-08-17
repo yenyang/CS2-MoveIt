@@ -42,7 +42,7 @@ namespace MoveIt.Overlays.Children
         {
             if (_Moveable is not MVNode)
             {
-                MIT.Log.Error($"ERROR OlayNode.CreateOlayE {_Moveable} is not node.");
+                MoveItToolSystem.Log.Error($"ERROR OlayNode.CreateOlayE {_Moveable} is not node.");
                 return false;
             }
 
@@ -115,12 +115,12 @@ namespace MoveIt.Overlays.Children
                     string msg = $"Segment {seg.D()} doesn't exist for node {node} overlay {m_Entity.D()} {QCommon.GetCallerDebug()}";
                     if (!s_ShownUpdateError)
                     {
-                        MIT.Log.Error(msg, "MI-OLYNOD01");
+                        MoveItToolSystem.Log.Error(msg, "MI-OLYNOD01");
                         s_ShownUpdateError = true;
                     }
                     else
                     {
-                        MIT.Log.Warning(msg, "MI-OLYNOD02");
+                        MoveItToolSystem.Log.Warning(msg, "MI-OLYNOD02");
                     }
                     continue;
                 }

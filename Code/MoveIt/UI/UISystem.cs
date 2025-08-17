@@ -24,7 +24,7 @@ namespace MoveIt.Systems
 {
     internal partial class MIT_UISystem : UISystemBase
     {
-        protected readonly MIT _MIT = MIT.m_Instance;
+        protected readonly MoveItToolSystem _MIT = MoveItToolSystem.m_Instance;
 
         private ValueBinding<bool>                  _ToolEnabledBinding;
         private ValueBinding<PanelState>            _PanelStateBinding;
@@ -162,7 +162,7 @@ namespace MoveIt.Systems
                     break;
 
                 default:
-                    MIT.Log.Debug($"UIButton: {buttonId}");
+                    MoveItToolSystem.Log.Debug($"UIButton: {buttonId}");
                     break;
             }
         }
@@ -299,7 +299,7 @@ namespace MoveIt.Systems
                     InputManager.instance.SetBinding(binding, out _);
                 }
 
-                MIT.Log.Info($"Set {conflicts.Count} bindings to empty ({string.Join(",", conflicts)})");
+                MoveItToolSystem.Log.Info($"Set {conflicts.Count} bindings to empty ({string.Join(",", conflicts)})");
             }
             else
             {
@@ -317,7 +317,7 @@ namespace MoveIt.Systems
                 InputManager.instance.SetBinding(binding, out _);
                 Mod.Settings.Key_ToggleTool = binding;
 
-                MIT.Log.Info($"Set ToggleTool to Shift+M");
+                MoveItToolSystem.Log.Info($"Set ToggleTool to Shift+M");
 
                 //MIT.Log.Debug($"Binding Paths for ToggleTool and ToggleManip:" +
                 //    $"\n{binding.path} {binding.modifiers.Count}:{string.Join(",", binding.modifiers)}" +
@@ -374,7 +374,7 @@ namespace MoveIt.Systems
                     catch { exists = "X"; }
                     msg += $"{e.D()}-{exists},  ";
                 }
-                MIT.Log.Warning($"GetOverlayTypeCount failed (entities:{_DrawQuery.CalculateEntityCount()})\n{_MIT.Moveables.DebugFull()}\n{msg}\n{ex}");
+                MoveItToolSystem.Log.Warning($"GetOverlayTypeCount failed (entities:{_DrawQuery.CalculateEntityCount()})\n{_MIT.Moveables.DebugFull()}\n{msg}\n{ex}");
                 all.Dispose();
                 return -1;
             }

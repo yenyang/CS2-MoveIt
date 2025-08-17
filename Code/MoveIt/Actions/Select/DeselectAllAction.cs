@@ -73,7 +73,7 @@ namespace MoveIt.Actions.Select
             _MIT.EntityManager.DestroyEntity(overlayQuery);
             overlayQuery.Dispose();
 
-            MIT.Log.Info($"DeselectAllAction - MVs:{countSel}, overlays:{countOlay}");
+            MoveItToolSystem.Log.Info($"DeselectAllAction - MVs:{countSel}, overlays:{countOlay}");
         }
 
         private List<MVDefinition> GetModeSwitchList()

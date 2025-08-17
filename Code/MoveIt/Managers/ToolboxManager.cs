@@ -144,7 +144,7 @@ namespace MoveIt.Managers
             }
             catch (Exception ex)
             {
-                MIT.Log.Error($"Failed to prepare tool '{id}'.\n{ex}");
+                MoveItToolSystem.Log.Error($"Failed to prepare tool '{id}'.\n{ex}");
                 return false;
             }
             return true;
@@ -171,7 +171,7 @@ namespace MoveIt.Managers
             }
             catch (Exception ex)
             {
-                MIT.Log.Error($"Failed to activate tool '{_ActiveTool.m_Id}'.\n{ex}");
+                MoveItToolSystem.Log.Error($"Failed to activate tool '{_ActiveTool.m_Id}'.\n{ex}");
                 return false;
             }
 

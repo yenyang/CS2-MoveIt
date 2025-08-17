@@ -38,8 +38,7 @@ namespace MoveIt.Tool
             m_ToolSystem.EventToolChanged += OnToolChanged;
 
             m_TempQuery = SystemAPI.QueryBuilder()
-               .WithAnyRW<Game.Objects.Transform, Game.Net.Curve>()
-               .WithAll<Temp>()
+               .WithAll<Temp, Game.Objects.Transform>()
                .WithNone<Deleted, Game.Common.Overridden>()
                .Build();
 
@@ -53,14 +52,13 @@ namespace MoveIt.Tool
         {
             ChangeOriginalEntitiesJob changeOriginalEntitiesJob = new ChangeOriginalEntitiesJob()
             {
-                m_EntityType = SystemAPI.GetEntityTypeHandle(),
                 m_TempType = SystemAPI.GetComponentTypeHandle<Temp>(),
-                m_CurveLookup = SystemAPI.GetComponentLookup<Game.Net.Curve>(isReadOnly: true),
                 m_TransformLookup = SystemAPI.GetComponentLookup<Game.Objects.Transform>(isReadOnly: true),
-                buffer = m_Barrier.CreateCommandBuffer(),
+                buffer = m_Barrier.CreateCommandBuffer().AsParallelWriter(),
+                m_TransformType = SystemAPI.GetComponentTypeHandle<Game.Objects.Transform>(isReadOnly: true),
             };
 
-            JobHandle jobHandle = changeOriginalEntitiesJob.Schedule(m_TempQuery, Dependency);
+            JobHandle jobHandle = changeOriginalEntitiesJob.ScheduleParallel(m_TempQuery, Dependency);
             m_Barrier.AddJobHandleForProducer(jobHandle);
             Dependency = jobHandle;
         }
@@ -81,17 +79,17 @@ namespace MoveIt.Tool
 #endif
         private struct ChangeOriginalEntitiesJob : IJobChunk
         {
-            public EntityTypeHandle m_EntityType;
             [ReadOnly]
             public ComponentTypeHandle<Temp> m_TempType;
             [ReadOnly]
             public ComponentLookup<Game.Objects.Transform> m_TransformLookup;
             [ReadOnly]
-            public ComponentLookup<Game.Net.Curve> m_CurveLookup;
-            public EntityCommandBuffer buffer;
+            public ComponentTypeHandle<Game.Objects.Transform> m_TransformType;
+
+            public EntityCommandBuffer.ParallelWriter buffer;
 
             /// <summary>
-            /// Executes job which will change Transform or curve for MIT Selected temp entities.
+            /// Executes job which will change Transform MIT Selected temp entities.
             /// </summary>
             /// <param name="chunk">ArchteypeChunk of IJobChunk.</param>
             /// <param name="unfilteredChunkIndex">Use for EntityCommandBuffer.ParralelWriter.</param>
@@ -99,20 +97,14 @@ namespace MoveIt.Tool
             /// <param name="chunkEnabledMask">Part of IJobChunk. Not sure what it does.</param>
             public void Execute(in ArchetypeChunk chunk, int unfilteredChunkIndex, bool useEnabledMask, in v128 chunkEnabledMask)
             {
-                NativeArray<Entity> entityNativeArray = chunk.GetNativeArray(m_EntityType);
                 NativeArray<Temp> tempNativeArray = chunk.GetNativeArray(ref m_TempType);
+                NativeArray<Game.Objects.Transform> transformNativeArray = chunk.GetNativeArray(ref m_TransformType);
                 for (int i = 0; i < chunk.Count; i++)
                 {
-                    Entity tempEntity = entityNativeArray[i];
-                    Entity originalEntity = tempNativeArray[i].m_Original;
-
-                    if (!m_TransformLookup.TryGetComponent(originalEntity, out Game.Objects.Transform originalTransform) ||
-                        !m_TransformLookup.TryGetComponent(tempEntity, out Game.Objects.Transform tempTransform))
+                    if (m_TransformLookup.TryGetComponent(tempNativeArray[i].m_Original, out Game.Objects.Transform originalTransform))
                     {
-                        continue;
+                        buffer.SetComponent(unfilteredChunkIndex, tempNativeArray[i].m_Original, transformNativeArray[i]);
                     }
-
-                    buffer.SetComponent(originalEntity, tempTransform);
                 }
             }
         }

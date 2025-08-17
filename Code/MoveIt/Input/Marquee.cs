@@ -16,7 +16,7 @@ namespace MoveIt.Input
 {
     internal class Marquee
     {
-        protected static readonly MIT _MIT = MIT.m_Instance;
+        protected static readonly MoveItToolSystem _MIT = MoveItToolSystem.m_Instance;
 
         internal float3 m_StartPosition;
         internal Quad3 m_SelectArea;
@@ -49,7 +49,7 @@ namespace MoveIt.Input
             if (position.Equals(m_StartPosition)) return false;
 
             _MIT.Queue.Push(new SelectMarqueeAction(QKeyboard.Shift));
-            JobHandle jobHandle = MIT.m_Instance.Dependencies;
+            JobHandle jobHandle = MoveItToolSystem.m_Instance.Dependencies;
             EntityCommandBuffer buffer = m_Barrier.CreateCommandBuffer();
             _MIT.Queue.Do(ref jobHandle, ref buffer);
             m_HasMoved = true;

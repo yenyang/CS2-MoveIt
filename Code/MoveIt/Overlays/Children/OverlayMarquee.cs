@@ -37,7 +37,7 @@ namespace MoveIt.Overlays.Children
 
         protected override bool CreateOverlayEntity()
         {
-            MIT.Log.Error($"Trying to automatically make OverlayMarquee.", "MIT02");
+            MoveItToolSystem.Log.Error($"Trying to automatically make OverlayMarquee.", "MIT02");
             return false;
         }
 

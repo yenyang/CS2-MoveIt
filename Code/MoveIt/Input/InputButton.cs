@@ -11,7 +11,7 @@ namespace MoveIt.Input
 {
     internal abstract class InputButton
     {
-        protected MIT _MIT = MIT.m_Instance;
+        protected MoveItToolSystem _MIT = MoveItToolSystem.m_Instance;
 
         protected readonly int DragThreshold = 250;
 

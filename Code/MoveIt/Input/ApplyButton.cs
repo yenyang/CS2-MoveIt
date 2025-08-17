@@ -104,7 +104,7 @@ namespace MoveIt.Input
             }
             else
             {
-                MIT.Log.Debug($"Update DrawingSelection but current action is {_MIT.Queue.Current.Name}");
+                MoveItToolSystem.Log.Debug($"Update DrawingSelection but current action is {_MIT.Queue.Current.Name}");
             }
         }
 

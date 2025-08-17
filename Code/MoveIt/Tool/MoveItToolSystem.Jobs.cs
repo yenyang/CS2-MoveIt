@@ -33,7 +33,7 @@ namespace MoveIt.Tool
     /// <summary>
     /// Contains Job structs to be used by Move It Tool.
     /// </summary>
-    public partial class MIT : Game.Tools.ObjectToolBaseSystem
+    public partial class MoveItToolSystem : Game.Tools.ObjectToolBaseSystem
     {
 
 #if BURST
@@ -47,7 +47,7 @@ namespace MoveIt.Tool
             [ReadOnly]
             public EntityTypeHandle m_EntityType;
             [ReadOnly]
-            public ComponentLookup<Game.Objects.Transform> m_TransformData;
+            public ComponentLookup<Game.Objects.Transform> m_TransformLookup;
             [ReadOnly]
             public ComponentLookup<PrefabRef> m_PrefabRefLookup;
             public EntityCommandBuffer buffer;
@@ -73,6 +73,12 @@ namespace MoveIt.Tool
             public ControlPoint m_Centroid;
             public bool m_FollowTerrain;
             public TerrainHeightData m_TerrainHeightData;
+            [ReadOnly]
+            public BufferLookup<Game.Areas.SubArea> m_SubAreaLookup;
+            [ReadOnly]
+            public BufferLookup<Game.Areas.Node> m_AreasNodeLookup;
+            [ReadOnly]
+            public BufferLookup<Game.Net.SubNet> m_SubNetLookup;
 
 
             public void Execute(in ArchetypeChunk chunk, int unfilteredChunkIndex, bool useEnabledMask, in v128 chunkEnabledMask)
@@ -109,7 +115,7 @@ namespace MoveIt.Tool
                         }
                         else
                         {
-                            creationDefinition.m_Prefab = m_PrefabRefLookup[entityNativeArray[i]];
+                            creationDefinition.m_Prefab = new PrefabRef(m_PrefabRefLookup[entityNativeArray[i]].m_Prefab);
                         }
                     }
 
@@ -119,9 +125,10 @@ namespace MoveIt.Tool
                     }
 
                     buffer.AddComponent(e, default(Updated));
-                    if (m_TransformData.HasComponent(entityNativeArray[i]))
+                    Game.Objects.Transform transform = new Game.Objects.Transform();
+                    if (m_TransformLookup.HasComponent(entityNativeArray[i]))
                     {
-                        Game.Objects.Transform transform = m_TransformData[entityNativeArray[i]];
+                        transform = m_TransformLookup[entityNativeArray[i]];
                         ObjectDefinition objectDefinition = new()
                         {
                             m_Position = transform.m_Position,
@@ -129,18 +136,10 @@ namespace MoveIt.Tool
                             m_ParentMesh = -1,
                             m_Probability = 100,
                             m_PrefabSubIndex = -1,
+                            m_Age = 1,
+                            m_Intensity = 1,
+                            m_Scale = new float3(1,1,1),
                         };
-
-                        if (m_OwnerLookup.TryGetComponent(entityNativeArray[i], out Owner owner) &&
-                            m_TransformData.TryGetComponent(entityNativeArray[i], out Game.Objects.Transform subobjectTransform) &&
-                            m_TransformData.TryGetComponent(owner.m_Owner, out Game.Objects.Transform ownerTransform))
-                        {
-                            Game.Objects.Transform inverseParentTransform = ObjectUtils.InverseTransform(ownerTransform);
-                            Game.Objects.Transform localTransform = ObjectUtils.WorldToLocal(inverseParentTransform, subobjectTransform);
-
-                            objectDefinition.m_LocalRotation = localTransform.m_Rotation;
-                            objectDefinition.m_LocalPosition = localTransform.m_Position;
-                        }
 
                         if ((m_CreationFlags & CreationFlags.Relocate) == CreationFlags.Relocate)
                         {
@@ -158,6 +157,20 @@ namespace MoveIt.Tool
                             objectDefinition.m_Position.y += TerrainUtils.SampleHeight(ref m_TerrainHeightData, objectDefinition.m_Position) - TerrainUtils.SampleHeight(ref m_TerrainHeightData, transform.m_Position);
                         }
 
+                        if (m_OwnerLookup.HasComponent(entityNativeArray[i]) &&
+                            m_TransformLookup.TryGetComponent(entityNativeArray[i], out Game.Objects.Transform subobjectTransform))
+                        {
+                            Game.Objects.Transform inverseParentTransform = ObjectUtils.InverseTransform( new Game.Objects.Transform(objectDefinition.m_Position, objectDefinition.m_Rotation));
+                            Game.Objects.Transform localTransform = ObjectUtils.WorldToLocal(inverseParentTransform, subobjectTransform);
+
+                            objectDefinition.m_LocalRotation = localTransform.m_Rotation;
+                            objectDefinition.m_LocalPosition = localTransform.m_Position;
+                        } else
+                        {
+                            objectDefinition.m_LocalPosition = objectDefinition.m_Position;
+                            objectDefinition.m_LocalRotation = objectDefinition.m_Rotation;
+                        }
+                       
                         if (m_TreeLookup.TryGetComponent(entityNativeArray[i], out Tree tree))
                         {
                             objectDefinition.m_Age = GetTreeAge(tree);
@@ -220,6 +233,80 @@ namespace MoveIt.Tool
                     }
 
                     buffer.AddComponent(e, creationDefinition);
+                    
+                    // SubAreas require their own CreationDefinition entity. The originals don't get hidden the way I would want them too. . .
+                    if (m_SubAreaLookup.TryGetBuffer(entityNativeArray[i], out DynamicBuffer<Game.Areas.SubArea> subAreas) &&
+                        subAreas.Length > 0)
+                    {
+                        for (int j = 0; j < subAreas.Length; j++)
+                        {
+                            if (subAreas[j].m_Area == Entity.Null)
+                            {
+                                continue;
+                            }
+
+                            Entity subAreaDefinition = buffer.CreateEntity();
+                            CreationDefinition subAreaCreationDefinition = new()
+                            {
+                                m_Flags = CreationFlags.Hidden,
+                            };
+
+                            if ((m_CreationFlags & CreationFlags.Relocate) == CreationFlags.Relocate ||
+                                (m_CreationFlags & CreationFlags.Delete) == CreationFlags.Delete)
+                            {
+                                subAreaCreationDefinition.m_Original = subAreas[j].m_Area;
+                            }
+
+                            if (m_PrefabRefLookup.HasComponent(subAreas[j].m_Area))
+                            {
+                                subAreaCreationDefinition.m_Prefab = m_PrefabRefLookup[subAreas[j].m_Area];
+                            }
+                            
+                            if (m_PrefabRefLookup.HasComponent(entityNativeArray[i]) &&
+                                m_TransformLookup.HasComponent(entityNativeArray[i]))
+                            {
+                                OwnerDefinition ownerDefinition = new OwnerDefinition()
+                                {
+                                    m_Prefab = m_PrefabRefLookup[entityNativeArray[i]],
+                                    m_Position = transform.m_Position,
+                                    m_Rotation = transform.m_Rotation,
+                                };
+                                buffer.AddComponent(subAreaDefinition, ownerDefinition);
+                            }
+
+                            if (m_AreasNodeLookup.TryGetBuffer(subAreas[j].m_Area, out DynamicBuffer<Game.Areas.Node> nodes) &&
+                                nodes.Length > 0)
+                            {
+                                DynamicBuffer<Game.Areas.Node> newNodeBuffer = buffer.AddBuffer<Game.Areas.Node>(subAreaDefinition);
+                                for (int k=0; k<nodes.Length; k++)
+                                {
+                                    Game.Areas.Node node = new Game.Areas.Node() { m_Position= nodes[k].m_Position, m_Elevation = nodes[k].m_Elevation };
+                                    if ((m_CreationFlags & CreationFlags.Relocate) == CreationFlags.Relocate)
+                                    {
+                                        node.m_Position.x += m_EndPoint.m_Position.x - m_StartPoint.m_Position.x;
+                                        node.m_Position.z += m_EndPoint.m_Position.z - m_StartPoint.m_Position.z;
+                                    }
+                                    else if (m_CreationFlags == 0)
+                                    {
+                                        node.m_Position.x += m_EndPoint.m_Position.x - m_Centroid.m_Position.x;
+                                        node.m_Position.z += m_EndPoint.m_Position.z - m_Centroid.m_Position.z;
+                                    }
+
+                                    newNodeBuffer.Add(node);
+                                }
+
+                                // Creating new subarea requires additional node to show that it's a closed figure.
+                                if (m_CreationFlags == 0)
+                                {
+                                    newNodeBuffer.Add(new Game.Areas.Node() { m_Position = newNodeBuffer[0].m_Position, m_Elevation = newNodeBuffer[0].m_Elevation });
+                                }
+                            }
+
+                            buffer.AddComponent(subAreaDefinition, subAreaCreationDefinition);
+                            buffer.AddComponent<Updated>(subAreaDefinition);
+                        }
+                    }
+
                 }
             }
 

@@ -49,6 +49,7 @@
 	</Target>
 
 	<ItemGroup>
+	  <Compile Remove="Systems\FindCopiedOwnersSystem.cs" />
 	  <Compile Remove="Tool\CopyComponentsSystem.cs" />
 	</ItemGroup>
 
@@ -153,6 +154,7 @@
 	<ItemGroup>
 		<None Include="$(ModPropsFile)" Link="Properties\Mod.props" />
 		<None Include="$(ModTargetsFile)" Link="Properties\Mod.targets" />
+		<None Include="Systems\FindCopiedOwnersSystem.cs" />
 		<None Include="Tool\CopyComponentsSystem.cs" />
 	</ItemGroup>
 
@@ -206,4 +208,28 @@
 	  <Folder Include="l10n\" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<Compile Update="Tool\MoveItToolSystem.JobMethods.cs">
+			<DependentUpon>MoveItToolSystem.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Tool\MoveItToolSystem.Lifecycle.cs">
+			<DependentUpon>MoveItToolSystem.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Tool\MoveItToolSystem.OnUpdate.cs">
+			<DependentUpon>MoveItToolSystem.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Tool\MoveItToolSystem.Jobs.cs">
+			<DependentUpon>MoveItToolSystem.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Tool\MoveItToolSystem.Methods.cs">
+			<DependentUpon>MoveItToolSystem.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Tool\MoveItToolSystem.Filtering.cs">
+			<DependentUpon>MoveItToolSystem.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Tool\MoveItToolSystem.Debug.cs">
+			<DependentUpon>MoveItToolSystem.cs</DependentUpon>
+		</Compile>
+	</ItemGroup>
+	
 </Project>

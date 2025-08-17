@@ -36,7 +36,7 @@ namespace MoveIt.Systems
         
         private ToolSystem _ToolSystem;
         private StringTooltip _Tooltip;
-        private Tool.MIT _MIT;
+        private Tool.MoveItToolSystem _MIT;
 
 
         private float _TTL;
@@ -54,7 +54,7 @@ namespace MoveIt.Systems
         {
             base.OnCreate();
             _ToolSystem = base.World.GetOrCreateSystemManaged<ToolSystem>();
-            _MIT = base.World.GetOrCreateSystemManaged<Tool.MIT>();
+            _MIT = base.World.GetOrCreateSystemManaged<Tool.MoveItToolSystem>();
             _Tooltip = new StringTooltip
             {
                 path = "QTesting_Main",

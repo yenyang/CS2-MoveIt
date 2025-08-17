@@ -11,6 +11,7 @@ namespace MoveIt
     using Game;
     using Game.Net;
     using Game.SceneFlow;
+    using Game.Tools;
     using MoveIt.Settings;
     using MoveIt.Systems;
     using MoveIt.Tool;
@@ -76,19 +77,21 @@ namespace MoveIt
 
             Colossal.IO.AssetDatabase.AssetDatabase.global.LoadSettings(nameof(MoveIt), Settings, new Settings.Settings(this));
 
-            updateSystem.UpdateAt<Tool.MIT>(SystemUpdatePhase.ToolUpdate);
+            updateSystem.UpdateAt<Tool.MoveItToolSystem>(SystemUpdatePhase.ToolUpdate);
             updateSystem.UpdateAt<MIT_InputSystem>(SystemUpdatePhase.PreTool);
             updateSystem.UpdateAt<MIT_PostToolSystem>(SystemUpdatePhase.PostTool);
             updateSystem.UpdateAt<Overlays.MIT_OverlaySystem>(SystemUpdatePhase.Rendering);
             updateSystem.UpdateAt<MIT_UISystem>(SystemUpdatePhase.UIUpdate);
             updateSystem.UpdateAt<MIT_ToolTipSystem>(SystemUpdatePhase.UITooltip);
             updateSystem.UpdateAt<ApplyMoveItTransformationsSystem>(SystemUpdatePhase.ApplyTool);
+            updateSystem.UpdateBefore<RemoveSaveInstanceSystem, ApplyPrefabsSystem>(SystemUpdatePhase.ModificationEnd);
+            // updateSystem.UpdateAt<FindCopiedOwnersSystem>(SystemUpdatePhase.Modification2);
             // updateSystem.UpdateAt<CopyComponentsSystem>(SystemUpdatePhase.Modification2);
         }
 
         public void OnDispose()
         {
-            Tool.MIT.Log?.Info(nameof(OnDispose));
+            Tool.MoveItToolSystem.Log?.Info(nameof(OnDispose));
             if (Settings != null)
             {
                 Settings.UnregisterInOptionsUI();

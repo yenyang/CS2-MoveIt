@@ -9,7 +9,7 @@ namespace MoveIt.Systems
 {
     internal partial class MIT_InputSystem : QInputSystem
     {
-        protected static readonly MIT _MIT = MIT.m_Instance;
+        protected static readonly MoveItToolSystem _MIT = MoveItToolSystem.m_Instance;
 
         protected override void OnCreate()
         {
@@ -157,7 +157,7 @@ namespace MoveIt.Systems
         private static void DoDebugFreeze()
         {
             _MIT.m_OverlaySystem.DebugFreeze = !_MIT.m_OverlaySystem.DebugFreeze;
-            MIT.Log.Debug($"Key: {Inputs.KEY_DEBUGFREEZE} ({_MIT.m_OverlaySystem.DebugFreeze})");
+            MoveItToolSystem.Log.Debug($"Key: {Inputs.KEY_DEBUGFREEZE} ({_MIT.m_OverlaySystem.DebugFreeze})");
         }
 
         private static void ToolboxActivate(string id)
