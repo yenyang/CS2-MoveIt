@@ -128,6 +128,8 @@ namespace MoveIt.Systems
 
             public EntityCommandBuffer buffer;
 
+            public EntityCommandBuffer.ParallelWriter buffer;
+
             /// <summary>
             /// Executes job which will change Transform MIT Selected temp entities.
             /// </summary>
@@ -196,7 +198,7 @@ namespace MoveIt.Systems
                                 !Mathf.Approximately(ownerDefinition.m_Rotation.value.y, ownerTransform.m_Rotation.value.y) ||
                                 !Mathf.Approximately(ownerDefinition.m_Rotation.value.z, ownerTransform.m_Rotation.value.z) ||
                                 !Mathf.Approximately(ownerDefinition.m_Rotation.value.w, ownerTransform.m_Rotation.value.w))
-                            {
+                    {
                                 continue;
                             }
 

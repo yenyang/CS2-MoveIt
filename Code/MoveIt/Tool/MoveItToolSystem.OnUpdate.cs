@@ -73,6 +73,8 @@ namespace MoveIt.Tool
             }
 
             Queue.FireAction(ref inputDeps, ref buffer);
+
+            
             if (!UIHasFocus &&
                (MITState == MITStates.Default ||
                 MITState == MITStates.ApplyButtonHeld) || 

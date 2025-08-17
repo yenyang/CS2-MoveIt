@@ -188,6 +188,20 @@ namespace MoveIt.Tool
                             objectDefinition.m_Position.y += TerrainUtils.SampleHeight(ref m_TerrainHeightData, objectDefinition.m_Position) - TerrainUtils.SampleHeight(ref m_TerrainHeightData, transform.m_Position);
                         }
 
+                        if (m_OwnerLookup.HasComponent(entityNativeArray[i]) &&
+                            m_TransformLookup.TryGetComponent(entityNativeArray[i], out Game.Objects.Transform subobjectTransform))
+                        {
+                            Game.Objects.Transform inverseParentTransform = ObjectUtils.InverseTransform( new Game.Objects.Transform(objectDefinition.m_Position, objectDefinition.m_Rotation));
+                            Game.Objects.Transform localTransform = ObjectUtils.WorldToLocal(inverseParentTransform, subobjectTransform);
+
+                            objectDefinition.m_LocalRotation = localTransform.m_Rotation;
+                            objectDefinition.m_LocalPosition = localTransform.m_Position;
+                        } else
+                        {
+                            objectDefinition.m_LocalPosition = objectDefinition.m_Position;
+                            objectDefinition.m_LocalRotation = objectDefinition.m_Rotation;
+                        }
+                       
                         if (m_TreeLookup.TryGetComponent(entityNativeArray[i], out Tree tree))
                         {
                             objectDefinition.m_Age = GetTreeAge(tree);
