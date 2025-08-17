@@ -128,8 +128,6 @@ namespace MoveIt.Systems
 
             public EntityCommandBuffer buffer;
 
-            public EntityCommandBuffer.ParallelWriter buffer;
-
             /// <summary>
             /// Executes job which will change Transform MIT Selected temp entities.
             /// </summary>
