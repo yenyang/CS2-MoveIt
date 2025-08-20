@@ -23,36 +23,61 @@ export const FOTitleRow = (props: {data: FOTitleData, state: FoldoutState}) : JS
         showCB = props.state.IsOpen ? (props.data.CBWhenOpen === true) : (props.data.CBWhenClosed === true);
     }
     const classes = classNames({
-        [foStyles.row]: true,
+        [foStyles.rowGroup]: true,
         [foStyles.title]: true,
         [foStyles.titleOpen]: props.state.IsOpen,
         [foStyles.titleClosed]: !props.state.IsOpen,
     });
     const labelClasses = classNames({
         [foStyles.label]: true,
-        [foStyles.labelCB]: showCB,
         [foStyles.rowGroup]: true,
     })
 
     return (
         <div className={classes}>
-            {showCB && (<div className={foStyles.checkbox}>{BuildCheckbox(true, props.data.Section, props.data.Checkbox, props.state.Title.Checkbox)}</div>)}
-            <Button
-                className={foStyles.titleBtn}
-                src={props.state.IsOpen ? FoldoutOpenSrc : FoldoutClosedSrc}
-                id={props.data.Id}
-                focusKey={VanillaComponentResolver.instance.FOCUS_DISABLED}
-                onMouseUpCapture={(e) => LabelMouseUp(props.data.Section, props.data.Id, e.button)}
-                variant="icon">
-                    <Tooltip tooltip={props.data.Tooltip}>
-                            <div className={labelClasses}>
-                                {translate(props.data.LabelLocaleKey, props.data.LabelFallback)}
-                                <span className={foStyles.smSpacer}></span>
-                                <img src={props.data.Icon} className={foStyles.icon}></img>
+             <Tooltip tooltip={props.data.Tooltip}>
+                <>
+                    <Button
+                        className={foStyles.icon}                
+                        focusKey={VanillaComponentResolver.instance.FOCUS_DISABLED}
+                        onMouseUpCapture={(e) => LabelMouseUp(props.data.Section, props.data.Id, e.button)}
+                        variant="icon"
+                        src={props.data.Icon}
+                    >
+                    </Button>
+                    
+                    {showCB?   
+                    (
+                        <>
+                            <div className={foStyles.checkbox}>
+                                {BuildCheckbox(true, props.data.Section, props.data.Checkbox, props.state.Title.Checkbox)}
                             </div>
-                    </Tooltip>
-                   
-            </Button>
+                        </>
+                    ) :
+                        <Button
+                            className={foStyles.checkbox}                
+                            focusKey={VanillaComponentResolver.instance.FOCUS_DISABLED}
+                            onMouseUpCapture={(e) => LabelMouseUp(props.data.Section, props.data.Id, e.button)}
+                            variant="icon"
+                        >
+                        </Button>
+                    }                        
+                    <Button
+                        className={foStyles.titleButton}
+                        id={props.data.Id}
+                        focusKey={VanillaComponentResolver.instance.FOCUS_DISABLED}
+                        onMouseUpCapture={(e) => LabelMouseUp(props.data.Section, props.data.Id, e.button)}
+                        variant="icon">
+                                <>
+                                    <div className={labelClasses}>
+                                        {translate(props.data.LabelLocaleKey, props.data.LabelFallback)}
+                                    </div>
+                                    <img src={props.state.IsOpen ? FoldoutOpenSrc : FoldoutClosedSrc} className={foStyles.foldoutButton}></img>
+                                </>
+                        
+                    </Button>
+                </>
+            </Tooltip>
         </div>
     );
 }
@@ -84,6 +109,15 @@ export const FOEntryRow = (props: {data: FOMainEntryData, state: FOMainEntryStat
         <>
             {props.isOpen && (
                 <div className={classes}>
+                    <Button
+                        className={foStyles.icon}                
+                        focusKey={VanillaComponentResolver.instance.FOCUS_DISABLED}
+                        onMouseUpCapture={(e) => LabelMouseUp(props.data.Section, props.data.RawId, e.button)}
+                        variant="icon"
+                        src={props.data.Icon}
+                    >
+                    </Button>
+
                     {showCB && (<div
                         className={foStyles.checkbox}
                         onMouseUp={(e) => LabelMouseUp(props.data.Section, props.data.RawId, e.button)}
@@ -97,9 +131,7 @@ export const FOEntryRow = (props: {data: FOMainEntryData, state: FOMainEntryStat
                             onMouseUp={(e) => LabelMouseUp(props.data.Section, props.data.RawId, e.button)}
                             >
                                 <>
-                                    {translate(props.data.LabelLocaleKey, props.data.LabelFallback)}                                    
-                                    <span className={foStyles.smSpacer}></span>
-                                    <img src={props.data.Icon} className={foStyles.icon}></img>
+                                    {translate(props.data.LabelLocaleKey, props.data.LabelFallback)}          
                                 </>
                         </div>
                     </Tooltip>

@@ -12,7 +12,6 @@
 {
     height: 35rem;
     width: 100%;
-    position: relative;
 }
 .title:hover
 {
@@ -29,12 +28,7 @@
 
 .titleBtn {
     height: 100%;
-    width: 100%;
     text-align: left !important;
-    align-content: flex-start;
-    flex-direction: row-reverse;
-    display: flex;
-    z-index: 4;
 }
 .titleBtn img
 {
@@ -45,7 +39,6 @@
 {
     text-align: left;
     padding-left: 3rem;
-    width: 133rem;
 }
 .titleBtn .labelCB
 {
@@ -53,9 +46,13 @@
 }
 .title .checkbox
 {
-    position: absolute;
-    margin: 3rem 0;
     z-index: 5;
+}
+
+.foldoutButton
+{
+    width: 30rem;
+    height: 30rem;
 }
 
 .entries
@@ -63,6 +60,7 @@
     font-size: 94%;
     border-left: 2rem solid #1abeffbb;
     margin-left: 2rem;
+    margin-bottom: 2rem;
 }
 .entry
 {
@@ -143,8 +141,17 @@
 .icon {
     width: 23rem !important;
     height: 23rem !important; 
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    margin-left: 2.5rem;
+    margin-right: 2.5rem;
 }
 
 .smSpacer {
     width: 2.5rem;
+}
+
+.titleButton {
+    width: 120rem;
+    justify-content: space-between !important;
 }
