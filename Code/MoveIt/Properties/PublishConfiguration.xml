@@ -108,7 +108,8 @@ Translators: Pingwin_PL and karmel68 (Polish), elGendo87 (Spanish), ti4goc (Port
   <!--Change log for new version. Single line or multi line. Supports minimal markdown subset-->
   <ChangeLog># Patch v0.5.8
 * Rearranged new Icons to be first in the row rather than last.
-* Added panels to Editor.</ChangeLog>
+* Added panels to Editor.
+* Improved Tooltip handling for main panel.</ChangeLog>
   <!--External link. supported types are discord, github, youtube, twitch, x, paypal, patreon-->
   <ExternalLink Type="discord" Url="https://discord.gg/HTav7ARPs2" />
   <ExternalLink Type="paypal" Url="https://www.paypal.me/QuboidCSL1" />
