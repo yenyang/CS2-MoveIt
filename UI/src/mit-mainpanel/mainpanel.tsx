@@ -11,6 +11,7 @@ import { FiltersFoldout } from "./filtersFoldout";
 import { ToolboxFoldout } from "./toolboxFoldout";
 import { useLocalization } from "cs2/l10n";
 import locale from "../lang/en-US.json";
+import classNames from "classnames";
 
 export const MIT_MainPanel = () =>
 {
@@ -32,14 +33,15 @@ export const MIT_MainPanel = () =>
                         header={(
                             <div className={styles.header}>
                                 <img src={icon} className={styles.headerIcon} />
-                                <span className={styles.headerText}>{translate("Options.SECTION[MoveIt.MoveIt.Mod]",   locale["Options.SECTION[MoveIt.MoveIt.Mod]"])}</span>
+                                <div className={styles.headerText}>{translate("Options.SECTION[MoveIt.MoveIt.Mod]",   locale["Options.SECTION[MoveIt.MoveIt.Mod]"])}</div>
                             </div>
                         )}>
-                        <PanelSection className={styles.section}>
+                        
+                        <div className={classNames(styles.section, styles.columnGroup)}>
                                 <ButtonRowTop topRowState={panelState.TopRow}></ButtonRowTop>                                
                                 <FiltersFoldout state={panelState.FilterSection}></FiltersFoldout>
                                 <ToolboxFoldout state={panelState.ToolboxSection}></ToolboxFoldout>
-                        </PanelSection>
+                        </div>
                         
                     </Panel>
                 </Portal>

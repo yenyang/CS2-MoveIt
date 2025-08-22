@@ -1,5 +1,5 @@
 .panel {
-    width: 180rem;
+    width: 210rem;
 }
 
 .header {
@@ -31,6 +31,15 @@
     background-color: #00000011;
 }
 
+.columnGroup {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
+    padding-bottom: 1rem;
+}
+
 .row {
     padding: 0;
     margin: 2rem 0 0 0;
@@ -39,7 +48,7 @@
 .buttonRow {
     align-items: stretch;
     display: flex;
-    // flex-flow: row nowrap;
+    justify-content: space-between;
     height: 38rem;
 }
 
@@ -78,4 +87,11 @@
 .checkboxRow:hover
 {
     background-color: #00000022;
+}
+
+.rowGroup {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
 }

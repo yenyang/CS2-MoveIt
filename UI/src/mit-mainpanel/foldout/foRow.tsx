@@ -31,11 +31,19 @@ export const FOTitleRow = (props: {data: FOTitleData, state: FoldoutState}) : JS
     const labelClasses = classNames({
         [foStyles.label]: true,
         [foStyles.rowGroup]: true,
-    })
+    });
 
     return (
              <Tooltip tooltip={props.data.Tooltip}>
                 <div className={classes}>
+                    {showCB &&  
+                    (
+                        <>
+                            <div className={foStyles.checkbox}>
+                                {BuildCheckbox(true, props.data.Section, props.data.Checkbox, props.state.Title.Checkbox)}
+                            </div>
+                        </>
+                    )}      
                     <Button
                         className={foStyles.icon}                
                         focusKey={VanillaComponentResolver.instance.FOCUS_DISABLED}
@@ -43,24 +51,7 @@ export const FOTitleRow = (props: {data: FOTitleData, state: FoldoutState}) : JS
                         variant="icon"
                         src={props.data.Icon}
                     >
-                    </Button>
-                    
-                    {showCB?   
-                    (
-                        <>
-                            <div className={foStyles.checkbox}>
-                                {BuildCheckbox(true, props.data.Section, props.data.Checkbox, props.state.Title.Checkbox)}
-                            </div>
-                        </>
-                    ) :
-                        <Button
-                            className={foStyles.checkbox}                
-                            focusKey={VanillaComponentResolver.instance.FOCUS_DISABLED}
-                            onMouseUpCapture={(e) => LabelMouseUp(props.data.Section, props.data.Id, e.button)}
-                            variant="icon"
-                        >
-                        </Button>
-                    }                        
+                    </Button>           
                     <Button
                         className={foStyles.titleButton}
                         id={props.data.Id}
@@ -108,15 +99,6 @@ export const FOEntryRow = (props: {data: FOMainEntryData, state: FOMainEntryStat
             {props.isOpen && (
                 <Tooltip tooltip={props.data.Tooltip}>
                     <div className={classes}>
-                        <Button
-                            className={foStyles.icon}                
-                            focusKey={VanillaComponentResolver.instance.FOCUS_DISABLED}
-                            onMouseUpCapture={(e) => LabelMouseUp(props.data.Section, props.data.RawId, e.button)}
-                            variant="icon"
-                            src={props.data.Icon}
-                        >
-                        </Button>
-
                         {showCB && (<div
                             className={foStyles.checkbox}
                             onMouseUp={(e) => LabelMouseUp(props.data.Section, props.data.RawId, e.button)}
@@ -125,14 +107,22 @@ export const FOEntryRow = (props: {data: FOMainEntryData, state: FOMainEntryStat
                             </div>
                         )}
                         
-                            <div
-                                className={labelClasses}
-                                onMouseUp={(e) => LabelMouseUp(props.data.Section, props.data.RawId, e.button)}
-                                >
-                                    <>
-                                        {translate(props.data.LabelLocaleKey, props.data.LabelFallback)}          
-                                    </>
-                            </div>
+                        <Button
+                            className={foStyles.icon}                
+                            focusKey={VanillaComponentResolver.instance.FOCUS_DISABLED}
+                            onMouseUpCapture={(e) => LabelMouseUp(props.data.Section, props.data.RawId, e.button)}
+                            variant="icon"
+                            src={props.data.Icon}
+                        >
+                        </Button>
+                        <div
+                            className={labelClasses}
+                            onMouseUp={(e) => LabelMouseUp(props.data.Section, props.data.RawId, e.button)}
+                            >
+                                <>
+                                    {translate(props.data.LabelLocaleKey, props.data.LabelFallback)}          
+                                </>
+                        </div>
                     </div>
                 </Tooltip>
             )}

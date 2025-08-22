@@ -5,7 +5,7 @@ import { FOEntryRow, FOTitleRow } from "./foRow";
 
 export const Foldout = (props : {data: FoldoutData, state: FoldoutState})  : JSX.Element => {
     return (  
-        <div className={foStyles.container}>
+        <div className={foStyles.columnGroup}>
             <FOTitleRow data={props.data.Title} state={props.state}></FOTitleRow>
             <div className={foStyles.entries}>
             {

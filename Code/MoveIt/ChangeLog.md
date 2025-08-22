@@ -1,4 +1,3 @@
-﻿# Patch v0.5.8
-* Rearranged new Icons to be first in the row rather than last.
-* Added panels to Editor.
-* Improved Tooltip handling for main panel.
+﻿# Patch v0.5.9
+* Checkboxes are now left of icons.
+* Adjusted panel width to accomodate all currently translated languages.

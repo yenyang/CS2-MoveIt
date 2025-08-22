@@ -11,7 +11,6 @@
 .title
 {
     height: 35rem;
-    width: 100%;
 }
 .title:hover
 {
@@ -152,6 +151,16 @@
 }
 
 .titleButton {
-    width: 120rem;
     justify-content: space-between !important;
+    flex-grow: 2;
+}
+
+
+.columnGroup {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
+    padding-bottom: 1rem;
 }
