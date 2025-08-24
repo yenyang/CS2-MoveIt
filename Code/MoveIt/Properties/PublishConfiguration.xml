@@ -1,12 +1,15 @@
 <Publish>
   <!--Id must be set in order to update existed mod. it is not required for publishing mod for the first time-->
-  <ModId Value="83596" />
+  <!--Stable ID: 74324 | Beta ID:  83596-->
+  <ModId Value="74324" />
   <!--Name of the mod to display to players-->
-  <DisplayName Value="Move It [Beta]" />
+   <!--Stable Name: Move It | Beta Name:  Move It [Beta]-->
+  <DisplayName Value="Move It" />
   <!--Short description of the mod-->
   <ShortDescription Value="Move Things" />
   <!--Long description of the mod. Single line or multi line. Supports minimal markdown subset-->
-  <LongDescription># Move It Beta for Cities Skylines 2.
+  <!--Stable Name: Move It | Beta Name:  Move It Beta-->
+  <LongDescription># Move It for Cities Skylines 2.
 
 You can move trees, props, decals, buildings, surfaces, nodes, and segment curves.
 
@@ -22,7 +25,7 @@ Unified Icon Library
 If you want to say thank you to **Quboid** with a donation you can do so on Paypal. I will replace the donation link once I've implemented sufficient changes.
 
 ## Translations
-I am looking for volunteers to help translate the mod into the other languages. For those interested please discuss the translation project in the discord link. CSM Community Projects -&gt; move-it -&gt; Move It: Translations. CrowdIn Link available here.
+I am looking for volunteers to help translate the mod into the other languages. For those interested please discuss the translation project in Cities Skylines Modding Discord. Invite Link: https://discord.gg/HTav7ARPs2. Thread: CSM Community Projects -&gt; move-it -&gt; Move It: Translations. CrowdIn Link available here.
 
 ## Selecting:
 
@@ -98,7 +101,9 @@ Translators: Pingwin_PL and karmel68 (Polish), elGendo87 (Spanish), ti4goc (Port
   <!--Tag, can be set multiple-->
   <Tag Value="Code Mod" />
   <!--Link to the forum post where the mod can be discussed-->
-  <ForumLink Value="https://forum.paradoxplaza.com/forum/threads/move-it-unstable.1691126/" />
+  <!-- Stable Forum Link: https://forum.paradoxplaza.com/forum/threads/move-it.1684140/  -->
+  <!-- Beta Forum Link: https://forum.paradoxplaza.com/forum/threads/move-it-unstable.1691126/ -->
+  <ForumLink Value="https://forum.paradoxplaza.com/forum/threads/move-it.1684140/" />
   <!--Version of the mod-->
   <ModVersion Value="0.5.9" />
   <!--Recommended version of the base game to use the mod-->
@@ -107,10 +112,14 @@ Translators: Pingwin_PL and karmel68 (Polish), elGendo87 (Spanish), ti4goc (Port
   <Dependency Id="74417" DisplayName="Unified Icon Library" Version="1.0.13" />
   <!--Change log for new version. Single line or multi line. Supports minimal markdown subset-->
   <ChangeLog># Patch v0.5.9
-* Checkboxes are now left of icons.
-* Adjusted panel width to accomodate all currently translated languages.</ChangeLog>
+* Added Localization Support.
+* Added Unified Icon Library Dependency
+* Added Icons to filters and toolbox actions.
+* Added Tooltip Icons and Toolbox tooltips.
+* Adjusted panel width to accommodate all currently translated languages.
+* Added panels to Editor.</ChangeLog>
   <!--External link. supported types are discord, github, youtube, twitch, x, paypal, patreon-->
-  <ExternalLink Type="discord" Url="https://discord.gg/HTav7ARPs2" />
+  <ExternalLink Type="discord" Url="https://discord.gg/nURB9MQ" />
   <ExternalLink Type="paypal" Url="https://www.paypal.me/QuboidCSL1" />
   <ExternalLink Type="github" Url="https://github.com/yenyang/CS2-MoveIt" />
   <ExternalLink Type="crowdin" Url="https://crowdin.com/project/csl2-mod-move-it" />

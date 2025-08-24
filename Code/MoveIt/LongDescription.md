@@ -1,4 +1,4 @@
-﻿# Move It Beta for Cities Skylines 2.
+﻿# Move It for Cities Skylines 2.
 
 You can move trees, props, decals, buildings, surfaces, nodes, and segment curves.
 
@@ -14,7 +14,7 @@ Unified Icon Library
 If you want to say thank you to **Quboid** with a donation you can do so on Paypal. I will replace the donation link once I've implemented sufficient changes.
 
 ## Translations
-I am looking for volunteers to help translate the mod into the other languages. For those interested please discuss the translation project in the discord link. CSM Community Projects -> move-it -> Move It: Translations. CrowdIn Link available here.
+I am looking for volunteers to help translate the mod into the other languages. For those interested please discuss the translation project in Cities Skylines Modding Discord. Invite Link: https://discord.gg/HTav7ARPs2. Thread: CSM Community Projects -> move-it -> Move It: Translations. CrowdIn Link available here.
 
 ## Selecting:
 
