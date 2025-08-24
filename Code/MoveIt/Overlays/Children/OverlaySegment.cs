@@ -1,4 +1,5 @@
-﻿using Colossal.Mathematics;
+﻿using Colossal.Entities;
+using Colossal.Mathematics;
 using MoveIt.Moveables;
 using MoveIt.Tool;
 using QCommonLib;
@@ -138,16 +139,18 @@ namespace MoveIt.Overlays.Children
             dashedBuffer.Add(new(DrawTools.CalculateProtrudedLine(cpPos[3], cpPos[2])));
 
             // Outline
-            var edgeGeo = _MIT.EntityManager.GetComponentData<Game.Net.EdgeGeometry>(m_Owner);
-            float3 offset = new(0f);
-            if (_MIT.EntityManager.HasComponent<Game.Net.Elevation>(m_Owner))
+            if (_MIT.EntityManager.TryGetComponent(m_Owner, out Game.Net.EdgeGeometry edgeGeo))
             {
-                offset.y = 0.5f;
+                float3 offset = new(0f);
+                if (_MIT.EntityManager.HasComponent<Game.Net.Elevation>(m_Owner))
+                {
+                    offset.y = 0.5f;
+                }
+                curvesBuffer.Add(new(edgeGeo.m_Start.m_Left + offset));
+                curvesBuffer.Add(new(edgeGeo.m_Start.m_Right + offset));
+                curvesBuffer.Add(new(edgeGeo.m_End.m_Left + offset));
+                curvesBuffer.Add(new(edgeGeo.m_End.m_Right + offset));
             }
-            curvesBuffer.Add(new(edgeGeo.m_Start.m_Left + offset));
-            curvesBuffer.Add(new(edgeGeo.m_Start.m_Right + offset));
-            curvesBuffer.Add(new(edgeGeo.m_End.m_Left + offset));
-            curvesBuffer.Add(new(edgeGeo.m_End.m_Right + offset));
 
             return true;
         }

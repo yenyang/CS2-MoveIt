@@ -1,4 +1,4 @@
-﻿# Move It for Cities Skylines 2.
+﻿# Move It Beta for Cities Skylines 2.
 
 You can move trees, props, decals, buildings, surfaces, nodes, and segment curves.
 
@@ -72,10 +72,13 @@ Save often, save different.
 
 ## Credits:
 Original Author: Quboid
+
 Current Author: Yenyang
+
 Big thanks to SamSamTS, Krzychu124, T.D.W., Klyte45, REV0, BadPeanut, Sully, Algernon, CanadianMoosePlays!
 
 Icons from SVG Repo, and from WishForge.Games under CC Attribution License.
+
 Unified Icon Library icons by Chameleon TBN
 
 Translators: Pingwin_PL and karmel68 (Polish), elGendo87 (Spanish), ti4goc (Portuguese), Morgan, aidan taylor and prospr (French), nemoriees and 0belix (Portugese, Brazilian), ExpedientFalcon and allegretic (Japenese), Nullpinter and RilkeXS (Chinese Simplified), allegretic (Chinese Traditional), MyNameIsntRealHere and WISSAH (Dutch)

@@ -33,7 +33,7 @@ namespace MoveIt
         public static string Version => Assembly.GetExecutingAssembly().GetName().Version.ToString(4);
 #else
         public const bool IS_BETA = false;
-        public static string Version => Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
+        public static string Version => Assembly.GetExecutingAssembly().GetName().Version.ToString(4);
 #endif
 
         public static Settings.Settings Settings;
