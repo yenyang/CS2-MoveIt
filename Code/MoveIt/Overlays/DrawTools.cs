@@ -22,7 +22,7 @@ namespace MoveIt.Overlays
         #region Drawing Lines
         public static void LineSimple(OverlayRenderSystem.Buffer buffer, MIO_Common common, Line3.Segment line, Projection proj)
         {
-            buffer.DrawLine(common.m_OutlineColor, common.m_OutlineColor, common.GetWidth(proj), GetProjection(proj), line, common.GetWidth(proj));
+            buffer.DrawLine(common.m_OutlineColor, common.m_OutlineColor, common.GetWidth(proj), GetProjection(proj), line, common.GetWidth(proj), new float2());
         }
 
         public static void Curve(OverlayRenderSystem.Buffer buffer, MIO_Common common, Bezier4x3 curve, Projection proj, float width = -1, float widthMultiplier = 1f)

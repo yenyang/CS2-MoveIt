@@ -109,14 +109,14 @@ Translators: Pingwin_PL and karmel68 (Polish), elGendo87 (Spanish), ti4goc (Port
   <!-- Beta Forum Link: https://forum.paradoxplaza.com/forum/threads/move-it-unstable.1691126/ -->
   <ForumLink Value="https://forum.paradoxplaza.com/forum/threads/move-it-unstable.1691126/" />
   <!--Version of the mod-->
-  <ModVersion Value="0.5.9.1" />
+  <ModVersion Value="0.5.9.2" />
   <!--Recommended version of the base game to use the mod-->
   <GameVersion Value="1.3.*" />
   <!--Dependency for the mod, can be set multiple-->
   <Dependency Id="74417" DisplayName="Unified Icon Library" Version="1.0.13" />
   <!--Change log for new version. Single line or multi line. Supports minimal markdown subset-->
   <ChangeLog># Patch v0.5.9.1
-* No longer generating invalid overlay outlines for NetLanes. (Potential fix for overlay issus and errors while manipulating NetLanes).</ChangeLog>
+* No longer generating invalid overlay outlines for NetLanes. (Potential fix for overlay issues and errors while manipulating NetLanes).</ChangeLog>
   <!--External link. supported types are discord, github, youtube, twitch, x, paypal, patreon-->
   <ExternalLink Type="discord" Url="https://discord.gg/nURB9MQ" />
   <ExternalLink Type="paypal" Url="https://www.paypal.me/QuboidCSL1" />
