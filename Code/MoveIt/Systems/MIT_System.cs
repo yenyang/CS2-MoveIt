@@ -11,7 +11,7 @@ namespace MoveIt.Systems
 {
     internal abstract partial class MIT_System : SystemBase
     {
-        protected static readonly MIT _MIT = MIT.m_Instance;
+        protected static readonly MoveItToolSystem _MIT = MoveItToolSystem.m_Instance;
 
         protected override void OnCreate()
         {

@@ -9,6 +9,9 @@ import { VanillaComponentResolver } from "classes/VanillaComponentResolver";
 import { ButtonPressed } from "bindings";
 import { ButtonState } from "./panelState";
 import { uilStandard } from "./toolboxFoldout";
+import { trigger } from "cs2/api";
+import mod from "../../mod.json";
+import { MouseEventHandler } from "react";
 
 export const uilColored =                          "coui://uil/Colored/";
 export const uilDark =                          "coui://uil/Dark/";
@@ -19,6 +22,8 @@ export interface ModeButtonProps
     DisabledSrc: string,
     OffSrc: string,
     ActiveSrc: string,
+    OnMouseEnter?: MouseEventHandler
+    OnMouseLeave?: MouseEventHandler
 }
 
 export const ModeButton = (props: { data : ModeButtonProps, state : ButtonState}) => 
@@ -36,6 +41,8 @@ export const ModeButton = (props: { data : ModeButtonProps, state : ButtonState}
                     src={!props.state.IsEnabled ? props.data.DisabledSrc : props.state.IsActive ? props.data.ActiveSrc : props.data.OffSrc}
                     focusKey={VanillaComponentResolver.instance.FOCUS_DISABLED}
                     onSelect={() => ButtonPressed("toprow", props.data.Id)}
+                    onMouseEnter={props.data.OnMouseEnter}
+                    onMouseLeave={props.data.OnMouseLeave}
                     variant="icon"
                 >
                 </Button>

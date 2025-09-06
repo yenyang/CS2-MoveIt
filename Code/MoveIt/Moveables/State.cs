@@ -238,7 +238,7 @@ namespace MoveIt.Moveables
 
         public readonly void DebugDump()
         {
-            MIT.Log.Debug(ToString());
+            MoveItToolSystem.Log.Debug(ToString());
         }
     }
 }

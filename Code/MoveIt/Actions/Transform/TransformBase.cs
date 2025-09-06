@@ -80,7 +80,7 @@ namespace MoveIt.Actions.Transform
             m_Active = m_New;
             HashSet<Entity> allEntities = new();
 
-            m_InitialBounds = _MIT.Selection.GetTotalBounds(MIT.TERRAIN_UPDATE_MARGIN);
+            m_InitialBounds = _MIT.Selection.GetTotalBounds(MoveItToolSystem.TERRAIN_UPDATE_MARGIN);
             m_TerrainUpdateBounds = m_InitialBounds;
             m_Center = _MIT.Selection.Center;
 
@@ -169,7 +169,7 @@ namespace MoveIt.Actions.Transform
         {
             QLookupFactory.Init(_MIT);
 
-            m_TerrainUpdateBounds = _MIT.Selection.GetTotalBounds(MIT.TERRAIN_UPDATE_MARGIN);
+            m_TerrainUpdateBounds = _MIT.Selection.GetTotalBounds(MoveItToolSystem.TERRAIN_UPDATE_MARGIN);
             m_Snapper.m_SnapType = Snapper.SnapTypes.None;
 
             if (!ToolDo())
@@ -244,7 +244,7 @@ namespace MoveIt.Actions.Transform
 
         public override void Undo()
         {
-            MIT.Log.Debug($"TB.Undo |{Phase};{_MIT.Queue.Index}|");
+            MoveItToolSystem.Log.Debug($"TB.Undo |{Phase};{_MIT.Queue.Index}|");
             m_Active = m_Old;
             UndoRedoProcess();
             //DebugDumpStates($"Undo ");
@@ -252,7 +252,7 @@ namespace MoveIt.Actions.Transform
 
         public override void Redo()
         {
-            MIT.Log.Debug($"TB.Redo |{Phase};{_MIT.Queue.Index}|");
+            MoveItToolSystem.Log.Debug($"TB.Redo |{Phase};{_MIT.Queue.Index}|");
             m_Active = m_New;
             UndoRedoProcess();
             //DebugDumpStates($"Redo ");
@@ -260,7 +260,7 @@ namespace MoveIt.Actions.Transform
 
         private void UndoRedoProcess()
         {
-            MIT.Log.Debug($"TB.UndoRedoProcess |{Phase};{_MIT.Queue.Index}| Updates-[Move:{m_UpdateMove},Rotate:{m_UpdateRotate}]");
+            MoveItToolSystem.Log.Debug($"TB.UndoRedoProcess |{Phase};{_MIT.Queue.Index}| Updates-[Move:{m_UpdateMove},Rotate:{m_UpdateRotate}]");
             m_UpdateMove = true;
             m_UpdateRotate = true;
             m_HasMovedAction = true;
@@ -270,7 +270,7 @@ namespace MoveIt.Actions.Transform
 
         public override void Finalise()
         {
-            MIT.Log.Debug($"TB.Finalise |{Phase};{_MIT.Queue.Index}| Updates-[Move:{m_UpdateMove},Rotate:{m_UpdateRotate},HasMovedAction:{m_HasMovedAction}]");
+            MoveItToolSystem.Log.Debug($"TB.Finalise |{Phase};{_MIT.Queue.Index}| Updates-[Move:{m_UpdateMove},Rotate:{m_UpdateRotate},HasMovedAction:{m_HasMovedAction}]");
             Phase = Phases.Cleanup;
             if (!m_HasMovedAction)
             {
@@ -287,7 +287,7 @@ namespace MoveIt.Actions.Transform
 
             _MIT.m_SelectionDirty = true;
 
-            m_FinalBounds = _MIT.Selection.GetTotalBounds(MIT.TERRAIN_UPDATE_MARGIN);
+            m_FinalBounds = _MIT.Selection.GetTotalBounds(MoveItToolSystem.TERRAIN_UPDATE_MARGIN);
 
             m_Neighbours = GetSelectionNeighbours();
             for (int i = 0; i < m_Neighbours.Length; i++)
@@ -428,7 +428,7 @@ namespace MoveIt.Actions.Transform
                 State old = m_Old.m_States[i];
                 if (!old.m_Entity.Exists(_MIT.EntityManager))
                 {
-                    MIT.Log.Warning($"{GetType().Name}.{System.Reflection.MethodBase.GetCurrentMethod().Name} Invalid state: {old}  {QCommon.GetCallerDebug()}");
+                    MoveItToolSystem.Log.Warning($"{GetType().Name}.{System.Reflection.MethodBase.GetCurrentMethod().Name} Invalid state: {old}  {QCommon.GetCallerDebug()}");
                     continue;
                 }
 
@@ -602,13 +602,13 @@ namespace MoveIt.Actions.Transform
             Bounds3 bounds = _MIT.Selection.GetTotalBounds();
             if (area.Equals(default))
             {
-                area.min = bounds.min - MIT.TERRAIN_UPDATE_MARGIN;
-                area.max = bounds.max + MIT.TERRAIN_UPDATE_MARGIN;
+                area.min = bounds.min - MoveItToolSystem.TERRAIN_UPDATE_MARGIN;
+                area.max = bounds.max + MoveItToolSystem.TERRAIN_UPDATE_MARGIN;
             }
             else
             {
-                area.min = math.min(area.min, bounds.min - MIT.TERRAIN_UPDATE_MARGIN);
-                area.max = math.max(area.max, bounds.max + MIT.TERRAIN_UPDATE_MARGIN);
+                area.min = math.min(area.min, bounds.min - MoveItToolSystem.TERRAIN_UPDATE_MARGIN);
+                area.max = math.max(area.max, bounds.max + MoveItToolSystem.TERRAIN_UPDATE_MARGIN);
             }
             m_TerrainUpdateBounds = area;
 
@@ -674,7 +674,7 @@ namespace MoveIt.Actions.Transform
 
         public void DebugDumpStates(string prefix = "", bool showOld = true, bool showNew = true)
         {
-            MIT.Log.Debug(DebugStates(prefix, showOld, showNew));
+            MoveItToolSystem.Log.Debug(DebugStates(prefix, showOld, showNew));
         }
 
         public string DebugNeighbours(int depth = 0)

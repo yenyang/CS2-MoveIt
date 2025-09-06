@@ -135,7 +135,7 @@ namespace MoveIt.Overlays
             }
             catch (Exception ex)
             {
-                MIT.Log.Error($"Failed on UpdateOverlaysJob:\n{ex}");
+                MoveItToolSystem.Log.Error($"Failed on UpdateOverlaysJob:\n{ex}");
             }
 
             try
@@ -171,7 +171,7 @@ namespace MoveIt.Overlays
             }
             catch (Exception ex)
             {
-                MIT.Log.Error($"Failed on DrawOverlaysJob:\n{ex}");
+                MoveItToolSystem.Log.Error($"Failed on DrawOverlaysJob:\n{ex}");
             }
 
 

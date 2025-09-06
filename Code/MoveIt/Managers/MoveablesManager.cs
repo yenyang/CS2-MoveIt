@@ -67,7 +67,7 @@ namespace MoveIt.Managers
             }
             catch (Exception ex)
             {
-                MIT.Log.Error($"Factory failed to create {id} {mvd}\n{ex}");
+                MoveItToolSystem.Log.Error($"Factory failed to create {id} {mvd}\n{ex}");
                 return null;
             }
         }
@@ -77,7 +77,7 @@ namespace MoveIt.Managers
             _MIT.Selection.Clear();
             _MIT.Hover.Clear();
 
-            MIT.Log.Debug($"Moveables.Clear Removing all (Manager has {Count} entries before removal)");
+            MoveItToolSystem.Log.Debug($"Moveables.Clear Removing all (Manager has {Count} entries before removal)");
             _Moveables.Clear();
         }
 
@@ -295,7 +295,7 @@ namespace MoveIt.Managers
 
         internal void RemoveDo(Moveable mv)
         {
-            MIT.Log.Info($"Removing {mv} {QCommon.GetCallerDebug()}", "MI-MMREMDO-01");
+            MoveItToolSystem.Log.Info($"Removing {mv} {QCommon.GetCallerDebug()}", "MI-MMREMDO-01");
             //QLog.Debug($"MM.RemoveDo: {mv.D()}");
             _Moveables.Remove(mv);
             mv.Dispose();
@@ -333,12 +333,12 @@ namespace MoveIt.Managers
 
         public void DebugDumpFull(string prefix = "")
         {
-            MIT.Log.Debug(prefix + DebugFull());
+            MoveItToolSystem.Log.Debug(prefix + DebugFull());
         }
 
         public void DebugDumpFullBundle(string key, string prefix = "")
         {
-            MIT.Log.Bundle(key, prefix + DebugFull());
+            MoveItToolSystem.Log.Bundle(key, prefix + DebugFull());
         }
         #endregion
     }

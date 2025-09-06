@@ -55,7 +55,7 @@ namespace MoveIt.Settings
             set
             {
                 _ExtraDebugLogging = value;
-                if (MIT.Log is not null) MIT.Log.IsDebug = value;
+                if (MoveItToolSystem.Log is not null) MoveItToolSystem.Log.IsDebug = value;
             }
         }
         private bool _ExtraDebugLogging = true;

@@ -20,7 +20,7 @@ namespace MoveIt.Actions.Toolbox
                 State old = m_Old.m_States[i];
                 if (!old.m_Entity.Exists(_MIT.EntityManager))
                 {
-                    MIT.Log.Warning($"{GetType().Name}.{System.Reflection.MethodBase.GetCurrentMethod().Name} Invalid state: {old} {QCommon.GetCallerDebug()}");
+                    MoveItToolSystem.Log.Warning($"{GetType().Name}.{System.Reflection.MethodBase.GetCurrentMethod().Name} Invalid state: {old} {QCommon.GetCallerDebug()}");
                     continue;
                 }
 

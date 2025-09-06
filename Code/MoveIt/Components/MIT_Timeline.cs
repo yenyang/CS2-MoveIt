@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MoveIt.Components
 {
-    internal class MIT_Timeline
+    internal struct MIT_Timeline
     {
     }
 }

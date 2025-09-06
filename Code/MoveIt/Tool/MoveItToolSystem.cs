@@ -10,6 +10,7 @@ using System.Linq;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
+using Game.Simulation;
 
 namespace MoveIt.Tool
 {
@@ -20,7 +21,7 @@ namespace MoveIt.Tool
         SecondaryButtonHeld,
         DrawingSelection,
         ToolActive,
-        ModificationsPrepared,
+        Cancelling,
     }
 
     [Flags]
@@ -39,9 +40,9 @@ namespace MoveIt.Tool
         ParentManipulating  = 512,
     }
 
-    public partial class MIT : ObjectToolBaseSystem
+    public partial class MoveItToolSystem : ObjectToolBaseSystem
     {
-        internal static MIT m_Instance;
+        internal static MoveItToolSystem m_Instance;
 
         internal ControlPointManager ControlPointManager;
         internal InputManager InputManager;

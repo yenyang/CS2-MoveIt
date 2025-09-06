@@ -7,7 +7,7 @@ namespace MoveIt.Overlays.DebugOverlays
 {
     public class DebugCircle
     {
-        protected static readonly MIT _MIT = MIT.m_Instance;
+        protected static readonly MoveItToolSystem _MIT = MoveItToolSystem.m_Instance;
 
         private static readonly EntityArchetype _Archetype = _MIT.EntityManager.CreateArchetype(
             new ComponentType[] {

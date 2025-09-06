@@ -17,18 +17,24 @@ using Unity.Entities;
 
 namespace MoveIt.Tool
 {
-    public partial class MIT : ObjectToolBaseSystem
+    public partial class MoveItToolSystem : ObjectToolBaseSystem
     {
         public override void InitializeRaycast()
         {
             base.InitializeRaycast();
 
-            m_ToolRaycastSystem.collisionMask   = CollisionMask.OnGround | CollisionMask.Overground | CollisionMask.ExclusiveGround;
-            m_ToolRaycastSystem.typeMask        = TypeMask.StaticObjects | TypeMask.Lanes | TypeMask.Net | TypeMask.Areas | TypeMask.Terrain;
-            m_ToolRaycastSystem.raycastFlags    = RaycastFlags.Decals | RaycastFlags.Markers;
-            m_ToolRaycastSystem.netLayerMask    = Layer.Road | Layer.TrainTrack | Layer.TramTrack | Layer.SubwayTrack | Layer.Pathway | Layer.Fence | Layer.LaneEditor;
-            m_ToolRaycastSystem.iconLayerMask   = Game.Notifications.IconLayerMask.None;
-
+            if (!m_TempQuery.IsEmptyIgnoreFilter)
+            {
+                m_ToolRaycastSystem.typeMask = TypeMask.Terrain;
+            }
+            else
+            {
+                m_ToolRaycastSystem.collisionMask = CollisionMask.OnGround | CollisionMask.Overground | CollisionMask.ExclusiveGround;
+                m_ToolRaycastSystem.typeMask = TypeMask.StaticObjects | TypeMask.Lanes | TypeMask.Net | TypeMask.Areas | TypeMask.Terrain;
+                m_ToolRaycastSystem.raycastFlags = RaycastFlags.Decals | RaycastFlags.Markers;
+                m_ToolRaycastSystem.netLayerMask = Layer.Road | Layer.TrainTrack | Layer.TramTrack | Layer.SubwayTrack | Layer.Pathway | Layer.Fence | Layer.LaneEditor;
+                m_ToolRaycastSystem.iconLayerMask = Game.Notifications.IconLayerMask.None;
+            }
             m_RaycastTerrain = new RaycastTerrain(World);
             m_RaycastSurface = new RaycastSurface(World);
         }

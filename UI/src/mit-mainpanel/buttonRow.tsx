@@ -36,6 +36,7 @@ import icD from "../img/icon_PopoutClose.svg";
 import { getModule } from "cs2/modding";
 import { useLocalization } from "cs2/l10n";
 import { ModeButton } from "./modeButton";
+import { trigger } from "cs2/api";
 
 export const ButtonRowTop = (props: {topRowState : TopRowButtonStates}) => {
     const classes = classNames({
@@ -65,7 +66,7 @@ export const ButtonRowTop = (props: {topRowState : TopRowButtonStates}) => {
                 <span className={styles.separator}></span>
                 <ModeButton data={{Id: "Copy", OffSrc: copyOffSrc, DisabledSrc: copyDisabledSrc, ActiveSrc: copyActiveSrc}} state={props.topRowState.ButtonCopy}></ModeButton>
                 <span className={styles.separator}></span>
-                <ModeButton data={{Id: "Delete", OffSrc: deleteOffSrc, DisabledSrc: deleteDisabledSrc, ActiveSrc: deleteOffSrc}} state={props.topRowState.ButtonDelete}></ModeButton>
+                <ModeButton data={{Id: "Delete", OffSrc: deleteOffSrc, DisabledSrc: deleteDisabledSrc, ActiveSrc: deleteOffSrc, OnMouseEnter:() => trigger(mod.id, "DeleteMouseEnter"), OnMouseLeave: () => trigger(mod.id, "DeleteMouseLeave")}} state={props.topRowState.ButtonDelete} ></ModeButton>
                 <span className={styles.separator}></span>
                 {ButtonRowButton(TopButtonsData[4], props.topRowState.ButtonRedo, DescriptionTooltip( translate("MoveIt.TOOLTIP_TITLE[Redo]", locale["MoveIt.TOOLTIP_TITLE[Redo]"]), translate("MoveIt.TOOLTIP_DESCRIPTION[Redo]", locale["MoveIt.TOOLTIP_DESCRIPTION[Redo]"]) ))}
             </div>

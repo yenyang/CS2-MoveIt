@@ -8,7 +8,7 @@ namespace MoveIt.UI.Foldout
     /// </summary>
     internal abstract record FoldoutEntry : IEquatable<FoldoutEntry>
     {
-        protected readonly MIT _MIT = MIT.m_Instance;
+        protected readonly MoveItToolSystem _MIT = MoveItToolSystem.m_Instance;
 
         internal virtual bool Active
         {

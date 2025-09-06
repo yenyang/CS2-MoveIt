@@ -46,12 +46,12 @@ namespace MoveIt.Actions.Select
 
             SelectionState newSelectionStates = new(_MIT.m_IsManipulateMode, toSelection);
 
-            MIT.Log.Debug($"SB-{Name}.ProcessSelectionChange {QCommon.GetCallerDebug()}" +
-                $"\n FromSelection: {MIT.DebugDefinitions(fromSelection)}" +
-                $"\n   ToSelection: {MIT.DebugDefinitions(toSelection)}" +
-                $"\n      Deselect: {MIT.DebugDefinitions(deselected)}" +
-                $"\n      Reselect: {MIT.DebugDefinitions(reselected)}" +
-                $"\n         Final: {MIT.DebugDefinitions(newSelectionStates.Definitions)}");
+            MoveItToolSystem.Log.Debug($"SB-{Name}.ProcessSelectionChange {QCommon.GetCallerDebug()}" +
+                $"\n FromSelection: {MoveItToolSystem.DebugDefinitions(fromSelection)}" +
+                $"\n   ToSelection: {MoveItToolSystem.DebugDefinitions(toSelection)}" +
+                $"\n      Deselect: {MoveItToolSystem.DebugDefinitions(deselected)}" +
+                $"\n      Reselect: {MoveItToolSystem.DebugDefinitions(reselected)}" +
+                $"\n         Final: {MoveItToolSystem.DebugDefinitions(newSelectionStates.Definitions)}");
 
             _MIT.Selection = m_IsManipulationMode ? 
                 new SelectionManip(newSelectionStates) : 

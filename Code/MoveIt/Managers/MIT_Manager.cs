@@ -6,6 +6,6 @@ namespace MoveIt.Managers
     public abstract class MIT_Manager
     {
         // ReSharper disable once InconsistentNaming
-        protected readonly MIT _MIT = MIT.m_Instance;
+        protected readonly MoveItToolSystem _MIT = MoveItToolSystem.m_Instance;
     }
 }

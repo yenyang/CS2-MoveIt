@@ -10,7 +10,7 @@ namespace MoveIt.Components
     /// <summary>
     /// A tag component for entity is selected by Move It Tool.
     /// </summary>
-    public class MIT_Selected : IComponentData, IQueryTypeParameter
+    public struct MIT_Selected : IComponentData, IQueryTypeParameter
     {
     }
 }

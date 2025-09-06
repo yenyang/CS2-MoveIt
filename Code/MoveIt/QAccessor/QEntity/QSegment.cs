@@ -54,7 +54,7 @@ namespace MoveIt.QAccessor.QEntity
 
         private bool Segment_MoveTo(State state, float3 newPosition, float3 delta)
         {
-            MIT.Log.Info($"QSeg.Move called - new:{newPosition.DX()}, delta:{delta.DX()}, start:{Position.DX()}");
+            MoveItToolSystem.Log.Info($"QSeg.Move called - new:{newPosition.DX()}, delta:{delta.DX()}, start:{Position.DX()}");
             return false;
         }
 

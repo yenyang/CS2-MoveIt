@@ -8,7 +8,7 @@ namespace MoveIt.Selection
 {
     public abstract class ActionState
     {
-        protected static readonly MIT _MIT = MIT.m_Instance;
+        protected static readonly MoveItToolSystem _MIT = MoveItToolSystem.m_Instance;
 
         protected readonly bool _IsManipulation;
 
@@ -89,7 +89,7 @@ namespace MoveIt.Selection
 
             List<MVDefinition> newDefinitions = definitions.Except(toRemove).ToList();
 
-            MIT.Log.Info($"{msg}, NewDefs:{newDefinitions.Count} {(removing.Length > 0 ? $"\n Removing: {removing}" : "")}");
+            MoveItToolSystem.Log.Info($"{msg}, NewDefs:{newDefinitions.Count} {(removing.Length > 0 ? $"\n Removing: {removing}" : "")}");
 
             return newDefinitions;
         }
@@ -97,10 +97,10 @@ namespace MoveIt.Selection
         internal static SelectionState SelectionToState(bool isManipulation, HashSet<MVDefinition> definitions = null)
         {
             definitions ??= new();
-            string old = MIT.DebugDefinitions(definitions);
+            string old = MoveItToolSystem.DebugDefinitions(definitions);
             SelectionState result = new(isManipulation, definitions.ToList());
 
-            QLog.Debug($"SS.SelectionToState {QCommon.GetCallerDebug()}\nOld: {old}\nNew: {MIT.DebugDefinitions(result.Definitions)}");
+            QLog.Debug($"SS.SelectionToState {QCommon.GetCallerDebug()}\nOld: {old}\nNew: {MoveItToolSystem.DebugDefinitions(result.Definitions)}");
 
             return result;
         }
@@ -128,7 +128,7 @@ namespace MoveIt.Selection
 
         public void DebugDump(string prefix = "")
         {
-            MIT.Log.Debug(prefix + Debug());
+            MoveItToolSystem.Log.Debug(prefix + Debug());
         }
     }
 }

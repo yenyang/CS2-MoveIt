@@ -16,7 +16,7 @@ namespace MoveIt.Searcher
 {
     internal class Searcher : IDisposable, INativeDisposable
     {
-        protected static readonly MIT _MIT = MIT.m_Instance;
+        protected static readonly MoveItToolSystem _MIT = MoveItToolSystem.m_Instance;
 
         protected QLookup _Lookup;
 
@@ -229,7 +229,7 @@ namespace MoveIt.Searcher
             }
             catch (Exception ex)
             {
-                MIT.Log.Error($"Search {_Type} failed.\n{ex}");
+                MoveItToolSystem.Log.Error($"Search {_Type} failed.\n{ex}");
             }
         }
 
@@ -389,14 +389,14 @@ namespace MoveIt.Searcher
 
         internal void DebugDumpSearchResults(bool full = false, string prefix = "")
         {
-            MIT.Log.Debug(prefix + DebugSearchResults(full));
+            MoveItToolSystem.Log.Debug(prefix + DebugSearchResults(full));
         }
 
         internal void DebugDumpSearchResultsBundle(string key, bool full = false, bool includeEmpty = false, string prefix = "")
         {
             if (includeEmpty || HasSearchResults())
             {
-                MIT.Log.Bundle(key, prefix + DebugSearchResults(full));
+                MoveItToolSystem.Log.Bundle(key, prefix + DebugSearchResults(full));
             }
         }
 
