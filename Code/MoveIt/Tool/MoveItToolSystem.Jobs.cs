@@ -155,7 +155,7 @@ namespace MoveIt.Tool
                             objectDefinition.m_LocalRotation = objectDefinition.m_Rotation;
                         }
                        
-                        if (!m_TreeLookup.TryGetComponent(entityNativeArray[i], out Tree tree))
+                        if (m_CreationFlags == CreationFlags.Relocate)
                         {
                             objectDefinition.m_Position.x += m_EndPoint.m_Position.x - m_StartPoint.m_Position.x;
                             objectDefinition.m_Position.z += m_EndPoint.m_Position.z - m_StartPoint.m_Position.z;
@@ -164,6 +164,10 @@ namespace MoveIt.Tool
                         {
                             objectDefinition.m_Position.x += m_EndPoint.m_Position.x - m_Centroid.m_Position.x;
                             objectDefinition.m_Position.z += m_EndPoint.m_Position.z - m_Centroid.m_Position.z;
+                        }
+
+                        if (m_TreeLookup.TryGetComponent(entityNativeArray[i], out Tree tree))
+                        {
                             objectDefinition.m_Age = GetTreeAge(tree);
                         }
 
