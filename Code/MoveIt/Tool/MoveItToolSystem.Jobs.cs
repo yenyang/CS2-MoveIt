@@ -141,22 +141,6 @@ namespace MoveIt.Tool
                             m_Scale = new float3(1,1,1),
                         };
 
-                        if ((m_CreationFlags & CreationFlags.Relocate) == CreationFlags.Relocate)
-                        {
-                            objectDefinition.m_Position.x += m_EndPoint.m_Position.x - m_StartPoint.m_Position.x;
-                            objectDefinition.m_Position.z += m_EndPoint.m_Position.z - m_StartPoint.m_Position.z;
-                        }
-                        else if (m_CreationFlags == 0)
-                        {
-                            objectDefinition.m_Position.x += m_EndPoint.m_Position.x - m_Centroid.m_Position.x;
-                            objectDefinition.m_Position.z += m_EndPoint.m_Position.z - m_Centroid.m_Position.z;
-                        }
-
-                        if (m_FollowTerrain)
-                        {
-                            objectDefinition.m_Position.y += TerrainUtils.SampleHeight(ref m_TerrainHeightData, objectDefinition.m_Position) - TerrainUtils.SampleHeight(ref m_TerrainHeightData, transform.m_Position);
-                        }
-
                         if (m_OwnerLookup.HasComponent(entityNativeArray[i]) &&
                             m_TransformLookup.TryGetComponent(entityNativeArray[i], out Game.Objects.Transform subobjectTransform))
                         {
@@ -171,7 +155,7 @@ namespace MoveIt.Tool
                             objectDefinition.m_LocalRotation = objectDefinition.m_Rotation;
                         }
                        
-                        if (m_TreeLookup.TryGetComponent(entityNativeArray[i], out Tree tree))
+                        if (!m_TreeLookup.TryGetComponent(entityNativeArray[i], out Tree tree))
                         {
                             objectDefinition.m_Position.x += m_EndPoint.m_Position.x - m_StartPoint.m_Position.x;
                             objectDefinition.m_Position.z += m_EndPoint.m_Position.z - m_StartPoint.m_Position.z;
@@ -186,25 +170,6 @@ namespace MoveIt.Tool
                         if (m_FollowTerrain)
                         {
                             objectDefinition.m_Position.y += TerrainUtils.SampleHeight(ref m_TerrainHeightData, objectDefinition.m_Position) - TerrainUtils.SampleHeight(ref m_TerrainHeightData, transform.m_Position);
-                        }
-
-                        if (m_OwnerLookup.HasComponent(entityNativeArray[i]) &&
-                            m_TransformLookup.TryGetComponent(entityNativeArray[i], out Game.Objects.Transform subobjectTransform))
-                        {
-                            Game.Objects.Transform inverseParentTransform = ObjectUtils.InverseTransform( new Game.Objects.Transform(objectDefinition.m_Position, objectDefinition.m_Rotation));
-                            Game.Objects.Transform localTransform = ObjectUtils.WorldToLocal(inverseParentTransform, subobjectTransform);
-
-                            objectDefinition.m_LocalRotation = localTransform.m_Rotation;
-                            objectDefinition.m_LocalPosition = localTransform.m_Position;
-                        } else
-                        {
-                            objectDefinition.m_LocalPosition = objectDefinition.m_Position;
-                            objectDefinition.m_LocalRotation = objectDefinition.m_Rotation;
-                        }
-                       
-                        if (m_TreeLookup.TryGetComponent(entityNativeArray[i], out Tree tree))
-                        {
-                            objectDefinition.m_Age = GetTreeAge(tree);
                         }
 
                         buffer.AddComponent(e, objectDefinition);
@@ -338,30 +303,6 @@ namespace MoveIt.Tool
                         }
                     }
 
-                }
-            }
-
-            public float GetTreeAge(Tree tree)
-            {
-                if (tree.m_State == 0)
-                {
-                    return Mathf.Lerp(tree.m_Growth / 255f, 0f, ObjectUtils.TREE_AGE_PHASE_CHILD);
-                }
-                else if (tree.m_State == TreeState.Teen)
-                {
-                    return Mathf.Lerp(tree.m_Growth / 255f, ObjectUtils.TREE_AGE_PHASE_CHILD, ObjectUtils.TREE_AGE_PHASE_CHILD + ObjectUtils.TREE_AGE_PHASE_TEEN); ;
-                }
-                else if (tree.m_State == TreeState.Adult)
-                {
-                    return Mathf.Lerp(tree.m_Growth / 255f, ObjectUtils.TREE_AGE_PHASE_CHILD + ObjectUtils.TREE_AGE_PHASE_TEEN, ObjectUtils.TREE_AGE_PHASE_CHILD + ObjectUtils.TREE_AGE_PHASE_TEEN + ObjectUtils.TREE_AGE_PHASE_ADULT); ;
-                } 
-                else if (tree.m_State == TreeState.Elderly)
-                {
-                    return Mathf.Lerp(tree.m_Growth / 255f, ObjectUtils.TREE_AGE_PHASE_CHILD + ObjectUtils.TREE_AGE_PHASE_TEEN + ObjectUtils.TREE_AGE_PHASE_ADULT, ObjectUtils.TREE_AGE_PHASE_CHILD + ObjectUtils.TREE_AGE_PHASE_TEEN + ObjectUtils.TREE_AGE_PHASE_ADULT + ObjectUtils.TREE_AGE_PHASE_ELDERLY); ;
-                }
-                else
-                {
-                    return Mathf.Lerp(tree.m_Growth / 255f, ObjectUtils.TREE_AGE_PHASE_CHILD + ObjectUtils.TREE_AGE_PHASE_TEEN + ObjectUtils.TREE_AGE_PHASE_ADULT + ObjectUtils.TREE_AGE_PHASE_ELDERLY + 0.0001f, ObjectUtils.TREE_AGE_PHASE_CHILD + ObjectUtils.TREE_AGE_PHASE_TEEN + ObjectUtils.TREE_AGE_PHASE_ADULT + ObjectUtils.TREE_AGE_PHASE_ELDERLY + ObjectUtils.TREE_AGE_PHASE_DEAD); ;
                 }
             }
 

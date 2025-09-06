@@ -17,7 +17,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 
-namespace MoveIt.Tool
+namespace MoveIt.Systems
 {
     /// <summary>
     /// A system to apply move it transformations to originals from temps.
