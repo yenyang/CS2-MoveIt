@@ -13,11 +13,14 @@ namespace MoveIt.UI
         {
             _Buttons = new ButtonState[]
             {
-                new("undo",         false, true),
-                new("single",       true, !_MIT.m_IsManipulateMode && !_MIT.m_MarqueeSelect),
-                new("marquee",      true, !_MIT.m_IsManipulateMode && _MIT.m_MarqueeSelect),
-                new("manipulation", true, _MIT.m_IsManipulateMode),
-                new("redo",         false, true),
+                new("undo",             false, true),
+                new("single",           true, !_MIT.m_IsManipulateMode && !_MIT.m_MarqueeSelect),
+                new("marquee",          true, !_MIT.m_IsManipulateMode && _MIT.m_MarqueeSelect),
+                new("manipulation",     true, _MIT.m_IsManipulateMode),
+                new("redo",             false, true),
+                new("FollowTerrain",    true, true),
+                new("Copy",             false, true),
+                new("Delete",           false, true),
             };
         }
 
@@ -28,6 +31,9 @@ namespace MoveIt.UI
             _Buttons[2].Update(true, !_MIT.m_IsManipulateMode && _MIT.m_MarqueeSelect);
             _Buttons[3].Update(true, _MIT.m_IsManipulateMode);
             _Buttons[4].Update(_MIT.Queue is not null && _MIT.Queue.CanRedo(), false);
+            _Buttons[5].Update(true, _MIT.m_FollowingTerrain);
+            _Buttons[6].Update(_MIT.CanCopyOrDelete, _MIT.Copying);
+            _Buttons[7].Update(_MIT.CanCopyOrDelete, _MIT.Deleting);
         }
 
         public void Write(IJsonWriter writer)
@@ -43,6 +49,12 @@ namespace MoveIt.UI
             writer.Write(_Buttons[3]);
             writer.PropertyName("ButtonRedo");
             writer.Write(_Buttons[4]);
+            writer.PropertyName("ButtonFollowTerrain");
+            writer.Write(_Buttons[5]);
+            writer.PropertyName("ButtonCopy");
+            writer.Write(_Buttons[6]);
+            writer.PropertyName("ButtonDelete");
+            writer.Write(_Buttons[7]);
             writer.TypeEnd();
         }
 

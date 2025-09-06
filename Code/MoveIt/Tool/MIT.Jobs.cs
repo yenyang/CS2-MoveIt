@@ -64,6 +64,7 @@ namespace MoveIt.Tool
             public CreationFlags m_CreationFlags;
             public ControlPoint m_StartPoint;
             public ControlPoint m_EndPoint;
+            public ControlPoint m_Centroid;
 
 
             public void Execute(in ArchetypeChunk chunk, int unfilteredChunkIndex, bool useEnabledMask, in v128 chunkEnabledMask)
@@ -133,11 +134,14 @@ namespace MoveIt.Tool
                             objectDefinition.m_LocalPosition = localTransform.m_Position;
                         }
 
-                        if ((m_CreationFlags & CreationFlags.Relocate) == CreationFlags.Relocate ||
-                            m_CreationFlags == 0)
+                        if ((m_CreationFlags & CreationFlags.Relocate) == CreationFlags.Relocate)
                         {
                             objectDefinition.m_Position.x += m_EndPoint.m_Position.x - m_StartPoint.m_Position.x;
                             objectDefinition.m_Position.z += m_EndPoint.m_Position.z - m_StartPoint.m_Position.z;
+                        } else if (m_CreationFlags == 0)
+                        {
+                            objectDefinition.m_Position.x += m_EndPoint.m_Position.x - m_Centroid.m_Position.x;
+                            objectDefinition.m_Position.z += m_EndPoint.m_Position.z - m_Centroid.m_Position.z;
                         }
 
                         buffer.AddComponent(e, objectDefinition);

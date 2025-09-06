@@ -7,6 +7,16 @@ import { ButtonPressed } from "bindings";
 import locale from "../lang/en-US.json";
 import mod from "../../mod.json";
 
+import followTerrainActiveSrc from "../img/NetworkGround_Active.svg";
+import followTerrainOffSrc from "../img/NetworkGround_Off.svg";
+import copyActiveSrc from "../img/RectangleCopy_Active.svg";
+import copyOffSrc from "../img/RectangleCopy_Off.svg";
+import deleteOffSrc from "../img/Trash_Off.svg";
+import deleteDisabledSrc from "../img/Trash_Disabled.svg";
+import copyDisabledSrc from "../img/RectangleCopy_Disabled.svg";
+import followTerrainDisabledSrc from "../img/NetworkGround_Disabled.svg"
+
+
 import styles from "./panel.module.scss";
 // Ugly code to force these images to build
 import ic0 from "../img/icon_Undo_Off.svg";
@@ -25,6 +35,7 @@ import icC from "../img/icon_PopoutOpen.svg";
 import icD from "../img/icon_PopoutClose.svg";
 import { getModule } from "cs2/modding";
 import { useLocalization } from "cs2/l10n";
+import { ModeButton } from "./modeButton";
 
 export const ButtonRowTop = (props: {topRowState : TopRowButtonStates}) => {
     const classes = classNames({
@@ -40,17 +51,25 @@ export const ButtonRowTop = (props: {topRowState : TopRowButtonStates}) => {
     x = ic7; x = ic8; x = ic9; x = icA; x = icB; x = icC; x = icD;
 
     return (
-        <div className={classes}>
-            {ButtonRowButton(TopButtonsData[0], props.topRowState.ButtonUndo, DescriptionTooltip( translate("MoveIt.TOOLTIP_TITLE[Undo]", locale["MoveIt.TOOLTIP_TITLE[Undo]"]), translate("MoveIt.TOOLTIP_DESCRIPTION[Undo]", locale["MoveIt.TOOLTIP_DESCRIPTION[Undo]"]) ))}
-            <div className={styles.separator}></div>
-            {ButtonRowButton(TopButtonsData[1], props.topRowState.ButtonSingle, DescriptionTooltip( translate("MoveIt.TOOLTIP_TITLE[Single]", locale["MoveIt.TOOLTIP_TITLE[Single]"]), translate("MoveIt.TOOLTIP_DESCRIPTION[Single]", locale["MoveIt.TOOLTIP_DESCRIPTION[Single]"]) ))}
-            <div className={styles.separator}></div>
-            {ButtonRowButton(TopButtonsData[2], props.topRowState.ButtonMarquee, DescriptionTooltip( translate("MoveIt.TOOLTIP_TITLE[Marquee]", locale["MoveIt.TOOLTIP_TITLE[Marquee]"]), translate("MoveIt.TOOLTIP_DESCRIPTION[Marquee]", locale["MoveIt.TOOLTIP_DESCRIPTION[Marquee]"]) ))}
-            <div className={styles.separator}></div>
-            {ButtonRowButton(TopButtonsData[3], props.topRowState.ButtonManipulation, DescriptionTooltip( translate("MoveIt.TOOLTIP_TITLE[Manipulation]", locale["MoveIt.TOOLTIP_TITLE[Manipulation]"]), translate("MoveIt.TOOLTIP_DESCRIPTION[Manipulation]", locale["MoveIt.TOOLTIP_DESCRIPTION[Manipulation]"]) ))}
-            <div className={styles.separator}></div>
-            {ButtonRowButton(TopButtonsData[4], props.topRowState.ButtonRedo, DescriptionTooltip( translate("MoveIt.TOOLTIP_TITLE[Redo]", locale["MoveIt.TOOLTIP_TITLE[Redo]"]), translate("MoveIt.TOOLTIP_DESCRIPTION[Redo]", locale["MoveIt.TOOLTIP_DESCRIPTION[Redo]"]) ))}
-        </div>
+        <>
+            <div className={classes}>
+                {ButtonRowButton(TopButtonsData[0], props.topRowState.ButtonUndo, DescriptionTooltip( translate("MoveIt.TOOLTIP_TITLE[Undo]", locale["MoveIt.TOOLTIP_TITLE[Undo]"]), translate("MoveIt.TOOLTIP_DESCRIPTION[Undo]", locale["MoveIt.TOOLTIP_DESCRIPTION[Undo]"]) ))}
+                <div className={styles.separator}></div>
+                {ButtonRowButton(TopButtonsData[1], props.topRowState.ButtonSingle, DescriptionTooltip( translate("MoveIt.TOOLTIP_TITLE[Single]", locale["MoveIt.TOOLTIP_TITLE[Single]"]), translate("MoveIt.TOOLTIP_DESCRIPTION[Single]", locale["MoveIt.TOOLTIP_DESCRIPTION[Single]"]) ))}
+                <div className={styles.separator}></div>
+                {ButtonRowButton(TopButtonsData[2], props.topRowState.ButtonMarquee, DescriptionTooltip( translate("MoveIt.TOOLTIP_TITLE[Marquee]", locale["MoveIt.TOOLTIP_TITLE[Marquee]"]), translate("MoveIt.TOOLTIP_DESCRIPTION[Marquee]", locale["MoveIt.TOOLTIP_DESCRIPTION[Marquee]"]) ))}
+                <div className={styles.separator}></div>
+                {ButtonRowButton(TopButtonsData[3], props.topRowState.ButtonManipulation, DescriptionTooltip( translate("MoveIt.TOOLTIP_TITLE[Manipulation]", locale["MoveIt.TOOLTIP_TITLE[Manipulation]"]), translate("MoveIt.TOOLTIP_DESCRIPTION[Manipulation]", locale["MoveIt.TOOLTIP_DESCRIPTION[Manipulation]"]) ))}
+                <div className={styles.separator}></div>
+                <ModeButton data={{Id: "FollowTerrain", OffSrc: followTerrainOffSrc, DisabledSrc: followTerrainDisabledSrc, ActiveSrc: followTerrainActiveSrc}} state={props.topRowState.ButtonFollowTerrain}></ModeButton>
+                <span className={styles.separator}></span>
+                <ModeButton data={{Id: "Copy", OffSrc: copyOffSrc, DisabledSrc: copyDisabledSrc, ActiveSrc: copyActiveSrc}} state={props.topRowState.ButtonCopy}></ModeButton>
+                <span className={styles.separator}></span>
+                <ModeButton data={{Id: "Delete", OffSrc: deleteOffSrc, DisabledSrc: deleteDisabledSrc, ActiveSrc: deleteOffSrc}} state={props.topRowState.ButtonDelete}></ModeButton>
+                <span className={styles.separator}></span>
+                {ButtonRowButton(TopButtonsData[4], props.topRowState.ButtonRedo, DescriptionTooltip( translate("MoveIt.TOOLTIP_TITLE[Redo]", locale["MoveIt.TOOLTIP_TITLE[Redo]"]), translate("MoveIt.TOOLTIP_DESCRIPTION[Redo]", locale["MoveIt.TOOLTIP_DESCRIPTION[Redo]"]) ))}
+            </div>
+        </>
     );
 }
 
@@ -117,3 +136,4 @@ const TopButtonsData : ButtonData[] = [
     new ButtonData("toprow",    "manipulation",  "Manipulation"),
     new ButtonData("toprow",    "redo",          "Redo"),
 ];
+

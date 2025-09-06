@@ -33,11 +33,12 @@ namespace MoveIt.Tool
                 m_EditorContainterLookup = SystemAPI.GetComponentLookup<Game.Tools.EditorContainer>(isReadOnly: true),
                 m_PseudoRandomSeedLookup = SystemAPI.GetComponentLookup<Game.Common.PseudoRandomSeed>(isReadOnly: true),
                 m_AttachedLookup = SystemAPI.GetComponentLookup<Game.Objects.Attached>(isReadOnly: true),
-                m_CreationFlags = CreationFlags.Relocate,
+                m_CreationFlags = m_CreationFlags,
                 m_EdgeLookup = SystemAPI.GetComponentLookup<Game.Net.Edge>(isReadOnly: true),
                 m_NetElevationLookup = SystemAPI.GetComponentLookup<Game.Net.Elevation>(isReadOnly: true),
                 m_StartPoint = m_StartPoint,
                 m_EndPoint = m_LastRaycastPoint,
+                m_Centroid = new ControlPoint() { m_Position = _Selection.Center },
             };
             inputDeps = createDefinitionJob.Schedule(m_MIT_SelectedQuery, inputDeps);
             m_Barrier.AddJobHandleForProducer(inputDeps);
@@ -47,7 +48,8 @@ namespace MoveIt.Tool
 
         private JobHandle Update(JobHandle inputDeps)
         {
-            if (GetRaycastResult(out ControlPoint controlPoint, out bool forceUpdate))
+            if (GetRaycastResult(out ControlPoint controlPoint, out bool forceUpdate) ||
+                Deleting)
             {
                 if (m_InputSystem.MouseApply.WasPressedThisFrame())
                 {
@@ -56,7 +58,8 @@ namespace MoveIt.Tool
                     m_LastRaycastPoint = controlPoint;
                     return UpdateDefinitions(inputDeps);
                 }
-                if (m_LastRaycastPoint.Equals(controlPoint) &&
+                if (!Deleting &&
+                    m_LastRaycastPoint.Equals(controlPoint) &&
                     !forceUpdate)
                 {
                     applyMode = ApplyMode.None;
