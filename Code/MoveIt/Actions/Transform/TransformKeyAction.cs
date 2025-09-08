@@ -29,7 +29,9 @@ namespace MoveIt.Actions.Transform
         protected override bool ToolDo()
         {
             m_UpdateMove = true;
-            DoFromDeltas();
+            
+            // Commented out to prevent Quboid's Setup from moving things.
+            // DoFromDeltas();
             return true;
         }
 

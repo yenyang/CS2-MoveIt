@@ -71,6 +71,7 @@ namespace MoveIt.Tool
             public ControlPoint m_StartPoint;
             public ControlPoint m_EndPoint;
             public ControlPoint m_Centroid;
+            public float m_RotationAboutCenter;
             public bool m_FollowTerrain;
             public TerrainHeightData m_TerrainHeightData;
             [ReadOnly]
@@ -141,20 +142,17 @@ namespace MoveIt.Tool
                             m_Scale = new float3(1,1,1),
                         };
 
-                        if (m_OwnerLookup.HasComponent(entityNativeArray[i]) &&
-                            m_TransformLookup.TryGetComponent(entityNativeArray[i], out Game.Objects.Transform subobjectTransform))
+                        // Apply Rotation
+                        if (m_RotationAboutCenter != 0 && m_CreationFlags != CreationFlags.Delete)
                         {
-                            Game.Objects.Transform inverseParentTransform = ObjectUtils.InverseTransform( new Game.Objects.Transform(objectDefinition.m_Position, objectDefinition.m_Rotation));
-                            Game.Objects.Transform localTransform = ObjectUtils.WorldToLocal(inverseParentTransform, subobjectTransform);
-
-                            objectDefinition.m_LocalRotation = localTransform.m_Rotation;
-                            objectDefinition.m_LocalPosition = localTransform.m_Position;
-                        } else
-                        {
-                            objectDefinition.m_LocalPosition = objectDefinition.m_Position;
-                            objectDefinition.m_LocalRotation = objectDefinition.m_Rotation;
+                            Game.Objects.Transform parentTransform = new Game.Objects.Transform(m_Centroid.m_Position, quaternion.RotateY(m_RotationAboutCenter));
+                            Game.Objects.Transform localTransform = new Game.Objects.Transform() { m_Position = transform.m_Position - m_Centroid.m_Position, m_Rotation = transform.m_Rotation };
+                            Game.Objects.Transform newWorldTransform = ObjectUtils.LocalToWorld(parentTransform, localTransform);
+                            objectDefinition.m_Position = newWorldTransform.m_Position;
+                            objectDefinition.m_Rotation = newWorldTransform.m_Rotation;
                         }
-                       
+
+                        // Apply Translation
                         if (m_CreationFlags == CreationFlags.Relocate)
                         {
                             objectDefinition.m_Position.x += m_EndPoint.m_Position.x - m_StartPoint.m_Position.x;
@@ -174,6 +172,21 @@ namespace MoveIt.Tool
                         if (m_FollowTerrain)
                         {
                             objectDefinition.m_Position.y += TerrainUtils.SampleHeight(ref m_TerrainHeightData, objectDefinition.m_Position) - TerrainUtils.SampleHeight(ref m_TerrainHeightData, transform.m_Position);
+                        }
+
+                        if (m_OwnerLookup.HasComponent(entityNativeArray[i]) &&
+                            m_TransformLookup.TryGetComponent(entityNativeArray[i], out Game.Objects.Transform subobjectTransform))
+                        {
+                            Game.Objects.Transform inverseParentTransform = ObjectUtils.InverseTransform(new Game.Objects.Transform(objectDefinition.m_Position, objectDefinition.m_Rotation));
+                            Game.Objects.Transform localTransform = ObjectUtils.WorldToLocal(inverseParentTransform, subobjectTransform);
+
+                            objectDefinition.m_LocalRotation = localTransform.m_Rotation;
+                            objectDefinition.m_LocalPosition = localTransform.m_Position;
+                        }
+                        else
+                        {
+                            objectDefinition.m_LocalPosition = objectDefinition.m_Position;
+                            objectDefinition.m_LocalRotation = objectDefinition.m_Rotation;
                         }
 
                         buffer.AddComponent(e, objectDefinition);

@@ -77,16 +77,19 @@ namespace MoveIt.Tool
             
             if (!UIHasFocus &&
                (MITState == MITStates.Default ||
-                MITState == MITStates.ApplyButtonHeld) || 
+                MITState == MITStates.ApplyButtonHeld ||
+                MITState == MITStates.SecondaryButtonHeld) || 
                (Deleting &&
                 MITState != MITStates.DrawingSelection))
             {
-                if (m_InputSystem.MouseApply.WasReleasedThisFrame())
+                if (m_InputSystem.MouseApply.WasReleasedThisFrame() ||
+                   (m_InputSystem.MouseCancel.WasReleasedThisFrame() && !Deleting && !Copying))
                 {
                     return Apply(inputDeps);
                 }
                 else if (m_InputSystem.MouseApply.IsPressed() ||
-                         Copying)
+                         Copying ||
+                         m_InputSystem.MouseCancel.IsPressed())
                 {
                     return Update(inputDeps);
                 }

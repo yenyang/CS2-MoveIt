@@ -3,15 +3,14 @@
 // Forked with permission from Quboid's CS2-MoveIt project.
 // </copyright>
 
-using Colossal.Entities;
 using Game.Common;
 using Game.Prefabs;
-using Game.Rendering;
 using Game.Tools;
-using MoveIt.Moveables;
+using QCommonLib;
 using Unity.Entities;
 using Unity.Jobs;
-using static Game.Tools.NetToolSystem;
+using Unity.Mathematics;
+using UnityEngine;
 
 namespace MoveIt.Tool
 {
@@ -21,6 +20,7 @@ namespace MoveIt.Tool
         {
             JobHandle jobHandle = DestroyDefinitions(m_DefinitionGroup, m_Barrier, inputDeps);
             EntityCommandBuffer buffer = m_Barrier.CreateCommandBuffer();
+            QLog.Debug($"{nameof(MoveItToolSystem)}:{nameof(UpdateDefinitions)} m_RotationAboutCenter {m_RotationAboutCenter}");
 
             CreateDefinitionJob createDefinitionJob = new CreateDefinitionJob()
             {
@@ -45,6 +45,7 @@ namespace MoveIt.Tool
                 m_AreasNodeLookup = SystemAPI.GetBufferLookup<Game.Areas.Node>(isReadOnly: true),
                 m_SubAreaLookup = SystemAPI.GetBufferLookup<Game.Areas.SubArea>(isReadOnly: true),
                 m_SubNetLookup = SystemAPI.GetBufferLookup<Game.Net.SubNet>(isReadOnly: true),
+                m_RotationAboutCenter = m_RotationAboutCenter,
             };
             inputDeps = createDefinitionJob.Schedule(m_MIT_SelectedQuery, inputDeps);
             m_TerrainSystem.AddCPUHeightReader(inputDeps);
@@ -58,13 +59,15 @@ namespace MoveIt.Tool
             if (GetRaycastResult(out ControlPoint controlPoint, out bool forceUpdate) ||
                 Deleting)
             {
-                if (m_InputSystem.MouseApply.WasPressedThisFrame())
+                if (m_InputSystem.MouseApply.WasPressedThisFrame() ||
+                    m_InputSystem.MouseCancel.WasPressedThisFrame())
                 {
                     applyMode = ApplyMode.Clear;
                     m_StartPoint = controlPoint;
                     m_LastRaycastPoint = controlPoint;
                     return UpdateDefinitions(inputDeps);
                 }
+
                 if (!Deleting &&
                     m_LastRaycastPoint.Equals(controlPoint) &&
                     !forceUpdate)
@@ -72,6 +75,15 @@ namespace MoveIt.Tool
                     applyMode = ApplyMode.None;
                     return inputDeps;
                 }
+
+                if (m_InputSystem.MouseCancel.IsPressed())
+                {
+                    applyMode = ApplyMode.Clear;
+                    float mouseTravel = QCommon.MouseScreenPosition.x - m_MouseStartX;
+                    m_RotationAboutCenter = mouseTravel / (float)(Screen.height * 1.5f) * RotationDirection;
+                    return UpdateDefinitions(inputDeps);
+                }
+                
                 applyMode = ApplyMode.Clear;
                 m_LastRaycastPoint = controlPoint;
                 return UpdateDefinitions(inputDeps);
@@ -86,6 +98,7 @@ namespace MoveIt.Tool
             applyMode = ApplyMode.Clear;
             m_StartPoint = default;
             m_LastRaycastPoint = default;
+            m_RotationAboutCenter = 0f;
             return Clear(inputDeps);            
         }
 

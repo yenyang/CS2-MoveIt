@@ -61,6 +61,7 @@ namespace MoveIt.Tool
         internal ToolOutputBarrier m_Barrier;
         internal ControlPoint m_LastRaycastPoint;
         internal ControlPoint m_StartPoint;
+        internal float m_RotationAboutCenter;
 
         internal Game.Common.RaycastSystem m_RaycastSystem;
 
