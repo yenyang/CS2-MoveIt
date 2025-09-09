@@ -20,7 +20,6 @@ namespace MoveIt.Tool
         {
             JobHandle jobHandle = DestroyDefinitions(m_DefinitionGroup, m_Barrier, inputDeps);
             EntityCommandBuffer buffer = m_Barrier.CreateCommandBuffer();
-            QLog.Debug($"{nameof(MoveItToolSystem)}:{nameof(UpdateDefinitions)} m_RotationAboutCenter {m_RotationAboutCenter}");
 
             CreateDefinitionJob createDefinitionJob = new CreateDefinitionJob()
             {
@@ -73,19 +72,35 @@ namespace MoveIt.Tool
                     !forceUpdate)
                 {
                     applyMode = ApplyMode.None;
+
+                    if (m_InputSystem.MouseCancel.WasReleasedThisFrame() && Copying)
+                    {
+                        m_PreviousRotation = 0;
+                    }
                     return inputDeps;
                 }
 
                 if (m_InputSystem.MouseCancel.IsPressed())
                 {
-                    applyMode = ApplyMode.Clear;
-                    float mouseTravel = QCommon.MouseScreenPosition.x - m_MouseStartX;
-                    m_RotationAboutCenter = mouseTravel / (float)(Screen.height * 1.5f) * RotationDirection;
-                    return UpdateDefinitions(inputDeps);
+                    float newRotation = (QCommon.MouseScreenPosition.x - m_MouseStartX) / (float)(Screen.height * 1.5f) * RotationDirection * 4f;
+                    if (!Mathf.Approximately(newRotation, m_PreviousRotation))
+                    {
+                        m_RotationAboutCenter += newRotation - m_PreviousRotation;
+                        m_PreviousRotation = newRotation;
+                    }
+                }
+
+                if (m_InputSystem.MouseCancel.WasReleasedThisFrame() && Copying)
+                {
+                    m_PreviousRotation = 0;
                 }
                 
                 applyMode = ApplyMode.Clear;
-                m_LastRaycastPoint = controlPoint;
+
+                if (m_InputSystem.MouseApply.IsPressed() || Copying)
+                {
+                    m_LastRaycastPoint = controlPoint;
+                }
                 return UpdateDefinitions(inputDeps);
             }
             if (m_LastRaycastPoint.Equals(default) &&
@@ -99,6 +114,7 @@ namespace MoveIt.Tool
             m_StartPoint = default;
             m_LastRaycastPoint = default;
             m_RotationAboutCenter = 0f;
+            m_PreviousRotation = 0f;
             return Clear(inputDeps);            
         }
 
@@ -117,6 +133,14 @@ namespace MoveIt.Tool
             {
                 Deleting = false;
             }
+
+            if (!Copying)
+            {
+                m_RotationAboutCenter = 0f;
+                m_PreviousRotation = 0f;
+            }
+
+            m_SelectionDirty = true;
             return inputDeps;
         }
 

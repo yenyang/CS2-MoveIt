@@ -62,6 +62,7 @@ namespace MoveIt.Tool
         internal ControlPoint m_LastRaycastPoint;
         internal ControlPoint m_StartPoint;
         internal float m_RotationAboutCenter;
+        internal float m_PreviousRotation;
 
         internal Game.Common.RaycastSystem m_RaycastSystem;
 
