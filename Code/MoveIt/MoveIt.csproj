@@ -261,6 +261,12 @@
 		<Compile Update="Tool\MoveItToolSystem.Debug.cs">
 			<DependentUpon>MoveItToolSystem.cs</DependentUpon>
 		</Compile>
+		<Compile Update="Overlays\MIT_OverlaySystem.Job_DrawOverlays.cs">
+			<DependentUpon>MIT_OverlaySystem.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Overlays\MIT_OverlaySystem.Job_UpdateOverlays.cs">
+			<DependentUpon>MIT_OverlaySystem.cs</DependentUpon>
+		</Compile>
 	</ItemGroup>
 	
 </Project>

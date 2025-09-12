@@ -113,6 +113,7 @@ namespace MoveIt.Tool
             applyMode = ApplyMode.Clear;
             m_StartPoint = default;
             m_LastRaycastPoint = default;
+
             m_RotationAboutCenter = 0f;
             m_PreviousRotation = 0f;
             return Clear(inputDeps);            
