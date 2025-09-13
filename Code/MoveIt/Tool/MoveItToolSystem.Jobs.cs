@@ -310,8 +310,11 @@ namespace MoveIt.Tool
 
                 if (m_EdgeLookup.TryGetComponent(originalInstance, out Game.Net.Edge edge))
                 {
-                    netCourse.m_StartPosition.m_Entity = edge.m_Start;
-                    netCourse.m_EndPosition.m_Entity = edge.m_End;
+                    if (m_CreationFlags != 0)
+                    {
+                        netCourse.m_StartPosition.m_Entity = edge.m_Start;
+                        netCourse.m_EndPosition.m_Entity = edge.m_End;
+                    }
 
                     if (m_NetElevationLookup.TryGetComponent(edge.m_Start, out Game.Net.Elevation startElevation))
                     {
