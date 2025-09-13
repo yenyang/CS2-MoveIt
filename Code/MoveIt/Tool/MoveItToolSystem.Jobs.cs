@@ -24,6 +24,7 @@ using Unity.Burst;
 using Unity.Burst.Intrinsics;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Entities.UniversalDelegates;
 using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
@@ -80,6 +81,8 @@ namespace MoveIt.Tool
             public BufferLookup<Game.Areas.Node> m_AreasNodeLookup;
             [ReadOnly]
             public BufferLookup<Game.Net.SubNet> m_SubNetLookup;
+            [ReadOnly]
+            public BufferLookup<Game.Net.ConnectedEdge> m_ConnectedEdgeLookup;
 
 
             public void Execute(in ArchetypeChunk chunk, int unfilteredChunkIndex, bool useEnabledMask, in v128 chunkEnabledMask)
@@ -87,6 +90,52 @@ namespace MoveIt.Tool
                 NativeArray<Entity> entityNativeArray = chunk.GetNativeArray(m_EntityType);
                 for (int i = 0; i < chunk.Count; i++)
                 {
+                    // Selected Nodes. Each connected segment gets it's own entity.
+                    if (m_ConnectedEdgeLookup.TryGetBuffer(entityNativeArray[i], out DynamicBuffer<ConnectedEdge> connectedEdges))
+                    {
+                        foreach (ConnectedEdge connectedEdge in connectedEdges)
+                        {
+                            if (m_CurveLookup.TryGetComponent(connectedEdge.m_Edge, out Game.Net.Curve connectedCurve))
+                            {
+                                Entity connectedEdgeDefinition = buffer.CreateEntity();
+                                CreationDefinition connectedEdgeCreationDefinition = new()
+                                {
+                                    m_Flags = m_CreationFlags,
+                                };
+
+                                if ((m_CreationFlags & CreationFlags.Relocate) == CreationFlags.Relocate ||
+                                    (m_CreationFlags & CreationFlags.Delete) == CreationFlags.Delete)
+                                {
+                                    connectedEdgeCreationDefinition.m_Original = connectedEdge.m_Edge;
+                                }
+
+                                if (m_PrefabRefLookup.HasComponent(connectedEdge.m_Edge))
+                                {
+                                    if (m_OwnerLookup.TryGetComponent(connectedEdge.m_Edge, out Owner owner) &&
+                                        m_EditorContainterLookup.HasComponent(owner.m_Owner) &&
+                                        m_PrefabRefLookup.HasComponent(owner.m_Owner))
+                                    {
+                                        connectedEdgeCreationDefinition.m_Prefab = m_PrefabRefLookup[owner.m_Owner];
+                                        connectedEdgeCreationDefinition.m_SubPrefab = m_PrefabRefLookup[connectedEdge.m_Edge];
+                                    }
+                                    else
+                                    {
+                                        connectedEdgeCreationDefinition.m_Prefab = new PrefabRef(m_PrefabRefLookup[connectedEdge.m_Edge].m_Prefab);
+                                    }
+                                }
+
+                                buffer.AddComponent(connectedEdgeDefinition, default(Updated));
+
+                                buffer.AddComponent(connectedEdgeDefinition, connectedEdgeCreationDefinition);
+
+                                ProcessCurve(connectedEdge.m_Edge, connectedEdgeDefinition, connectedCurve);
+                            }
+                        }
+
+                        continue;
+                    }
+
+
                     Entity e = buffer.CreateEntity();
                     CreationDefinition creationDefinition = new()
                     {
@@ -194,56 +243,10 @@ namespace MoveIt.Tool
 
                     if (m_CurveLookup.TryGetComponent(entityNativeArray[i], out Game.Net.Curve curve))
                     {
-                        NetCourse netCourse = new NetCourse()
-                        {
-                            m_Curve = curve.m_Bezier,
-                            m_Elevation = default,
-                            m_EndPosition = new CoursePos()
-                            {
-                                m_Entity = Entity.Null,
-                                m_Elevation = default,
-                                m_Flags = 0,
-                                m_ParentMesh = -1,
-                                m_Position = curve.m_Bezier.d,
-                                m_SplitPosition = 0,
-                                m_Rotation = NetUtils.GetNodeRotation(MathUtils.EndTangent(curve.m_Bezier)),
-                                m_CourseDelta = 1,
-                            },
-                            m_FixedIndex = -1,
-                            m_Length = curve.m_Length,
-                            m_StartPosition = new CoursePos()
-                            {
-                                m_Entity = Entity.Null,
-                                m_Elevation = default,
-                                m_Flags = 0,
-                                m_ParentMesh = -1,
-                                m_Position = curve.m_Bezier.a,
-                                m_SplitPosition = 0,
-                                m_Rotation = NetUtils.GetNodeRotation(MathUtils.StartTangent(curve.m_Bezier)),
-                                m_CourseDelta = 0,
-                            },
-                        };
-
-                        if (m_EdgeLookup.TryGetComponent(entityNativeArray[i], out Game.Net.Edge edge))
-                        {
-                            netCourse.m_StartPosition.m_Entity = edge.m_Start;
-                            netCourse.m_EndPosition.m_Entity = edge.m_End;
-
-                            if (m_NetElevationLookup.TryGetComponent(edge.m_Start, out Game.Net.Elevation startElevation))
-                            {
-                                netCourse.m_StartPosition.m_Elevation = startElevation.m_Elevation;
-                            }
-
-                            if (m_NetElevationLookup.TryGetComponent(edge.m_Start, out Game.Net.Elevation endElevation))
-                            {
-                                netCourse.m_EndPosition.m_Elevation = endElevation.m_Elevation;
-                            }
-                        }
-
-                        
-
-                        buffer.AddComponent(e, netCourse);
+                        ProcessCurve(entityNativeArray[i], e, curve);
                     }
+
+                    
 
                     buffer.AddComponent(e, creationDefinition);
                     
@@ -345,6 +348,57 @@ namespace MoveIt.Tool
                 {
                     return Mathf.Lerp(tree.m_Growth / 255f, ObjectUtils.TREE_AGE_PHASE_CHILD + ObjectUtils.TREE_AGE_PHASE_TEEN + ObjectUtils.TREE_AGE_PHASE_ADULT + ObjectUtils.TREE_AGE_PHASE_ELDERLY + 0.0001f, ObjectUtils.TREE_AGE_PHASE_CHILD + ObjectUtils.TREE_AGE_PHASE_TEEN + ObjectUtils.TREE_AGE_PHASE_ADULT + ObjectUtils.TREE_AGE_PHASE_ELDERLY + ObjectUtils.TREE_AGE_PHASE_DEAD); ;
                 }
+            }
+
+            public void ProcessCurve(Entity originalInstance, Entity definitionEntity, Game.Net.Curve curve)
+            {
+                NetCourse netCourse = new NetCourse()
+                {
+                    m_Curve = curve.m_Bezier,
+                    m_Elevation = default,
+                    m_EndPosition = new CoursePos()
+                    {
+                        m_Entity = Entity.Null,
+                        m_Elevation = default,
+                        m_Flags = 0,
+                        m_ParentMesh = -1,
+                        m_Position = curve.m_Bezier.d,
+                        m_SplitPosition = 0,
+                        m_Rotation = NetUtils.GetNodeRotation(MathUtils.EndTangent(curve.m_Bezier)),
+                        m_CourseDelta = 1,
+                    },
+                    m_FixedIndex = -1,
+                    m_Length = curve.m_Length,
+                    m_StartPosition = new CoursePos()
+                    {
+                        m_Entity = Entity.Null,
+                        m_Elevation = default,
+                        m_Flags = 0,
+                        m_ParentMesh = -1,
+                        m_Position = curve.m_Bezier.a,
+                        m_SplitPosition = 0,
+                        m_Rotation = NetUtils.GetNodeRotation(MathUtils.StartTangent(curve.m_Bezier)),
+                        m_CourseDelta = 0,
+                    },
+                };
+
+                if (m_EdgeLookup.TryGetComponent(originalInstance, out Game.Net.Edge edge))
+                {
+                    netCourse.m_StartPosition.m_Entity = edge.m_Start;
+                    netCourse.m_EndPosition.m_Entity = edge.m_End;
+
+                    if (m_NetElevationLookup.TryGetComponent(edge.m_Start, out Game.Net.Elevation startElevation))
+                    {
+                        netCourse.m_StartPosition.m_Elevation = startElevation.m_Elevation;
+                    }
+
+                    if (m_NetElevationLookup.TryGetComponent(edge.m_Start, out Game.Net.Elevation endElevation))
+                    {
+                        netCourse.m_EndPosition.m_Elevation = endElevation.m_Elevation;
+                    }
+                }
+
+                buffer.AddComponent(definitionEntity, netCourse);
             }
         }
 

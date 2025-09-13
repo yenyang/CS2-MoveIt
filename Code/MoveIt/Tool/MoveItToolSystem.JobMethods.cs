@@ -45,6 +45,7 @@ namespace MoveIt.Tool
                 m_SubAreaLookup = SystemAPI.GetBufferLookup<Game.Areas.SubArea>(isReadOnly: true),
                 m_SubNetLookup = SystemAPI.GetBufferLookup<Game.Net.SubNet>(isReadOnly: true),
                 m_RotationAboutCenter = m_RotationAboutCenter,
+                m_ConnectedEdgeLookup = SystemAPI.GetBufferLookup<Game.Net.ConnectedEdge>(isReadOnly: true),
             };
             inputDeps = createDefinitionJob.Schedule(m_MIT_SelectedQuery, inputDeps);
             m_TerrainSystem.AddCPUHeightReader(inputDeps);
