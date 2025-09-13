@@ -150,7 +150,7 @@ namespace MoveIt.Tool
 
                         if (m_FollowTerrain)
                         {
-                            objectDefinition.m_Position.y += TerrainUtils.SampleHeight(ref m_TerrainHeightData, objectDefinition.m_Position) - TerrainUtils.SampleHeight(ref m_TerrainHeightData, transform.m_Position);
+                            objectDefinition.m_Position = FollowTerrain(objectDefinition.m_Position, transform.m_Position);
                         }
 
                         if (m_OwnerLookup.HasComponent(entityNativeArray[i]) &&
@@ -306,6 +306,7 @@ namespace MoveIt.Tool
                         m_Rotation = NetUtils.GetNodeRotation(MathUtils.StartTangent(curve.m_Bezier)),
                         m_CourseDelta = 0,
                     },
+                    
                 };
 
                 if (m_EdgeLookup.TryGetComponent(originalInstance, out Game.Net.Edge edge))
@@ -315,43 +316,77 @@ namespace MoveIt.Tool
                         netCourse.m_StartPosition.m_Entity = edge.m_Start;
                         netCourse.m_EndPosition.m_Entity = edge.m_End;
                     }
-
-                    if (m_NetElevationLookup.TryGetComponent(edge.m_Start, out Game.Net.Elevation startElevation))
+                    else
                     {
-                        netCourse.m_StartPosition.m_Elevation = startElevation.m_Elevation;
+                        // Evaluate order.
                     }
 
-                    if (m_NetElevationLookup.TryGetComponent(edge.m_Start, out Game.Net.Elevation endElevation))
-                    {
-                        netCourse.m_EndPosition.m_Elevation = endElevation.m_Elevation;
-                    }
-                    
                     if (m_CreationFlags != CreationFlags.Delete)
                     {
-                        if (m_SelectedLookup.HasComponent(edge.m_Start))
+                        if (m_SelectedLookup.HasComponent(edge.m_Start) || m_CreationFlags == 0)
                         {
                             if (m_RotationAboutCenter != 0)
                             {
                                 Game.Objects.Transform rotatedPosition = GetRotatedPosition(new Game.Objects.Transform() { m_Position = netCourse.m_StartPosition.m_Position, m_Rotation = netCourse.m_StartPosition.m_Rotation });
                                 netCourse.m_StartPosition.m_Position = rotatedPosition.m_Position;
                                 netCourse.m_StartPosition.m_Rotation = rotatedPosition.m_Rotation;
+                                netCourse.m_Curve.b = GetRotatedPosition(new Game.Objects.Transform() { m_Position = curve.m_Bezier.b, m_Rotation = quaternion.identity }).m_Position;
                             }
 
                             netCourse.m_StartPosition.m_Position = GetTranslatedXZPosition(netCourse.m_StartPosition.m_Position);
+                            netCourse.m_Curve.b = GetTranslatedXZPosition(netCourse.m_Curve.b);
+
+                            if (m_FollowTerrain)
+                            {
+                                netCourse.m_StartPosition.m_Position = FollowTerrain(netCourse.m_StartPosition.m_Position, curve.m_Bezier.a);
+                                netCourse.m_Curve.b = FollowTerrain(netCourse.m_Curve.b, curve.m_Bezier.b);
+                            }
+
                             netCourse.m_Curve.a = netCourse.m_StartPosition.m_Position;
+                            netCourse.m_StartPosition.m_Elevation = TerrainUtils.SampleHeight(ref m_TerrainHeightData, netCourse.m_StartPosition.m_Position) - netCourse.m_StartPosition.m_Position.y;
+                        }
+                        else if (m_NetElevationLookup.TryGetComponent(edge.m_Start, out Game.Net.Elevation startElevation))
+                        {
+                            netCourse.m_StartPosition.m_Elevation = startElevation.m_Elevation;
                         }
 
-                        if (m_SelectedLookup.HasComponent(edge.m_End))
+                        if (m_SelectedLookup.HasComponent(edge.m_End) || m_CreationFlags == 0)
                         {
                             if (m_RotationAboutCenter != 0)
                             {
                                 Game.Objects.Transform rotatedPosition = GetRotatedPosition(new Game.Objects.Transform() { m_Position = netCourse.m_EndPosition.m_Position, m_Rotation = netCourse.m_EndPosition.m_Rotation });
                                 netCourse.m_EndPosition.m_Position = rotatedPosition.m_Position;
                                 netCourse.m_EndPosition.m_Rotation = rotatedPosition.m_Rotation;
+                                netCourse.m_Curve.c = GetRotatedPosition(new Game.Objects.Transform() { m_Position = curve.m_Bezier.c, m_Rotation = quaternion.identity }).m_Position;
                             }
 
                             netCourse.m_EndPosition.m_Position = GetTranslatedXZPosition(netCourse.m_EndPosition.m_Position);
+                            netCourse.m_Curve.c = GetTranslatedXZPosition(netCourse.m_Curve.c);
+
+                            if (m_FollowTerrain)
+                            {
+                                netCourse.m_EndPosition.m_Position = FollowTerrain(netCourse.m_EndPosition.m_Position, curve.m_Bezier.a);
+                                netCourse.m_Curve.c = FollowTerrain(netCourse.m_Curve.c, curve.m_Bezier.c);
+                            }
+
                             netCourse.m_Curve.d = netCourse.m_EndPosition.m_Position;
+                            netCourse.m_EndPosition.m_Elevation = TerrainUtils.SampleHeight(ref m_TerrainHeightData, netCourse.m_StartPosition.m_Position) - netCourse.m_StartPosition.m_Position.y;
+                        }
+                        else if (m_NetElevationLookup.TryGetComponent(edge.m_Start, out Game.Net.Elevation endElevation))
+                        {
+                            netCourse.m_EndPosition.m_Elevation = endElevation.m_Elevation;
+                        }
+                    }
+                    else
+                    {
+                        if (m_NetElevationLookup.TryGetComponent(edge.m_Start, out Game.Net.Elevation startElevation))
+                        {
+                            netCourse.m_StartPosition.m_Elevation = startElevation.m_Elevation;
+                        }
+
+                        if (m_NetElevationLookup.TryGetComponent(edge.m_Start, out Game.Net.Elevation endElevation))
+                        {
+                            netCourse.m_EndPosition.m_Elevation = endElevation.m_Elevation;
                         }
                     }
                 }
@@ -398,6 +433,13 @@ namespace MoveIt.Tool
                     creationDefinition.m_RandomSeed = m_PseudoRandomSeedLookup[originalInstance].m_Seed;
                 }
 
+                if (m_CurveLookup.HasComponent(originalInstance) &&
+                    m_CreationFlags == CreationFlags.Relocate)
+                {
+                    // highlight in this situation. Noticed some instability after adding this, but could be a coincidence. Might just be spamming tool too fast.
+                    creationDefinition.m_Flags = CreationFlags.Select;
+                }
+
                 buffer.AddComponent(definitionEntity, creationDefinition);
             }
 
@@ -422,6 +464,12 @@ namespace MoveIt.Tool
                 }
 
                 return position;
+            }
+
+            private float3 FollowTerrain(float3 newPosition, float3 originalPosition)
+            {
+                newPosition.y += TerrainUtils.SampleHeight(ref m_TerrainHeightData, newPosition) - TerrainUtils.SampleHeight(ref m_TerrainHeightData, originalPosition);
+                return newPosition;
             }
         }
 

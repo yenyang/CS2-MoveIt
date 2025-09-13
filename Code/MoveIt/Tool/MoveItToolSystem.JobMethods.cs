@@ -50,6 +50,7 @@ namespace MoveIt.Tool
                 m_SelectedLookup = SystemAPI.GetComponentLookup<MIT_Selected>(isReadOnly: true),
             };
             inputDeps = createDefinitionJob.Schedule(m_MIT_SelectedQuery, inputDeps);
+            
             m_TerrainSystem.AddCPUHeightReader(inputDeps);
             m_Barrier.AddJobHandleForProducer(inputDeps);
 
