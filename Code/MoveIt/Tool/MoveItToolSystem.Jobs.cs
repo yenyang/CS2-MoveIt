@@ -28,6 +28,7 @@ using Unity.Entities.UniversalDelegates;
 using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
+using static Game.Input.UIBaseInputAction;
 
 namespace MoveIt.Tool
 {
@@ -83,6 +84,8 @@ namespace MoveIt.Tool
             public BufferLookup<Game.Net.SubNet> m_SubNetLookup;
             [ReadOnly]
             public BufferLookup<Game.Net.ConnectedEdge> m_ConnectedEdgeLookup;
+            [ReadOnly]
+            public ComponentLookup<MIT_Selected> m_SelectedLookup;
 
 
             public void Execute(in ArchetypeChunk chunk, int unfilteredChunkIndex, bool useEnabledMask, in v128 chunkEnabledMask)
@@ -98,35 +101,9 @@ namespace MoveIt.Tool
                             if (m_CurveLookup.TryGetComponent(connectedEdge.m_Edge, out Game.Net.Curve connectedCurve))
                             {
                                 Entity connectedEdgeDefinition = buffer.CreateEntity();
-                                CreationDefinition connectedEdgeCreationDefinition = new()
-                                {
-                                    m_Flags = m_CreationFlags,
-                                };
-
-                                if ((m_CreationFlags & CreationFlags.Relocate) == CreationFlags.Relocate ||
-                                    (m_CreationFlags & CreationFlags.Delete) == CreationFlags.Delete)
-                                {
-                                    connectedEdgeCreationDefinition.m_Original = connectedEdge.m_Edge;
-                                }
-
-                                if (m_PrefabRefLookup.HasComponent(connectedEdge.m_Edge))
-                                {
-                                    if (m_OwnerLookup.TryGetComponent(connectedEdge.m_Edge, out Owner owner) &&
-                                        m_EditorContainterLookup.HasComponent(owner.m_Owner) &&
-                                        m_PrefabRefLookup.HasComponent(owner.m_Owner))
-                                    {
-                                        connectedEdgeCreationDefinition.m_Prefab = m_PrefabRefLookup[owner.m_Owner];
-                                        connectedEdgeCreationDefinition.m_SubPrefab = m_PrefabRefLookup[connectedEdge.m_Edge];
-                                    }
-                                    else
-                                    {
-                                        connectedEdgeCreationDefinition.m_Prefab = new PrefabRef(m_PrefabRefLookup[connectedEdge.m_Edge].m_Prefab);
-                                    }
-                                }
+                                ProcessCreationDefinition(connectedEdge.m_Edge, connectedEdgeDefinition);
 
                                 buffer.AddComponent(connectedEdgeDefinition, default(Updated));
-
-                                buffer.AddComponent(connectedEdgeDefinition, connectedEdgeCreationDefinition);
 
                                 ProcessCurve(connectedEdge.m_Edge, connectedEdgeDefinition, connectedCurve);
                             }
@@ -137,43 +114,7 @@ namespace MoveIt.Tool
 
 
                     Entity e = buffer.CreateEntity();
-                    CreationDefinition creationDefinition = new()
-                    {
-                        m_Flags = m_CreationFlags,
-                    };
-
-                    if ((m_CreationFlags & CreationFlags.Relocate) == CreationFlags.Relocate ||
-                        (m_CreationFlags & CreationFlags.Delete) == CreationFlags.Delete)
-                    {
-                        creationDefinition.m_Original = entityNativeArray[i];
-
-                        // Not sure if this should be used for create or not.
-                        if (m_AttachedLookup.HasComponent(entityNativeArray[i]))
-                        {
-                            creationDefinition.m_Attached = m_AttachedLookup[entityNativeArray[i]].m_Parent;
-                        }
-                    }
-
-                    if (m_PrefabRefLookup.HasComponent(entityNativeArray[i]))
-                    {
-                        if (m_OwnerLookup.TryGetComponent(entityNativeArray[i], out Owner owner) &&
-                            m_EditorContainterLookup.HasComponent(owner.m_Owner) &&
-                            m_PrefabRefLookup.HasComponent(owner.m_Owner))
-                        {
-                            creationDefinition.m_Prefab = m_PrefabRefLookup[owner.m_Owner];
-                            creationDefinition.m_SubPrefab = m_PrefabRefLookup[entityNativeArray[i]];
-                        }
-                        else
-                        {
-                            creationDefinition.m_Prefab = new PrefabRef(m_PrefabRefLookup[entityNativeArray[i]].m_Prefab);
-                        }
-                    }
-
-                    if (m_PseudoRandomSeedLookup.HasComponent(entityNativeArray[i]))
-                    {
-                        creationDefinition.m_RandomSeed = m_PseudoRandomSeedLookup[entityNativeArray[i]].m_Seed;
-                    }
-
+                    ProcessCreationDefinition(entityNativeArray[i], e);
                     buffer.AddComponent(e, default(Updated));
                     Game.Objects.Transform transform = new Game.Objects.Transform();
                     if (m_TransformLookup.HasComponent(entityNativeArray[i]))
@@ -194,24 +135,13 @@ namespace MoveIt.Tool
                         // Apply Rotation
                         if (m_RotationAboutCenter != 0 && m_CreationFlags != CreationFlags.Delete)
                         {
-                            Game.Objects.Transform parentTransform = new Game.Objects.Transform(m_Centroid.m_Position, quaternion.RotateY(m_RotationAboutCenter));
-                            Game.Objects.Transform localTransform = new Game.Objects.Transform() { m_Position = transform.m_Position - m_Centroid.m_Position, m_Rotation = transform.m_Rotation };
-                            Game.Objects.Transform newWorldTransform = ObjectUtils.LocalToWorld(parentTransform, localTransform);
+                            Game.Objects.Transform newWorldTransform = GetRotatedPosition(transform);
                             objectDefinition.m_Position = newWorldTransform.m_Position;
                             objectDefinition.m_Rotation = newWorldTransform.m_Rotation;
                         }
 
                         // Apply Translation
-                        if (m_CreationFlags == CreationFlags.Relocate)
-                        {
-                            objectDefinition.m_Position.x += m_EndPoint.m_Position.x - m_StartPoint.m_Position.x;
-                            objectDefinition.m_Position.z += m_EndPoint.m_Position.z - m_StartPoint.m_Position.z;
-                        }
-                        else if (m_CreationFlags == 0)
-                        {
-                            objectDefinition.m_Position.x += m_EndPoint.m_Position.x - m_Centroid.m_Position.x;
-                            objectDefinition.m_Position.z += m_EndPoint.m_Position.z - m_Centroid.m_Position.z;
-                        }
+                        objectDefinition.m_Position = GetTranslatedXZPosition(objectDefinition.m_Position);
 
                         if (m_TreeLookup.TryGetComponent(entityNativeArray[i], out Tree tree))
                         {
@@ -245,10 +175,6 @@ namespace MoveIt.Tool
                     {
                         ProcessCurve(entityNativeArray[i], e, curve);
                     }
-
-                    
-
-                    buffer.AddComponent(e, creationDefinition);
                     
                     // SubAreas require their own CreationDefinition entity. The originals don't get hidden the way I would want them too. . .
                     if (m_SubAreaLookup.TryGetBuffer(entityNativeArray[i], out DynamicBuffer<Game.Areas.SubArea> subAreas) &&
@@ -326,7 +252,7 @@ namespace MoveIt.Tool
                 }
             }
 
-            public float GetTreeAge(Tree tree)
+            private float GetTreeAge(Tree tree)
             {
                 if (tree.m_State == 0)
                 {
@@ -350,7 +276,7 @@ namespace MoveIt.Tool
                 }
             }
 
-            public void ProcessCurve(Entity originalInstance, Entity definitionEntity, Game.Net.Curve curve)
+            private void ProcessCurve(Entity originalInstance, Entity definitionEntity, Game.Net.Curve curve)
             {
                 NetCourse netCourse = new NetCourse()
                 {
@@ -396,9 +322,103 @@ namespace MoveIt.Tool
                     {
                         netCourse.m_EndPosition.m_Elevation = endElevation.m_Elevation;
                     }
+                    
+                    if (m_CreationFlags != CreationFlags.Delete)
+                    {
+                        if (m_SelectedLookup.HasComponent(edge.m_Start))
+                        {
+                            if (m_RotationAboutCenter != 0)
+                            {
+                                Game.Objects.Transform rotatedPosition = GetRotatedPosition(new Game.Objects.Transform() { m_Position = netCourse.m_StartPosition.m_Position, m_Rotation = netCourse.m_StartPosition.m_Rotation });
+                                netCourse.m_StartPosition.m_Position = rotatedPosition.m_Position;
+                                netCourse.m_StartPosition.m_Rotation = rotatedPosition.m_Rotation;
+                            }
+
+                            netCourse.m_StartPosition.m_Position = GetTranslatedXZPosition(netCourse.m_StartPosition.m_Position);
+                            netCourse.m_Curve.a = netCourse.m_StartPosition.m_Position;
+                        }
+
+                        if (m_SelectedLookup.HasComponent(edge.m_End))
+                        {
+                            if (m_RotationAboutCenter != 0)
+                            {
+                                Game.Objects.Transform rotatedPosition = GetRotatedPosition(new Game.Objects.Transform() { m_Position = netCourse.m_EndPosition.m_Position, m_Rotation = netCourse.m_EndPosition.m_Rotation });
+                                netCourse.m_EndPosition.m_Position = rotatedPosition.m_Position;
+                                netCourse.m_EndPosition.m_Rotation = rotatedPosition.m_Rotation;
+                            }
+
+                            netCourse.m_EndPosition.m_Position = GetTranslatedXZPosition(netCourse.m_EndPosition.m_Position);
+                            netCourse.m_Curve.d = netCourse.m_EndPosition.m_Position;
+                        }
+                    }
                 }
 
                 buffer.AddComponent(definitionEntity, netCourse);
+            }
+
+            private void ProcessCreationDefinition(Entity originalInstance, Entity definitionEntity)
+            {
+                CreationDefinition creationDefinition = new()
+                {
+                    m_Flags = m_CreationFlags,
+                };
+
+                if ((m_CreationFlags & CreationFlags.Relocate) == CreationFlags.Relocate ||
+                    (m_CreationFlags & CreationFlags.Delete) == CreationFlags.Delete)
+                {
+                    creationDefinition.m_Original = originalInstance;
+
+                    // Not sure if this should be used for create or not.
+                    if (m_AttachedLookup.HasComponent(originalInstance))
+                    {
+                        creationDefinition.m_Attached = m_AttachedLookup[originalInstance].m_Parent;
+                    }
+                }
+
+                if (m_PrefabRefLookup.HasComponent(originalInstance))
+                {
+                    if (m_OwnerLookup.TryGetComponent(originalInstance, out Owner owner) &&
+                        m_EditorContainterLookup.HasComponent(owner.m_Owner) &&
+                        m_PrefabRefLookup.HasComponent(owner.m_Owner))
+                    {
+                        creationDefinition.m_Prefab = m_PrefabRefLookup[owner.m_Owner];
+                        creationDefinition.m_SubPrefab = m_PrefabRefLookup[originalInstance];
+                    }
+                    else
+                    {
+                        creationDefinition.m_Prefab = new PrefabRef(m_PrefabRefLookup[originalInstance].m_Prefab);
+                    }
+                }
+
+                if (m_PseudoRandomSeedLookup.HasComponent(originalInstance))
+                {
+                    creationDefinition.m_RandomSeed = m_PseudoRandomSeedLookup[originalInstance].m_Seed;
+                }
+
+                buffer.AddComponent(definitionEntity, creationDefinition);
+            }
+
+            private Game.Objects.Transform GetRotatedPosition(Game.Objects.Transform originalTransform)
+            {
+                Game.Objects.Transform parentTransform = new Game.Objects.Transform(m_Centroid.m_Position, quaternion.RotateY(m_RotationAboutCenter));
+                Game.Objects.Transform localTransform = new Game.Objects.Transform() { m_Position = originalTransform.m_Position - m_Centroid.m_Position, m_Rotation = originalTransform.m_Rotation };
+                return ObjectUtils.LocalToWorld(parentTransform, localTransform);
+            }
+
+            private float3 GetTranslatedXZPosition(float3 position)
+            {
+                if (m_CreationFlags == CreationFlags.Relocate)
+                {
+                    position.x += m_EndPoint.m_Position.x - m_StartPoint.m_Position.x;
+                    position.z += m_EndPoint.m_Position.z - m_StartPoint.m_Position.z;
+                }
+                else if (m_CreationFlags == 0)
+                {
+                    position.x += m_EndPoint.m_Position.x - m_Centroid.m_Position.x;
+                    position.z += m_EndPoint.m_Position.z - m_Centroid.m_Position.z;
+                }
+
+                return position;
             }
         }
 

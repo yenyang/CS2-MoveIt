@@ -6,6 +6,7 @@
 using Game.Common;
 using Game.Prefabs;
 using Game.Tools;
+using MoveIt.Components;
 using QCommonLib;
 using Unity.Entities;
 using Unity.Jobs;
@@ -46,6 +47,7 @@ namespace MoveIt.Tool
                 m_SubNetLookup = SystemAPI.GetBufferLookup<Game.Net.SubNet>(isReadOnly: true),
                 m_RotationAboutCenter = m_RotationAboutCenter,
                 m_ConnectedEdgeLookup = SystemAPI.GetBufferLookup<Game.Net.ConnectedEdge>(isReadOnly: true),
+                m_SelectedLookup = SystemAPI.GetComponentLookup<MIT_Selected>(isReadOnly: true),
             };
             inputDeps = createDefinitionJob.Schedule(m_MIT_SelectedQuery, inputDeps);
             m_TerrainSystem.AddCPUHeightReader(inputDeps);
