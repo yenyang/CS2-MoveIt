@@ -116,6 +116,7 @@ namespace MoveIt.Tool
             m_PostToolSystem.End();
             m_InputSystem.OnToolDisable();
             m_ToolTipSystem.Enabled = false;
+            Copying = false;
             // secondaryApplyAction.enabled = false;
 
             QLog.FlushBundle();

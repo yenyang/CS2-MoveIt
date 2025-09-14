@@ -87,10 +87,14 @@ namespace MoveIt.Tool
             [ReadOnly]
             public ComponentLookup<MIT_Selected> m_SelectedLookup;
 
+            private NativeList<Entity> m_NetworksProcessed;
+
 
             public void Execute(in ArchetypeChunk chunk, int unfilteredChunkIndex, bool useEnabledMask, in v128 chunkEnabledMask)
             {
                 NativeArray<Entity> entityNativeArray = chunk.GetNativeArray(m_EntityType);
+                m_NetworksProcessed = new(entityNativeArray.Length, Allocator.TempJob);
+
                 for (int i = 0; i < chunk.Count; i++)
                 {
                     // Selected Nodes. Each connected segment gets it's own entity.
@@ -98,7 +102,8 @@ namespace MoveIt.Tool
                     {
                         foreach (ConnectedEdge connectedEdge in connectedEdges)
                         {
-                            if (m_CurveLookup.TryGetComponent(connectedEdge.m_Edge, out Game.Net.Curve connectedCurve))
+                            if (m_CurveLookup.TryGetComponent(connectedEdge.m_Edge, out Game.Net.Curve connectedCurve) &&
+                               !m_NetworksProcessed.Contains(connectedEdge.m_Edge))
                             {
                                 Entity connectedEdgeDefinition = buffer.CreateEntity();
                                 ProcessCreationDefinition(connectedEdge.m_Edge, connectedEdgeDefinition);
@@ -109,6 +114,10 @@ namespace MoveIt.Tool
                             }
                         }
 
+                        continue;
+                    } else if (m_CurveLookup.HasComponent(entityNativeArray[i]) &&
+                               m_NetworksProcessed.Contains(entityNativeArray[i]))
+                    {
                         continue;
                     }
 
@@ -248,8 +257,9 @@ namespace MoveIt.Tool
                             buffer.AddComponent<Updated>(subAreaDefinition);
                         }
                     }
-
                 }
+
+                m_NetworksProcessed.Dispose();
             }
 
             private float GetTreeAge(Tree tree)
@@ -318,7 +328,8 @@ namespace MoveIt.Tool
                     }
                     else
                     {
-                        // Evaluate order.
+                        netCourse.m_StartPosition.m_Flags = CoursePosFlags.IsLeft | CoursePosFlags.IsRight | CoursePosFlags.FreeHeight;
+                        netCourse.m_EndPosition.m_Flags = CoursePosFlags.IsLeft | CoursePosFlags.IsRight | CoursePosFlags.FreeHeight;
                     }
 
                     if (m_CreationFlags != CreationFlags.Delete)
@@ -343,11 +354,6 @@ namespace MoveIt.Tool
                             }
 
                             netCourse.m_Curve.a = netCourse.m_StartPosition.m_Position;
-                            netCourse.m_StartPosition.m_Elevation = TerrainUtils.SampleHeight(ref m_TerrainHeightData, netCourse.m_StartPosition.m_Position) - netCourse.m_StartPosition.m_Position.y;
-                        }
-                        else if (m_NetElevationLookup.TryGetComponent(edge.m_Start, out Game.Net.Elevation startElevation))
-                        {
-                            netCourse.m_StartPosition.m_Elevation = startElevation.m_Elevation;
                         }
 
                         if (m_SelectedLookup.HasComponent(edge.m_End) || m_CreationFlags == 0)
@@ -370,28 +376,22 @@ namespace MoveIt.Tool
                             }
 
                             netCourse.m_Curve.d = netCourse.m_EndPosition.m_Position;
-                            netCourse.m_EndPosition.m_Elevation = TerrainUtils.SampleHeight(ref m_TerrainHeightData, netCourse.m_StartPosition.m_Position) - netCourse.m_StartPosition.m_Position.y;
-                        }
-                        else if (m_NetElevationLookup.TryGetComponent(edge.m_Start, out Game.Net.Elevation endElevation))
-                        {
-                            netCourse.m_EndPosition.m_Elevation = endElevation.m_Elevation;
-                        }
-                    }
-                    else
-                    {
-                        if (m_NetElevationLookup.TryGetComponent(edge.m_Start, out Game.Net.Elevation startElevation))
-                        {
-                            netCourse.m_StartPosition.m_Elevation = startElevation.m_Elevation;
-                        }
-
-                        if (m_NetElevationLookup.TryGetComponent(edge.m_Start, out Game.Net.Elevation endElevation))
-                        {
-                            netCourse.m_EndPosition.m_Elevation = endElevation.m_Elevation;
                         }
                     }
                 }
 
+                if (m_NetElevationLookup.TryGetComponent(edge.m_Start, out Game.Net.Elevation startElevation))
+                {
+                    netCourse.m_StartPosition.m_Elevation = startElevation.m_Elevation;
+                }
+
+                if (m_NetElevationLookup.TryGetComponent(edge.m_Start, out Game.Net.Elevation endElevation))
+                {
+                    netCourse.m_EndPosition.m_Elevation = endElevation.m_Elevation;
+                }
+
                 buffer.AddComponent(definitionEntity, netCourse);
+                m_NetworksProcessed.Add(originalInstance);
             }
 
             private void ProcessCreationDefinition(Entity originalInstance, Entity definitionEntity)
@@ -432,12 +432,13 @@ namespace MoveIt.Tool
                 {
                     creationDefinition.m_RandomSeed = m_PseudoRandomSeedLookup[originalInstance].m_Seed;
                 }
-
+                
                 if (m_CurveLookup.HasComponent(originalInstance) &&
                     m_CreationFlags == CreationFlags.Relocate)
                 {
                     // highlight in this situation. Noticed some instability after adding this, but could be a coincidence. Might just be spamming tool too fast.
-                    creationDefinition.m_Flags = CreationFlags.Select;
+                    // Just select give highlight, but not overriden greyed out when moving. May affect other validation checks too.
+                    creationDefinition.m_Flags = CreationFlags.Recreate | CreationFlags.Parent;
                 }
 
                 buffer.AddComponent(definitionEntity, creationDefinition);
