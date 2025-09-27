@@ -68,6 +68,8 @@ namespace MoveIt.Tool
             [ReadOnly]
             public ComponentLookup<Game.Net.Edge> m_EdgeLookup;
             [ReadOnly]
+            public ComponentLookup<Game.Net.Node> m_NodeLookup;
+            [ReadOnly]
             public ComponentLookup<Game.Objects.Tree> m_TreeLookup;
             public CreationFlags m_CreationFlags;
             public ControlPoint m_StartPoint;
@@ -328,14 +330,62 @@ namespace MoveIt.Tool
                     }
                     else
                     {
-                        netCourse.m_StartPosition.m_Flags = CoursePosFlags.IsLeft | CoursePosFlags.IsRight | CoursePosFlags.FreeHeight;
-                        netCourse.m_EndPosition.m_Flags = CoursePosFlags.IsLeft | CoursePosFlags.IsRight | CoursePosFlags.FreeHeight;
+                        netCourse.m_StartPosition.m_Flags = CoursePosFlags.IsLeft | CoursePosFlags.IsRight;
+                        netCourse.m_EndPosition.m_Flags = CoursePosFlags.IsLeft | CoursePosFlags.IsRight;
                     }
 
                     if (m_CreationFlags != CreationFlags.Delete)
                     {
                         if (m_SelectedLookup.HasComponent(edge.m_Start) || m_CreationFlags == 0)
-                        {
+                        {                            
+                            bool isStart = true;
+                            /* Evaluate if the start of this edge is the start of a chain.
+                            if (m_ConnectedEdgeLookup.TryGetBuffer(edge.m_Start, out DynamicBuffer<ConnectedEdge> connectedEdges) &&
+                                connectedEdges.Length > 1)
+                            {
+                                for (int i = 0; i < connectedEdges.Length; i++)
+                                {
+                                    if (m_SelectedLookup.HasComponent(connectedEdges[i].m_Edge) &&
+                                        connectedEdges[i].m_Edge != originalInstance)
+                                    {
+                                        isStart = false;
+                                        break;
+                                    }
+                                        
+                                    if (m_EdgeLookup.TryGetComponent(connectedEdges[i].m_Edge, out Edge adjacentEdge))
+                                    {
+                                        if (m_SelectedLookup.HasComponent(adjacentEdge.m_Start) &&
+                                            adjacentEdge.m_Start != edge.m_Start)
+                                        {
+                                            isStart = false;
+                                            break;
+                                        }
+
+                                        if (m_SelectedLookup.HasComponent(adjacentEdge.m_End) &&
+                                            adjacentEdge.m_End != edge.m_Start)
+                                        {
+                                            isStart = false;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }*/
+
+                            if (isStart)
+                            {
+                                // netCourse.m_StartPosition.m_Flags |= CoursePosFlags.IsFirst;
+                            }
+
+                            float3 originalPosition = curve.m_Bezier.a;
+
+                            if (m_CreationFlags == 0 &&
+                                m_NodeLookup.TryGetComponent(edge.m_Start, out Game.Net.Node node))
+                            {
+                                netCourse.m_StartPosition.m_Position = node.m_Position;
+                                originalPosition = node.m_Position;
+                            }
+
+
                             if (m_RotationAboutCenter != 0)
                             {
                                 Game.Objects.Transform rotatedPosition = GetRotatedPosition(new Game.Objects.Transform() { m_Position = netCourse.m_StartPosition.m_Position, m_Rotation = netCourse.m_StartPosition.m_Rotation });
@@ -349,7 +399,7 @@ namespace MoveIt.Tool
 
                             if (m_FollowTerrain)
                             {
-                                netCourse.m_StartPosition.m_Position = FollowTerrain(netCourse.m_StartPosition.m_Position, curve.m_Bezier.a);
+                                netCourse.m_StartPosition.m_Position = FollowTerrain(netCourse.m_StartPosition.m_Position, originalPosition);
                                 netCourse.m_Curve.b = FollowTerrain(netCourse.m_Curve.b, curve.m_Bezier.b);
                             }
 
@@ -358,6 +408,54 @@ namespace MoveIt.Tool
 
                         if (m_SelectedLookup.HasComponent(edge.m_End) || m_CreationFlags == 0)
                         {
+                            
+                            bool isLast = true;
+                            /* Evaluate if the end of this edge is the end of a chain.
+                            if (m_ConnectedEdgeLookup.TryGetBuffer(edge.m_Start, out DynamicBuffer<ConnectedEdge> connectedEdges) &&
+                                connectedEdges.Length > 1)
+                            {
+                                for (int i = 0; i < connectedEdges.Length; i++)
+                                {
+                                    if (m_SelectedLookup.HasComponent(connectedEdges[i].m_Edge) &&
+                                        connectedEdges[i].m_Edge != originalInstance)
+                                    {
+                                        isLast = false;
+                                        break;
+                                    }
+
+                                    if (m_EdgeLookup.TryGetComponent(connectedEdges[i].m_Edge, out Edge adjacentEdge))
+                                    {
+                                        if (m_SelectedLookup.HasComponent(adjacentEdge.m_Start) &&
+                                            adjacentEdge.m_Start != edge.m_End)
+                                        {
+                                            isLast = false;
+                                            break;
+                                        }
+
+                                        if (m_SelectedLookup.HasComponent(adjacentEdge.m_End) &&
+                                            adjacentEdge.m_End != edge.m_End)
+                                        {
+                                            isLast = false;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }*/
+
+                            if (isLast)
+                            {
+                                // netCourse.m_EndPosition.m_Flags |= CoursePosFlags.IsLast;
+                            }
+
+                            float3 originalPosition = curve.m_Bezier.d;
+
+                            if (m_CreationFlags == 0 &&
+                                m_NodeLookup.TryGetComponent(edge.m_End, out Game.Net.Node node))
+                            {
+                                netCourse.m_EndPosition.m_Position = node.m_Position;
+                                originalPosition = node.m_Position;
+                            }
+
                             if (m_RotationAboutCenter != 0)
                             {
                                 Game.Objects.Transform rotatedPosition = GetRotatedPosition(new Game.Objects.Transform() { m_Position = netCourse.m_EndPosition.m_Position, m_Rotation = netCourse.m_EndPosition.m_Rotation });
@@ -371,7 +469,7 @@ namespace MoveIt.Tool
 
                             if (m_FollowTerrain)
                             {
-                                netCourse.m_EndPosition.m_Position = FollowTerrain(netCourse.m_EndPosition.m_Position, curve.m_Bezier.a);
+                                netCourse.m_EndPosition.m_Position = FollowTerrain(netCourse.m_EndPosition.m_Position, originalPosition);
                                 netCourse.m_Curve.c = FollowTerrain(netCourse.m_Curve.c, curve.m_Bezier.c);
                             }
 
