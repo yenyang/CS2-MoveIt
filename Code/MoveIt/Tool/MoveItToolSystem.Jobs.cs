@@ -382,6 +382,7 @@ namespace MoveIt.Tool
                                 m_NodeLookup.TryGetComponent(edge.m_Start, out Game.Net.Node node))
                             {
                                 netCourse.m_StartPosition.m_Position = node.m_Position;
+                                netCourse.m_StartPosition.m_Rotation = node.m_Rotation;
                                 originalPosition = node.m_Position;
                             }
 
@@ -454,6 +455,7 @@ namespace MoveIt.Tool
                                 m_NodeLookup.TryGetComponent(edge.m_End, out Game.Net.Node node))
                             {
                                 netCourse.m_EndPosition.m_Position = node.m_Position;
+                                netCourse.m_EndPosition.m_Rotation = node.m_Rotation;
                                 originalPosition = node.m_Position;
                             }
 
@@ -481,14 +483,16 @@ namespace MoveIt.Tool
                     }
                 }
 
-                if (m_NetElevationLookup.TryGetComponent(edge.m_Start, out Game.Net.Elevation startElevation))
+                float startDifferential = TerrainUtils.SampleHeight(ref m_TerrainHeightData, netCourse.m_StartPosition.m_Position) - netCourse.m_StartPosition.m_Position.y;
+                if (Mathf.Abs(startDifferential) > 4f)
                 {
-                    netCourse.m_StartPosition.m_Elevation = startElevation.m_Elevation;
+                    netCourse.m_StartPosition.m_Elevation = startDifferential;
                 }
 
-                if (m_NetElevationLookup.TryGetComponent(edge.m_Start, out Game.Net.Elevation endElevation))
+                float endDifferential = TerrainUtils.SampleHeight(ref m_TerrainHeightData, netCourse.m_EndPosition.m_Position) - netCourse.m_EndPosition.m_Position.y;
+                if (Mathf.Abs(endDifferential) > 4f)
                 {
-                    netCourse.m_EndPosition.m_Elevation = endElevation.m_Elevation;
+                    netCourse.m_EndPosition.m_Elevation = endDifferential;
                 }
 
                 buffer.AddComponent(definitionEntity, netCourse);
@@ -547,9 +551,7 @@ namespace MoveIt.Tool
 
             private Game.Objects.Transform GetRotatedPosition(Game.Objects.Transform originalTransform)
             {
-                Game.Objects.Transform parentTransform = new Game.Objects.Transform(m_Centroid.m_Position, quaternion.RotateY(m_RotationAboutCenter));
-                Game.Objects.Transform localTransform = new Game.Objects.Transform() { m_Position = originalTransform.m_Position - m_Centroid.m_Position, m_Rotation = originalTransform.m_Rotation };
-                return ObjectUtils.LocalToWorld(parentTransform, localTransform);
+                return ObjectUtils.LocalToWorld(new Game.Objects.Transform(m_Centroid.m_Position, quaternion.RotateY(m_RotationAboutCenter)), new Game.Objects.Transform() { m_Position = originalTransform.m_Position - m_Centroid.m_Position, m_Rotation = originalTransform.m_Rotation });
             }
 
             private float3 GetTranslatedXZPosition(float3 position)
