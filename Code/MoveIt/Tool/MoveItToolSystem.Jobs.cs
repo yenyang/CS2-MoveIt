@@ -338,8 +338,8 @@ namespace MoveIt.Tool
                     {
                         if (m_SelectedLookup.HasComponent(edge.m_Start) || m_CreationFlags == 0)
                         {                            
-                            bool isStart = true;
-                            /* Evaluate if the start of this edge is the start of a chain.
+                            /* bool isStart = true;
+                            Evaluate if the start of this edge is the start of a chain.
                             if (m_ConnectedEdgeLookup.TryGetBuffer(edge.m_Start, out DynamicBuffer<ConnectedEdge> connectedEdges) &&
                                 connectedEdges.Length > 1)
                             {
@@ -369,12 +369,12 @@ namespace MoveIt.Tool
                                         }
                                     }
                                 }
-                            }*/
+                            }
 
                             if (isStart)
                             {
                                 // netCourse.m_StartPosition.m_Flags |= CoursePosFlags.IsFirst;
-                            }
+                            }*/
 
                             float3 originalPosition = curve.m_Bezier.a;
 
@@ -392,25 +392,26 @@ namespace MoveIt.Tool
                                 netCourse.m_StartPosition.m_Position = rotatedPosition.m_Position;
                                 netCourse.m_StartPosition.m_Rotation = rotatedPosition.m_Rotation;
                                 netCourse.m_Curve.b = GetRotatedPosition(new Game.Objects.Transform() { m_Position = curve.m_Bezier.b, m_Rotation = quaternion.identity }).m_Position;
+                                netCourse.m_Curve.a = GetRotatedPosition(new Game.Objects.Transform() { m_Position = curve.m_Bezier.a  , m_Rotation = quaternion.identity }).m_Position;
                             }
 
                             netCourse.m_StartPosition.m_Position = GetTranslatedXZPosition(netCourse.m_StartPosition.m_Position);
                             netCourse.m_Curve.b = GetTranslatedXZPosition(netCourse.m_Curve.b);
+                            netCourse.m_Curve.a = GetTranslatedXZPosition(netCourse.m_Curve.a);
 
                             if (m_FollowTerrain)
                             {
                                 netCourse.m_StartPosition.m_Position = FollowTerrain(netCourse.m_StartPosition.m_Position, originalPosition);
                                 netCourse.m_Curve.b = FollowTerrain(netCourse.m_Curve.b, curve.m_Bezier.b);
+                                netCourse.m_Curve.a = FollowTerrain(netCourse.m_Curve.a, curve.m_Bezier.a);
                             }
-
-                            netCourse.m_Curve.a = netCourse.m_StartPosition.m_Position;
                         }
 
                         if (m_SelectedLookup.HasComponent(edge.m_End) || m_CreationFlags == 0)
                         {
-                            
+                            /*
                             bool isLast = true;
-                            /* Evaluate if the end of this edge is the end of a chain.
+                            Evaluate if the end of this edge is the end of a chain.
                             if (m_ConnectedEdgeLookup.TryGetBuffer(edge.m_Start, out DynamicBuffer<ConnectedEdge> connectedEdges) &&
                                 connectedEdges.Length > 1)
                             {
@@ -440,12 +441,12 @@ namespace MoveIt.Tool
                                         }
                                     }
                                 }
-                            }*/
+                            }
 
                             if (isLast)
                             {
                                 // netCourse.m_EndPosition.m_Flags |= CoursePosFlags.IsLast;
-                            }
+                            }*/
 
                             float3 originalPosition = curve.m_Bezier.d;
 
@@ -462,18 +463,20 @@ namespace MoveIt.Tool
                                 netCourse.m_EndPosition.m_Position = rotatedPosition.m_Position;
                                 netCourse.m_EndPosition.m_Rotation = rotatedPosition.m_Rotation;
                                 netCourse.m_Curve.c = GetRotatedPosition(new Game.Objects.Transform() { m_Position = curve.m_Bezier.c, m_Rotation = quaternion.identity }).m_Position;
+                                netCourse.m_Curve.d = GetRotatedPosition(new Game.Objects.Transform() { m_Position = curve.m_Bezier.d, m_Rotation = quaternion.identity }).m_Position;
                             }
 
                             netCourse.m_EndPosition.m_Position = GetTranslatedXZPosition(netCourse.m_EndPosition.m_Position);
                             netCourse.m_Curve.c = GetTranslatedXZPosition(netCourse.m_Curve.c);
+                            netCourse.m_Curve.d = GetTranslatedXZPosition(netCourse.m_Curve.d);
 
                             if (m_FollowTerrain)
                             {
                                 netCourse.m_EndPosition.m_Position = FollowTerrain(netCourse.m_EndPosition.m_Position, originalPosition);
                                 netCourse.m_Curve.c = FollowTerrain(netCourse.m_Curve.c, curve.m_Bezier.c);
+                                netCourse.m_Curve.d = FollowTerrain(netCourse.m_Curve.d, curve.m_Bezier.d);
                             }
 
-                            netCourse.m_Curve.d = netCourse.m_EndPosition.m_Position;
                         }
                     }
                 }
