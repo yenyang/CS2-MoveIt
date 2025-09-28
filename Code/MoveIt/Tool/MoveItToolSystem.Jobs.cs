@@ -234,16 +234,8 @@ namespace MoveIt.Tool
                                 for (int k=0; k<nodes.Length; k++)
                                 {
                                     Game.Areas.Node node = new Game.Areas.Node() { m_Position= nodes[k].m_Position, m_Elevation = nodes[k].m_Elevation };
-                                    if ((m_CreationFlags & CreationFlags.Relocate) == CreationFlags.Relocate)
-                                    {
-                                        node.m_Position.x += m_EndPoint.m_Position.x - m_StartPoint.m_Position.x;
-                                        node.m_Position.z += m_EndPoint.m_Position.z - m_StartPoint.m_Position.z;
-                                    }
-                                    else if (m_CreationFlags == 0)
-                                    {
-                                        node.m_Position.x += m_EndPoint.m_Position.x - m_Centroid.m_Position.x;
-                                        node.m_Position.z += m_EndPoint.m_Position.z - m_Centroid.m_Position.z;
-                                    }
+                                    node.m_Position = GetRotatedPosition(new Game.Objects.Transform(node.m_Position, quaternion.identity)).m_Position;
+                                    node.m_Position = GetTranslatedXZPosition(node.m_Position);
 
                                     newNodeBuffer.Add(node);
                                 }
@@ -337,45 +329,7 @@ namespace MoveIt.Tool
                     if (m_CreationFlags != CreationFlags.Delete)
                     {
                         if (m_SelectedLookup.HasComponent(edge.m_Start) || m_CreationFlags == 0)
-                        {                            
-                            /* bool isStart = true;
-                            Evaluate if the start of this edge is the start of a chain.
-                            if (m_ConnectedEdgeLookup.TryGetBuffer(edge.m_Start, out DynamicBuffer<ConnectedEdge> connectedEdges) &&
-                                connectedEdges.Length > 1)
-                            {
-                                for (int i = 0; i < connectedEdges.Length; i++)
-                                {
-                                    if (m_SelectedLookup.HasComponent(connectedEdges[i].m_Edge) &&
-                                        connectedEdges[i].m_Edge != originalInstance)
-                                    {
-                                        isStart = false;
-                                        break;
-                                    }
-                                        
-                                    if (m_EdgeLookup.TryGetComponent(connectedEdges[i].m_Edge, out Edge adjacentEdge))
-                                    {
-                                        if (m_SelectedLookup.HasComponent(adjacentEdge.m_Start) &&
-                                            adjacentEdge.m_Start != edge.m_Start)
-                                        {
-                                            isStart = false;
-                                            break;
-                                        }
-
-                                        if (m_SelectedLookup.HasComponent(adjacentEdge.m_End) &&
-                                            adjacentEdge.m_End != edge.m_Start)
-                                        {
-                                            isStart = false;
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-
-                            if (isStart)
-                            {
-                                // netCourse.m_StartPosition.m_Flags |= CoursePosFlags.IsFirst;
-                            }*/
-
+                        {        
                             float3 originalPosition = curve.m_Bezier.a;
 
                             if (m_CreationFlags == 0 &&
@@ -410,45 +364,6 @@ namespace MoveIt.Tool
 
                         if (m_SelectedLookup.HasComponent(edge.m_End) || m_CreationFlags == 0)
                         {
-                            /*
-                            bool isLast = true;
-                            Evaluate if the end of this edge is the end of a chain.
-                            if (m_ConnectedEdgeLookup.TryGetBuffer(edge.m_Start, out DynamicBuffer<ConnectedEdge> connectedEdges) &&
-                                connectedEdges.Length > 1)
-                            {
-                                for (int i = 0; i < connectedEdges.Length; i++)
-                                {
-                                    if (m_SelectedLookup.HasComponent(connectedEdges[i].m_Edge) &&
-                                        connectedEdges[i].m_Edge != originalInstance)
-                                    {
-                                        isLast = false;
-                                        break;
-                                    }
-
-                                    if (m_EdgeLookup.TryGetComponent(connectedEdges[i].m_Edge, out Edge adjacentEdge))
-                                    {
-                                        if (m_SelectedLookup.HasComponent(adjacentEdge.m_Start) &&
-                                            adjacentEdge.m_Start != edge.m_End)
-                                        {
-                                            isLast = false;
-                                            break;
-                                        }
-
-                                        if (m_SelectedLookup.HasComponent(adjacentEdge.m_End) &&
-                                            adjacentEdge.m_End != edge.m_End)
-                                        {
-                                            isLast = false;
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-
-                            if (isLast)
-                            {
-                                // netCourse.m_EndPosition.m_Flags |= CoursePosFlags.IsLast;
-                            }*/
-
                             float3 originalPosition = curve.m_Bezier.d;
 
                             if (m_CreationFlags == 0 &&
