@@ -147,6 +147,7 @@ namespace MoveIt.Tool
             }
 
             m_SelectionDirty = true;
+            Selection.CalculateCenter();
             return inputDeps;
         }
 

@@ -395,6 +395,40 @@ namespace MoveIt.Tool
                             }
 
                         }
+
+                        if (m_SelectedLookup.HasComponent(originalInstance) && 
+                            m_CreationFlags == CreationFlags.Relocate)
+                        {
+                            if (!m_SelectedLookup.HasComponent(edge.m_Start))
+                            {
+                                if (m_RotationAboutCenter != 0)
+                                {
+                                    netCourse.m_Curve.b = GetRotatedPosition(new Game.Objects.Transform() { m_Position = curve.m_Bezier.b, m_Rotation = quaternion.identity }).m_Position;
+                                }
+
+                                netCourse.m_Curve.b = GetTranslatedXZPosition(netCourse.m_Curve.b);
+
+                                if (m_FollowTerrain)
+                                {
+                                    netCourse.m_Curve.b = FollowTerrain(netCourse.m_Curve.b, curve.m_Bezier.b);
+                                }
+                            }
+
+                            if (!m_SelectedLookup.HasComponent(edge.m_End))
+                            {
+                                if (m_RotationAboutCenter != 0)
+                                {
+                                    netCourse.m_Curve.c = GetRotatedPosition(new Game.Objects.Transform() { m_Position = curve.m_Bezier.c, m_Rotation = quaternion.identity }).m_Position;
+                                }
+
+                                netCourse.m_Curve.c = GetTranslatedXZPosition(netCourse.m_Curve.c);
+
+                                if (m_FollowTerrain)
+                                {
+                                    netCourse.m_Curve.c = FollowTerrain(netCourse.m_Curve.c, curve.m_Bezier.c);
+                                }
+                            }
+                        }
                     }
                 }
 
