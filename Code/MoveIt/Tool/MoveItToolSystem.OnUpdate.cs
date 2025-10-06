@@ -75,6 +75,8 @@ namespace MoveIt.Tool
             Queue.FireAction(ref inputDeps, ref buffer);
 
             
+
+
             if (!UIHasFocus &&
                (MITState == MITStates.Default ||
                 MITState == MITStates.ApplyButtonHeld ||
@@ -83,17 +85,24 @@ namespace MoveIt.Tool
                 MITState != MITStates.DrawingSelection))
             {
                 if (m_InputSystem.MouseApply.WasReleasedThisFrame() ||
-                   (m_InputSystem.MouseCancel.WasReleasedThisFrame() && !Deleting && !Copying))
+                   (!Deleting &&
+                    !Copying && 
+                    !m_InputSystem.MouseApply.IsPressed() &&
+                   (m_InputSystem.MouseCancel.WasReleasedThisFrame() ||
+                    MovementKeyReleased)))
                 {
                     return Apply(inputDeps);
                 }
                 else if (m_InputSystem.MouseApply.IsPressed() ||
                          Copying ||
-                         m_InputSystem.MouseCancel.IsPressed())
+                         m_InputSystem.MouseCancel.IsPressed() ||
+                         MovementKeyPressed)
                 {
                     return Update(inputDeps);
                 }
             }
+
+            ;
 
             if (MITState == MITStates.Cancelling)
             {

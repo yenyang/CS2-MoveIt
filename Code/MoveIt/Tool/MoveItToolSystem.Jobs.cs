@@ -76,6 +76,7 @@ namespace MoveIt.Tool
             public ControlPoint m_EndPoint;
             public ControlPoint m_Centroid;
             public float m_RotationAboutCenter;
+            public float m_VerticalDisplacement;
             public bool m_FollowTerrain;
             public TerrainHeightData m_TerrainHeightData;
             [ReadOnly]
@@ -152,7 +153,7 @@ namespace MoveIt.Tool
                         }
 
                         // Apply Translation
-                        objectDefinition.m_Position = GetTranslatedXZPosition(objectDefinition.m_Position);
+                        objectDefinition.m_Position = GetTranslatedXZPositionAndVerticallyDisplace(objectDefinition.m_Position);
 
                         if (m_TreeLookup.TryGetComponent(entityNativeArray[i], out Tree tree))
                         {
@@ -235,7 +236,7 @@ namespace MoveIt.Tool
                                 {
                                     Game.Areas.Node node = new Game.Areas.Node() { m_Position= nodes[k].m_Position, m_Elevation = nodes[k].m_Elevation };
                                     node.m_Position = GetRotatedPosition(new Game.Objects.Transform(node.m_Position, quaternion.identity)).m_Position;
-                                    node.m_Position = GetTranslatedXZPosition(node.m_Position);
+                                    node.m_Position = GetTranslatedXZPositionAndVerticallyDisplace(node.m_Position);
 
                                     newNodeBuffer.Add(node);
                                 }
@@ -350,9 +351,9 @@ namespace MoveIt.Tool
                                 netCourse.m_Curve.a = GetRotatedPosition(new Game.Objects.Transform() { m_Position = curve.m_Bezier.a  , m_Rotation = quaternion.identity }).m_Position;
                             }
 
-                            netCourse.m_StartPosition.m_Position = GetTranslatedXZPosition(netCourse.m_StartPosition.m_Position);
-                            netCourse.m_Curve.b = GetTranslatedXZPosition(netCourse.m_Curve.b);
-                            netCourse.m_Curve.a = GetTranslatedXZPosition(netCourse.m_Curve.a);
+                            netCourse.m_StartPosition.m_Position = GetTranslatedXZPositionAndVerticallyDisplace(netCourse.m_StartPosition.m_Position);
+                            netCourse.m_Curve.b = GetTranslatedXZPositionAndVerticallyDisplace(netCourse.m_Curve.b);
+                            netCourse.m_Curve.a = GetTranslatedXZPositionAndVerticallyDisplace(netCourse.m_Curve.a);
 
                             if (m_FollowTerrain)
                             {
@@ -383,9 +384,9 @@ namespace MoveIt.Tool
                                 netCourse.m_Curve.d = GetRotatedPosition(new Game.Objects.Transform() { m_Position = curve.m_Bezier.d, m_Rotation = quaternion.identity }).m_Position;
                             }
 
-                            netCourse.m_EndPosition.m_Position = GetTranslatedXZPosition(netCourse.m_EndPosition.m_Position);
-                            netCourse.m_Curve.c = GetTranslatedXZPosition(netCourse.m_Curve.c);
-                            netCourse.m_Curve.d = GetTranslatedXZPosition(netCourse.m_Curve.d);
+                            netCourse.m_EndPosition.m_Position = GetTranslatedXZPositionAndVerticallyDisplace(netCourse.m_EndPosition.m_Position);
+                            netCourse.m_Curve.c = GetTranslatedXZPositionAndVerticallyDisplace(netCourse.m_Curve.c);
+                            netCourse.m_Curve.d = GetTranslatedXZPositionAndVerticallyDisplace(netCourse.m_Curve.d);
 
                             if (m_FollowTerrain)
                             {
@@ -406,7 +407,7 @@ namespace MoveIt.Tool
                                     netCourse.m_Curve.b = GetRotatedPosition(new Game.Objects.Transform() { m_Position = curve.m_Bezier.b, m_Rotation = quaternion.identity }).m_Position;
                                 }
 
-                                netCourse.m_Curve.b = GetTranslatedXZPosition(netCourse.m_Curve.b);
+                                netCourse.m_Curve.b = GetTranslatedXZPositionAndVerticallyDisplace(netCourse.m_Curve.b);
 
                                 if (m_FollowTerrain)
                                 {
@@ -421,7 +422,7 @@ namespace MoveIt.Tool
                                     netCourse.m_Curve.c = GetRotatedPosition(new Game.Objects.Transform() { m_Position = curve.m_Bezier.c, m_Rotation = quaternion.identity }).m_Position;
                                 }
 
-                                netCourse.m_Curve.c = GetTranslatedXZPosition(netCourse.m_Curve.c);
+                                netCourse.m_Curve.c = GetTranslatedXZPositionAndVerticallyDisplace(netCourse.m_Curve.c);
 
                                 if (m_FollowTerrain)
                                 {
@@ -503,7 +504,7 @@ namespace MoveIt.Tool
                 return ObjectUtils.LocalToWorld(new Game.Objects.Transform(m_Centroid.m_Position, quaternion.RotateY(m_RotationAboutCenter)), new Game.Objects.Transform() { m_Position = originalTransform.m_Position - m_Centroid.m_Position, m_Rotation = originalTransform.m_Rotation });
             }
 
-            private float3 GetTranslatedXZPosition(float3 position)
+            private float3 GetTranslatedXZPositionAndVerticallyDisplace(float3 position)
             {
                 if (m_CreationFlags == CreationFlags.Relocate)
                 {
@@ -515,6 +516,8 @@ namespace MoveIt.Tool
                     position.x += m_EndPoint.m_Position.x - m_Centroid.m_Position.x;
                     position.z += m_EndPoint.m_Position.z - m_Centroid.m_Position.z;
                 }
+
+                position.y += m_VerticalDisplacement;
 
                 return position;
             }

@@ -7,6 +7,7 @@ using Game.Common;
 using Game.Prefabs;
 using Game.Tools;
 using MoveIt.Components;
+using MoveIt.Input;
 using QCommonLib;
 using Unity.Entities;
 using Unity.Jobs;
@@ -49,6 +50,7 @@ namespace MoveIt.Tool
                 m_ConnectedEdgeLookup = SystemAPI.GetBufferLookup<Game.Net.ConnectedEdge>(isReadOnly: true),
                 m_SelectedLookup = SystemAPI.GetComponentLookup<MIT_Selected>(isReadOnly: true),
                 m_NodeLookup = SystemAPI.GetComponentLookup<Game.Net.Node>(isReadOnly: true),
+                m_VerticalDisplacement = m_VerticalDisplacement,
             };
             inputDeps = createDefinitionJob.Schedule(m_MIT_SelectedQuery, inputDeps);
             
@@ -64,25 +66,18 @@ namespace MoveIt.Tool
                 Deleting)
             {
                 if (m_InputSystem.MouseApply.WasPressedThisFrame() ||
-                    m_InputSystem.MouseCancel.WasPressedThisFrame())
+                    m_InputSystem.MouseCancel.WasPressedThisFrame() &&
+                   !m_InputSystem.MouseApply.IsPressed())                    
                 {
                     applyMode = ApplyMode.Clear;
                     m_StartPoint = controlPoint;
                     m_LastRaycastPoint = controlPoint;
                     return UpdateDefinitions(inputDeps);
-                }
-
-                if (!Deleting &&
-                    m_LastRaycastPoint.Equals(controlPoint) &&
-                    !forceUpdate)
+                } 
+                else if (!m_InputSystem.MouseApply.IsPressed() &&
+                         !m_InputSystem.MouseCancel.IsPressed())
                 {
-                    applyMode = ApplyMode.None;
-
-                    if (m_InputSystem.MouseCancel.WasReleasedThisFrame() && Copying)
-                    {
-                        m_PreviousRotation = 0;
-                    }
-                    return inputDeps;
+                    m_StartPoint = m_LastRaycastPoint;
                 }
 
                 if (m_InputSystem.MouseCancel.IsPressed())
@@ -93,6 +88,28 @@ namespace MoveIt.Tool
                         m_RotationAboutCenter += newRotation - m_PreviousRotation;
                         m_PreviousRotation = newRotation;
                     }
+                }
+                else if (!Deleting &&
+                        m_LastRaycastPoint.Equals(controlPoint) &&
+                        !forceUpdate &&
+                        !MovementKeyPressed)
+                {
+                    applyMode = ApplyMode.None;
+
+                    if (m_InputSystem.MouseCancel.WasReleasedThisFrame() && Copying)
+                    {
+                        m_PreviousRotation = 0;
+                    }
+                    return inputDeps;
+                }
+
+                if (m_InputSystem.GetBinding(Inputs.KEY_MOVEUP).m_Action.IsPressed())
+                {
+                    m_VerticalDisplacement += 0.25f;
+                }
+                else if (m_InputSystem.GetBinding(Inputs.KEY_MOVEDOWN).m_Action.IsPressed())
+                {
+                    m_VerticalDisplacement -= 0.25f;
                 }
 
                 if (m_InputSystem.MouseCancel.WasReleasedThisFrame() && Copying)
@@ -144,6 +161,7 @@ namespace MoveIt.Tool
             {
                 m_RotationAboutCenter = 0f;
                 m_PreviousRotation = 0f;
+                m_VerticalDisplacement = 0f;
             }
 
             m_SelectionDirty = true;
