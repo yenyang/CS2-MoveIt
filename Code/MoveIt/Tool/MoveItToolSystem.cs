@@ -1,16 +1,17 @@
-﻿using System;
+﻿using Game.Simulation;
 using Game.Tools;
+using MoveIt.Input;
 using MoveIt.Managers;
 using MoveIt.Searcher;
 using MoveIt.Selection;
 using MoveIt.Systems;
 using QCommonLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
-using Game.Simulation;
 
 namespace MoveIt.Tool
 {
@@ -61,8 +62,10 @@ namespace MoveIt.Tool
         internal ToolOutputBarrier m_Barrier;
         internal ControlPoint m_LastRaycastPoint;
         internal ControlPoint m_StartPoint;
+        internal ControlPoint m_RotationStartPoint;
         internal float m_RotationAboutCenter;
         internal float m_PreviousRotation;
+        internal float m_VerticalDisplacement;
 
         internal Game.Common.RaycastSystem m_RaycastSystem;
 
@@ -216,6 +219,34 @@ namespace MoveIt.Tool
         {
             get { return m_CreationFlags == CreationFlags.Delete; }
             set { m_CreationFlags = value ? CreationFlags.Delete : CreationFlags.Relocate; }
+        }
+
+        /// <summary>
+        /// Gets whether any movement key is pressed.
+        /// </summary>
+        public bool MovementKeyPressed
+        {
+            get
+            {
+                return  m_InputSystem.GetBinding(Inputs.KEY_MOVEUP).m_Action.IsPressed() ||
+                        m_InputSystem.GetBinding(Inputs.KEY_MOVEDOWN).m_Action.IsPressed() ||
+                        m_InputSystem.GetBinding(Inputs.KEY_MOVEUP2).m_Action.IsPressed() ||
+                        m_InputSystem.GetBinding(Inputs.KEY_MOVEDOWN2).m_Action.IsPressed();      
+            }
+        }
+
+        /// <summary>
+        /// Gets whether any movemene was released this frame.
+        /// </summary>
+        public bool MovementKeyReleased
+        {
+            get
+            {
+                return   m_InputSystem.GetBinding(Inputs.KEY_MOVEUP).m_Action.WasReleasedThisFrame() ||
+                         m_InputSystem.GetBinding(Inputs.KEY_MOVEDOWN).m_Action.WasReleasedThisFrame() ||
+                         m_InputSystem.GetBinding(Inputs.KEY_MOVEUP2).m_Action.WasReleasedThisFrame() ||
+                         m_InputSystem.GetBinding(Inputs.KEY_MOVEDOWN2).m_Action.WasReleasedThisFrame();
+            }
         }
     }
 }
