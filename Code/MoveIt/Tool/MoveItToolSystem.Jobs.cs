@@ -6,29 +6,19 @@
 #define BURST
 
 using Colossal.Mathematics;
-using Colossal.Serialization.Entities;
-using Game;
-using Game.Citizens;
 using Game.Common;
 using Game.Net;
 using Game.Objects;
 using Game.Prefabs;
-using Game.Prefabs.Modes;
 using Game.Simulation;
 using Game.Tools;
 using MoveIt.Components;
-using MoveIt.Selection;
-using QCommonLib;
-using System.Numerics;
 using Unity.Burst;
 using Unity.Burst.Intrinsics;
 using Unity.Collections;
 using Unity.Entities;
-using Unity.Entities.UniversalDelegates;
-using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
-using static Game.Input.UIBaseInputAction;
 
 namespace MoveIt.Tool
 {
@@ -110,9 +100,6 @@ namespace MoveIt.Tool
                             {
                                 Entity connectedEdgeDefinition = buffer.CreateEntity();
                                 ProcessCreationDefinition(connectedEdge.m_Edge, connectedEdgeDefinition);
-
-                                buffer.AddComponent(connectedEdgeDefinition, default(Updated));
-
                                 ProcessCurve(connectedEdge.m_Edge, connectedEdgeDefinition, connectedCurve);
                             }
                         }
@@ -127,7 +114,6 @@ namespace MoveIt.Tool
 
                     Entity e = buffer.CreateEntity();
                     ProcessCreationDefinition(entityNativeArray[i], e);
-                    buffer.AddComponent(e, default(Updated));
                     Game.Objects.Transform transform = new Game.Objects.Transform();
                     if (m_TransformLookup.HasComponent(entityNativeArray[i]))
                     {
@@ -252,6 +238,26 @@ namespace MoveIt.Tool
                             buffer.AddComponent<Updated>(subAreaDefinition);
                         }
                     }
+
+                    // SubNets require their own CreationDefinition entity.
+                    if (m_SubNetLookup.TryGetBuffer(entityNativeArray[i], out DynamicBuffer<Game.Net.SubNet> subNets) &&
+                        subNets.Length > 0)
+                    {
+
+                        for (int j = 0; j < subNets.Length; j++)
+                        {
+                            if (!m_CurveLookup.TryGetComponent(subNets[j].m_SubNet, out Curve subNetCurve))
+                            {
+                                continue;
+                            }
+
+                            Entity subNetDefinition = buffer.CreateEntity();
+                            ProcessCreationDefinition(subNets[j].m_SubNet, subNetDefinition);
+                            ProcessOwnerDefinition(entityNativeArray[i], subNetDefinition);
+                            ProcessCurve(subNets[j].m_SubNet, subNetDefinition, subNetCurve);
+                        }
+
+                    }
                 }
 
                 m_NetworksProcessed.Dispose();
@@ -327,9 +333,14 @@ namespace MoveIt.Tool
                         netCourse.m_EndPosition.m_Flags = CoursePosFlags.IsLeft | CoursePosFlags.IsRight;
                     }
 
+                    bool ownerSelected = m_OwnerLookup.TryGetComponent(originalInstance, out Owner owner) &&
+                                         m_SelectedLookup.HasComponent(owner.m_Owner);
+
                     if (m_CreationFlags != CreationFlags.Delete)
                     {
-                        if (m_SelectedLookup.HasComponent(edge.m_Start) || m_CreationFlags == 0)
+                        if (m_SelectedLookup.HasComponent(edge.m_Start) ||
+                            m_CreationFlags == 0 ||
+                            ownerSelected)
                         {        
                             float3 originalPosition = curve.m_Bezier.a;
 
@@ -363,7 +374,9 @@ namespace MoveIt.Tool
                             }
                         }
 
-                        if (m_SelectedLookup.HasComponent(edge.m_End) || m_CreationFlags == 0)
+                        if (m_SelectedLookup.HasComponent(edge.m_End) ||
+                            m_CreationFlags == 0 ||
+                            ownerSelected)
                         {
                             float3 originalPosition = curve.m_Bezier.d;
 
@@ -397,8 +410,8 @@ namespace MoveIt.Tool
 
                         }
 
-                        if (m_SelectedLookup.HasComponent(originalInstance) && 
-                            m_CreationFlags == CreationFlags.Relocate)
+                        if (m_CreationFlags == CreationFlags.Relocate &&
+                            m_SelectedLookup.HasComponent(originalInstance))
                         {
                             if (!m_SelectedLookup.HasComponent(edge.m_Start))
                             {
@@ -497,6 +510,7 @@ namespace MoveIt.Tool
                 }
 
                 buffer.AddComponent(definitionEntity, creationDefinition);
+                buffer.AddComponent<Game.Common.Updated>(definitionEntity);
             }
 
             private Game.Objects.Transform GetRotatedPosition(Game.Objects.Transform originalTransform)
@@ -527,7 +541,21 @@ namespace MoveIt.Tool
                 newPosition.y += TerrainUtils.SampleHeight(ref m_TerrainHeightData, newPosition) - TerrainUtils.SampleHeight(ref m_TerrainHeightData, originalPosition);
                 return newPosition;
             }
-        }
 
+            private void ProcessOwnerDefinition(Entity ownerInstance, Entity subelementDefinitionEntity)
+            {
+                if (m_PrefabRefLookup.HasComponent(ownerInstance) &&
+                    m_TransformLookup.TryGetComponent(ownerInstance, out Game.Objects.Transform transform))
+                {
+                    OwnerDefinition ownerDefinition = new OwnerDefinition()
+                    {
+                        m_Prefab = m_PrefabRefLookup[ownerInstance],
+                        m_Position = transform.m_Position,
+                        m_Rotation = transform.m_Rotation,
+                    };
+                    buffer.AddComponent(subelementDefinitionEntity, ownerDefinition);
+                }
+            }
+        }
     }
 }

@@ -3,6 +3,7 @@ import { MoveItButton } from "mit-button/moveit-button";
 import { MIT_MainPanel } from "mit-mainpanel/mainpanel";
 import { MIT_DebugPanel } from "mit-debugpanel/debugPanel";
 import { MIT_RebindConfirm } from "mit-rebindmkey/rebindConfirm";
+import mod from "../mod.json";
 
 const register: ModRegistrar = (moduleRegistry) => {
     // While launching game in UI development mode (include --uiDeveloperMode in the launch options)
@@ -17,7 +18,7 @@ const register: ModRegistrar = (moduleRegistry) => {
     moduleRegistry.append("Game", MIT_DebugPanel);
     moduleRegistry.append("Menu", MIT_RebindConfirm);
 
-    console.log(moduleRegistry);
+    console.log(mod.id + " UI module registrations completed.");
 }
 
 export default register;
