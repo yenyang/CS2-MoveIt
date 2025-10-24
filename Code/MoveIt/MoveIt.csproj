@@ -11,9 +11,9 @@
 		
 		<!--The file where mod information which is required for publishing mod on PDX mods are stored-->
 		<PublishConfigurationPath>Properties\PublishConfiguration.xml</PublishConfigurationPath>
-    <Version>0.6.0.0</Version>
-    <AssemblyVersion>0.6.0.0</AssemblyVersion>
-    <FileVersion>0.6.0.0</FileVersion>
+    <Version>0.6.0.2</Version>
+    <AssemblyVersion>0.6.0.2</AssemblyVersion>
+    <FileVersion>0.6.0.2</FileVersion>
 	</PropertyGroup>
 	
 	<!--Imports must be after PropertyGroup block-->
@@ -76,6 +76,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Systems\FindCopiedOwnersSystem.cs" />
 	  <Compile Remove="Tool\CopyComponentsSystem.cs" />
 	</ItemGroup>
 
@@ -180,6 +181,7 @@
 	<ItemGroup>
 		<None Include="$(ModPropsFile)" Link="Properties\Mod.props" />
 		<None Include="$(ModTargetsFile)" Link="Properties\Mod.targets" />
+		<None Include="Systems\FindCopiedOwnersSystem.cs" />
 		<None Include="Tool\CopyComponentsSystem.cs" />
 	</ItemGroup>
 
