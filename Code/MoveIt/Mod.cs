@@ -85,7 +85,6 @@ namespace MoveIt
             updateSystem.UpdateAt<MIT_ToolTipSystem>(SystemUpdatePhase.UITooltip);
             updateSystem.UpdateAt<ApplyMoveItTransformationsSystem>(SystemUpdatePhase.ApplyTool);
             updateSystem.UpdateBefore<RemoveSaveInstanceSystem, ApplyPrefabsSystem>(SystemUpdatePhase.ModificationEnd);
-            updateSystem.UpdateAt<FindCopiedOwnersSystem>(SystemUpdatePhase.Modification2);
             // updateSystem.UpdateAt<CopyComponentsSystem>(SystemUpdatePhase.Modification2);
         }
 

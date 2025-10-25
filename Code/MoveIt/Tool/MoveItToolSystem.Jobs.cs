@@ -166,6 +166,9 @@ namespace MoveIt.Tool
                             objectDefinition.m_LocalRotation = objectDefinition.m_Rotation;
                         }
 
+                        transform.m_Position = objectDefinition.m_Position;
+                        transform.m_Rotation = objectDefinition.m_Rotation;
+
                         buffer.AddComponent(e, objectDefinition);
                     }
 
@@ -238,7 +241,7 @@ namespace MoveIt.Tool
                             buffer.AddComponent<Updated>(subAreaDefinition);
                         }
                     }
-
+                    
                     // SubNets require their own CreationDefinition entity.
                     if (m_SubNetLookup.TryGetBuffer(entityNativeArray[i], out DynamicBuffer<Game.Net.SubNet> subNets) &&
                         subNets.Length > 0)
@@ -246,14 +249,15 @@ namespace MoveIt.Tool
 
                         for (int j = 0; j < subNets.Length; j++)
                         {
-                            if (!m_CurveLookup.TryGetComponent(subNets[j].m_SubNet, out Curve subNetCurve))
+                            if (!m_CurveLookup.TryGetComponent(subNets[j].m_SubNet, out Curve subNetCurve) ||
+                                m_NetworksProcessed.Contains(subNets[j].m_SubNet))
                             {
                                 continue;
                             }
 
                             Entity subNetDefinition = buffer.CreateEntity();
                             ProcessCreationDefinition(subNets[j].m_SubNet, subNetDefinition);
-                            ProcessOwnerDefinition(entityNativeArray[i], subNetDefinition);
+                            ProcessOwnerDefinition(entityNativeArray[i], subNetDefinition, transform);
                             ProcessCurve(subNets[j].m_SubNet, subNetDefinition, subNetCurve);
                         }
 
@@ -319,6 +323,9 @@ namespace MoveIt.Tool
                     },
                     
                 };
+                
+                bool ownerSelected = m_OwnerLookup.TryGetComponent(originalInstance, out Owner owner) &&
+                                     m_SelectedLookup.HasComponent(owner.m_Owner);
 
                 if (m_EdgeLookup.TryGetComponent(originalInstance, out Game.Net.Edge edge))
                 {
@@ -333,8 +340,7 @@ namespace MoveIt.Tool
                         netCourse.m_EndPosition.m_Flags = CoursePosFlags.IsLeft | CoursePosFlags.IsRight;
                     }
 
-                    bool ownerSelected = m_OwnerLookup.TryGetComponent(originalInstance, out Owner owner) &&
-                                         m_SelectedLookup.HasComponent(owner.m_Owner);
+                    
 
                     if (m_CreationFlags != CreationFlags.Delete)
                     {
@@ -447,13 +453,15 @@ namespace MoveIt.Tool
                 }
 
                 float startDifferential = TerrainUtils.SampleHeight(ref m_TerrainHeightData, netCourse.m_StartPosition.m_Position) - netCourse.m_StartPosition.m_Position.y;
-                if (Mathf.Abs(startDifferential) > 4f)
+                if (Mathf.Abs(startDifferential) > 4f &&
+                    !ownerSelected)
                 {
                     netCourse.m_StartPosition.m_Elevation = startDifferential;
                 }
 
                 float endDifferential = TerrainUtils.SampleHeight(ref m_TerrainHeightData, netCourse.m_EndPosition.m_Position) - netCourse.m_EndPosition.m_Position.y;
-                if (Mathf.Abs(endDifferential) > 4f)
+                if (Mathf.Abs(endDifferential) > 4f &&
+                    !ownerSelected)
                 {
                     netCourse.m_EndPosition.m_Elevation = endDifferential;
                 }
@@ -468,8 +476,20 @@ namespace MoveIt.Tool
                 {
                     m_Flags = m_CreationFlags,
                 };
+                /*
+                bool isSubNet =      m_OwnerLookup.TryGetComponent(originalInstance, out Owner subNetOwner) &&
+                                     m_SelectedLookup.HasComponent(subNetOwner.m_Owner) &&
+                                     m_CurveLookup.HasComponent(originalInstance);
+                */
+                bool isSubNet = false;
 
-                if ((m_CreationFlags & CreationFlags.Relocate) == CreationFlags.Relocate ||
+                if (isSubNet)
+                {
+                    creationDefinition.m_Flags = 0;
+                }
+
+                if (((m_CreationFlags & CreationFlags.Relocate) == CreationFlags.Relocate &&
+                     !isSubNet) ||
                     (m_CreationFlags & CreationFlags.Delete) == CreationFlags.Delete)
                 {
                     creationDefinition.m_Original = originalInstance;
@@ -502,7 +522,8 @@ namespace MoveIt.Tool
                 }
                 
                 if (m_CurveLookup.HasComponent(originalInstance) &&
-                    m_CreationFlags == CreationFlags.Relocate)
+                    m_CreationFlags == CreationFlags.Relocate &&
+                    !isSubNet)
                 {
                     // highlight in this situation. Noticed some instability after adding this, but could be a coincidence. Might just be spamming tool too fast.
                     // Just select give highlight, but not overriden greyed out when moving. May affect other validation checks too.
@@ -542,10 +563,10 @@ namespace MoveIt.Tool
                 return newPosition;
             }
 
-            private void ProcessOwnerDefinition(Entity ownerInstance, Entity subelementDefinitionEntity)
+            private void ProcessOwnerDefinition(Entity ownerInstance, Entity subelementDefinitionEntity, Game.Objects.Transform transform)
             {
                 if (m_PrefabRefLookup.HasComponent(ownerInstance) &&
-                    m_TransformLookup.TryGetComponent(ownerInstance, out Game.Objects.Transform transform))
+                    m_TransformLookup.HasComponent(ownerInstance))
                 {
                     OwnerDefinition ownerDefinition = new OwnerDefinition()
                     {
