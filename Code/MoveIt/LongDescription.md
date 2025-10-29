@@ -1,4 +1,4 @@
-﻿# Move It Beta for Cities Skylines 2.
+﻿# Move It for Cities Skylines 2.
 
 You can move trees, props, decals, buildings, surfaces, nodes, and segment curves.
 

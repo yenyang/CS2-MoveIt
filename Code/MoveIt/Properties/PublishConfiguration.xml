@@ -9,7 +9,7 @@
   <ShortDescription Value="Move Things" />
   <!--Long description of the mod. Single line or multi line. Supports minimal markdown subset-->
   <!--Change name in long description-->
-  <LongDescription># Move It Beta for Cities Skylines 2.
+  <LongDescription># Move It for Cities Skylines 2.
 
 You can move trees, props, decals, buildings, surfaces, nodes, and segment curves.
 
