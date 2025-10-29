@@ -1,10 +1,10 @@
 <Publish>
   <!--Id must be set in order to update existed mod. it is not required for publishing mod for the first time-->
   <!--Stable ID: 74324 | Beta ID:  83596-->
-  <ModId Value="83596" />
+  <ModId Value="74324" />
   <!--Name of the mod to display to players-->
   <!--Stable Name: Move It | Beta Name:  Move It [Beta]-->
-  <DisplayName Value="Move It [Beta]" />
+  <DisplayName Value="Move It" />
   <!--Short description of the mod-->
   <ShortDescription Value="Move Things" />
   <!--Long description of the mod. Single line or multi line. Supports minimal markdown subset-->
@@ -96,7 +96,7 @@ Unified Icon Library icons by Chameleon TBN
 Translators: Pingwin_PL and karmel68 (Polish), elGendo87 (Spanish), ti4goc (Portuguese), Morgan, aidan taylor and prospr (French), nemoriees and 0belix (Portugese, Brazilian), ExpedientFalcon and allegretic (Japenese), Nullpinter and RilkeXS (Chinese Simplified), allegretic (Chinese Traditional), MyNameIsntRealHere and WISSAH (Dutch)</LongDescription>
   <!--Thumbnail-->
   <!-- Stable: Properties/ThumbnailStable.png  | Beta: Properties/ThumbnailBeta.png-->
-  <Thumbnail Value="Properties/ThumbnailBeta.png" />
+  <Thumbnail Value="Properties/ThumbnailStable.png" />
   <!--Screenshot, can be set multiple-->
   <Screenshot Value="../../Resources/Screenshots/Mooose_A_Before.png" />
   <Screenshot Value="../../Resources/Screenshots/Mooose_B_During.png" />
@@ -118,7 +118,8 @@ Translators: Pingwin_PL and karmel68 (Polish), elGendo87 (Spanish), ti4goc (Port
   <!--Change log for new version. Single line or multi line. Supports minimal markdown subset-->
   <ChangeLog># Patch v0.5.10
 * Minor compatibility fixes for game version 1.3.6f1.
-* Fix console log from UI index.</ChangeLog>
+* Fix console log from UI index.
+* No longer generating invalid overlay outlines for NetLanes. (Potential fix for overlay issus and errors while manipulating NetLanes).</ChangeLog>
   <!--External link. supported types are discord, github, youtube, twitch, x, paypal, patreon-->
   <ExternalLink Type="discord" Url="https://discord.gg/nURB9MQ" />
   <ExternalLink Type="paypal" Url="https://www.paypal.me/QuboidCSL1" />
