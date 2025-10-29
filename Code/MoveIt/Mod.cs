@@ -19,7 +19,7 @@ namespace MoveIt
     using System.IO;
     using System.Linq;
     using System.Reflection;
-
+    
     /// <summary>
     /// Mod entry point.
     /// </summary>
@@ -27,7 +27,7 @@ namespace MoveIt
     {
         public const string MOD_NAME = "Move It";
         public const string MOD_UI = "MoveIt";
-
+        
 #if IS_DEBUG
         public const bool IS_BETA = true;
         public static string Version => Assembly.GetExecutingAssembly().GetName().Version.ToString(4);

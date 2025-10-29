@@ -5,7 +5,8 @@ You can move trees, props, decals, buildings, surfaces, nodes, and segment curve
 Press **M** or click on the Move It icon at the bottom right to enable the tool.
 
 ## Important Update on Development:
-I am continuing the development of Move It with permission from Quboid. This first version is still mostly Quboid's Move It, but over time this fork may or may not diverge from where it started.
+I am continuing the development of Move It with permission from Quboid. This first version is still mostly Quboid's Move It, but over time this fork may or may not diverge from where it started. 
+Alpha testing for new upcoming features will be availble on Cities Skylines Modding Discord and Quboid's Beta Testing Discord servers. 
 
 ## Dependencies
 Unified Icon Library
