@@ -8,6 +8,7 @@ using Game.Prefabs;
 using Game.Tools;
 using MoveIt.Components;
 using MoveIt.Input;
+using MoveIt.Managers;
 using QCommonLib;
 using Unity.Entities;
 using Unity.Jobs;
@@ -155,6 +156,7 @@ namespace MoveIt.Tool
             if (Deleting)
             {
                 Deleting = false;
+                Selection.Clear();
             }
 
             if (!Copying)

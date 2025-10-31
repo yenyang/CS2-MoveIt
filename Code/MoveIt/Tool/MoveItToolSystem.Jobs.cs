@@ -131,7 +131,8 @@ namespace MoveIt.Tool
                         };
 
                         // Apply Rotation
-                        if (m_RotationAboutCenter != 0 && m_CreationFlags != CreationFlags.Delete)
+                        if (m_RotationAboutCenter != 0 &&
+                            m_CreationFlags != CreationFlags.Delete)
                         {
                             Game.Objects.Transform newWorldTransform = GetRotatedPosition(transform);
                             objectDefinition.m_Position = newWorldTransform.m_Position;
@@ -139,16 +140,19 @@ namespace MoveIt.Tool
                         }
 
                         // Apply Translation
-                        objectDefinition.m_Position = GetTranslatedXZPositionAndVerticallyDisplace(objectDefinition.m_Position);
-
-                        if (m_TreeLookup.TryGetComponent(entityNativeArray[i], out Tree tree))
+                        if (m_CreationFlags != CreationFlags.Delete)
                         {
-                            objectDefinition.m_Age = GetTreeAge(tree);
-                        }
+                            objectDefinition.m_Position = GetTranslatedXZPositionAndVerticallyDisplace(objectDefinition.m_Position);
 
-                        if (m_FollowTerrain)
-                        {
-                            objectDefinition.m_Position = FollowTerrain(objectDefinition.m_Position, transform.m_Position);
+                            if (m_TreeLookup.TryGetComponent(entityNativeArray[i], out Tree tree))
+                            {
+                                objectDefinition.m_Age = GetTreeAge(tree);
+                            }
+
+                            if (m_FollowTerrain)
+                            {
+                                objectDefinition.m_Position = FollowTerrain(objectDefinition.m_Position, transform.m_Position);
+                            }
                         }
 
                         if (m_OwnerLookup.HasComponent(entityNativeArray[i]) &&
@@ -179,7 +183,8 @@ namespace MoveIt.Tool
                     
                     // SubAreas require their own CreationDefinition entity. The originals don't get hidden the way I would want them too. . .
                     if (m_SubAreaLookup.TryGetBuffer(entityNativeArray[i], out DynamicBuffer<Game.Areas.SubArea> subAreas) &&
-                        subAreas.Length > 0)
+                        subAreas.Length > 0 &&
+                        m_CreationFlags != CreationFlags.Delete)
                     {
                         for (int j = 0; j < subAreas.Length; j++)
                         {
@@ -244,7 +249,8 @@ namespace MoveIt.Tool
                     
                     // SubNets require their own CreationDefinition entity.
                     if (m_SubNetLookup.TryGetBuffer(entityNativeArray[i], out DynamicBuffer<Game.Net.SubNet> subNets) &&
-                        subNets.Length > 0)
+                        subNets.Length > 0 &&
+                        m_CreationFlags != CreationFlags.Delete)
                     {
 
                         for (int j = 0; j < subNets.Length; j++)
@@ -476,20 +482,8 @@ namespace MoveIt.Tool
                 {
                     m_Flags = m_CreationFlags,
                 };
-                /*
-                bool isSubNet =      m_OwnerLookup.TryGetComponent(originalInstance, out Owner subNetOwner) &&
-                                     m_SelectedLookup.HasComponent(subNetOwner.m_Owner) &&
-                                     m_CurveLookup.HasComponent(originalInstance);
-                */
-                bool isSubNet = false;
-
-                if (isSubNet)
-                {
-                    creationDefinition.m_Flags = 0;
-                }
-
-                if (((m_CreationFlags & CreationFlags.Relocate) == CreationFlags.Relocate &&
-                     !isSubNet) ||
+                
+                if (((m_CreationFlags & CreationFlags.Relocate) == CreationFlags.Relocate) ||
                     (m_CreationFlags & CreationFlags.Delete) == CreationFlags.Delete)
                 {
                     creationDefinition.m_Original = originalInstance;
@@ -522,8 +516,7 @@ namespace MoveIt.Tool
                 }
                 
                 if (m_CurveLookup.HasComponent(originalInstance) &&
-                    m_CreationFlags == CreationFlags.Relocate &&
-                    !isSubNet)
+                    m_CreationFlags == CreationFlags.Relocate)
                 {
                     // highlight in this situation. Noticed some instability after adding this, but could be a coincidence. Might just be spamming tool too fast.
                     // Just select give highlight, but not overriden greyed out when moving. May affect other validation checks too.
