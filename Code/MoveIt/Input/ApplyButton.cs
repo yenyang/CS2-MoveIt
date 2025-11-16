@@ -86,7 +86,8 @@ namespace MoveIt.Input
         {
             if (_MIT.UseMarquee)
             {
-                if (!_MIT.Hovered.IsSelected)
+                if (!_MIT.Hovered.IsSelected &&
+                    _MIT.m_TempQuery.IsEmptyIgnoreFilter)
                 {
                     _MIT.MITState = MITStates.DrawingSelection;
                     _MIT.m_Marquee = new(_MIT.m_PointerPos);

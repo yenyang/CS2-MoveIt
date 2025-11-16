@@ -44,6 +44,8 @@ namespace MoveIt.Input
             EntityCommandBuffer buffer = _Barrier.CreateCommandBuffer();
             _MIT.Queue.Do(ref jobHandle, ref buffer);
 
+            _MIT.StartWorkflow(Workflow.DeselectAll);
+
             Actions.Action.Phase = Actions.Phases.Cleanup;
 
             //MIT.Log.Debug($"SecondaryButton.OnClick {Queue.Debug()}");

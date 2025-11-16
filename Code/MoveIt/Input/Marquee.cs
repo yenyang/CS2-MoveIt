@@ -45,6 +45,7 @@ namespace MoveIt.Input
 
         internal bool CheckIfMoved(float3 position)
         {
+            if (!_MIT.m_TempQuery.IsEmptyIgnoreFilter) return false;
             if (m_HasMoved) return true;
             if (position.Equals(m_StartPosition)) return false;
 

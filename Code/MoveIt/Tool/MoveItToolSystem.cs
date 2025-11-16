@@ -41,6 +41,33 @@ namespace MoveIt.Tool
         ParentManipulating  = 512,
     }
 
+    public enum Workflow
+    {
+        SelectingIndividual,
+        DrawingMarquee,
+        DeselectAll,
+        Move,
+        Rotate,
+        Elevate,
+        Lower,
+        Copy,
+        Delete,
+        Undo,
+        Redo,
+        AlignObjectHeight,
+        AlignRotateAtCenter,
+        AlignRotateInPlace,
+        AlignTerrainHeight,
+    }
+
+    public enum WorkflowProgression
+    {
+        NotStarted = 0,
+        Starting = 1,
+        InProgress = 2,
+        Complete = 3,
+    }
+
     public partial class MoveItToolSystem : ObjectToolBaseSystem
     {
         internal static MoveItToolSystem m_Instance;
@@ -66,6 +93,7 @@ namespace MoveIt.Tool
         internal float m_RotationAboutCenter;
         internal float m_PreviousRotation;
         internal float m_VerticalDisplacement;
+        internal WorkflowProgression[] m_Workflow;
 
         internal Game.Common.RaycastSystem m_RaycastSystem;
 

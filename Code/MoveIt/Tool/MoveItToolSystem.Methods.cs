@@ -99,13 +99,10 @@ namespace MoveIt.Tool
         internal void MoveStart()
         {
             //QLog.Debug($"MOVESTART OnPress:{Hover.TopPressed.E()}-Null:{Hover.TopPressed.IsNull} :: {Hover.Normal.OnPress.E()}/{Hover.Child.OnPress.E()} (sel:{Selection.Has(Hover.TopPressed)})\n{QCommon.GetStackTrace(3)}");
-
             if (MITState == MITStates.SecondaryButtonHeld) return;
-            TransformAction action;
             if (Selection.Has(Hover.TopPressed))
             {
-                action = new TransformAction();
-                Queue.Push(action);
+                StartWorkflow(Workflow.Move);
             }
             else
             {
@@ -115,8 +112,7 @@ namespace MoveIt.Tool
                 EntityCommandBuffer buffer = m_ToolOutputBarrier.CreateCommandBuffer();
                 Queue.Do(ref jobHandle,  ref buffer);
 
-                action = new TransformAction();
-                Queue.Push(action);
+                StartWorkflow(Workflow.Move);
             }
             MITState = MITStates.ApplyButtonHeld;
             TransformStart();
@@ -124,40 +120,29 @@ namespace MoveIt.Tool
 
         internal void RotationStart()
         {
-            if (MITState == MITStates.ApplyButtonHeld) return;
-            var action = new TransformAction();
-            Queue.Push(action);
+            StartWorkflow(Workflow.Rotate);
+            if (MITState == MITStates.ApplyButtonHeld) return;           
             MITState = MITStates.SecondaryButtonHeld;
-
-            TransformStart();
         }
 
         private void TransformStart()
         {
-            m_DragPointerOffsetFromSelection = Selection.Center - m_PointerPos;
-            Actions.Action.Phase = Phases.Do;
         }
 
         internal void EndMove()
         {
+            CompeleteWorkflow(Workflow.Move);
             TransformEnd();
         }
 
         internal void RotationEnd()
         {
+            CompeleteWorkflow(Workflow.Rotate);
             TransformEnd();
         }
 
         private void TransformEnd()
         {
-            if (Queue.Current is TransformBase action)
-            {
-                Actions.Action.Phase = Phases.Finalise;
-            }
-            else
-            {
-                throw new Exception($"In EndTransform, action is {Queue.Current.Name} not TransformAction");
-            }
             MITState = MITStates.Default;
         }
 
@@ -207,258 +192,25 @@ namespace MoveIt.Tool
             field.SetValue(m_TerrainSystem, area);
         }
 
-        //internal void DejankNodes()
-        //{
-        //    bool previousFailed = false;
-        //    string msg = $"Dejanking selection ({Selection.Count})";
-        //    foreach (MVDefinition mvd in Selection.Definitions)
-        //    {
-        //        if (previousFailed) msg += " No, skipping Moveable.";
-        //        previousFailed = true;
+        internal void StartWorkflow(Workflow workflow)
+        {
+            m_Workflow[(int)workflow] = WorkflowProgression.Starting;
+        }
 
-        //        msg += $"\n   Check {mvd.m_Entity}, node?";
-        //        if (mvd.m_Identity != Identity.Node) continue;
-        //        msg += $" yes, 2 segments?";
-        //        MVNode node = Moveables.GetOrCreate<MVNode>(mvd);
-        //        if (node.m_Segments.Count != 2) continue;
-        //        msg += $" yes, same prefab?";
-        //        KeyValuePair<Entity, bool> segAPair = node.m_Segments.ElementAt(0);
-        //        Entity segAEntity = segAPair.Key;
-        //        bool segAIsStart = segAPair.Value;
-        //        KeyValuePair<Entity, bool> segBPair = node.m_Segments.ElementAt(1);
-        //        Entity segBEntity = segBPair.Key;
-        //        bool segBIsStart = segBPair.Value;
-        //        Entity segAPrefab = EntityManager.GetComponentData<Game.Prefabs.PrefabRef>(segAEntity).m_Prefab;
-        //        Entity segBPrefab = EntityManager.GetComponentData<Game.Prefabs.PrefabRef>(segBEntity).m_Prefab;
-        //        if (!segAPrefab.Equals(segBPrefab)) continue;
-        //        msg += $" yes, straight?";
+        internal void CompeleteWorkflow(Workflow workflow)
+        {
+            m_Workflow[(int)workflow] = WorkflowProgression.Complete;
+        }
 
-        //        Curve segACurve = EntityManager.GetComponentData<Curve>(segAEntity);
-        //        Curve segBCurve = EntityManager.GetComponentData<Curve>(segBEntity);
-        //        Bezier4x3 segABezier = segACurve.m_Bezier;
-        //        Bezier4x3 segBBezier = segBCurve.m_Bezier;
-        //        Bezier4x3 smooth3D = new(
-        //            segAIsStart ? segABezier.b : segABezier.c, segAIsStart ? segABezier.a : segABezier.d,
-        //            segBIsStart ? segBBezier.a : segBBezier.d, segBIsStart ? segBBezier.b : segBBezier.c);
-        //        Bezier4x2 smooth = new(
-        //            segAIsStart ? segABezier.b.XZ() : segABezier.c.XZ(), segAIsStart ? segABezier.a.XZ() : segABezier.d.XZ(), 
-        //            segBIsStart ? segBBezier.a.XZ() : segBBezier.d.XZ(), segBIsStart ? segBBezier.b.XZ() : segBBezier.c.XZ());
-        //        MathUtils.Distance(new Line2(smooth.a, smooth.d), smooth.b, out float segAT);
-        //        MathUtils.Distance(new Line2(smooth.a, smooth.d), smooth.c, out float segBT);
-        //        MathUtils.Distance(smooth, smooth.b, out float segATx);
-        //        MathUtils.Distance(smooth, smooth.c, out float segBTx);
+        internal void SetWorkflowInProgess(Workflow workflow)
+        {
+            m_Workflow[(int)workflow] = WorkflowProgression.InProgress;
+        }
 
-        //        MIT.Log.Debug($"Curve {segAT}, {segBT};   {segATx}, {segBTx}\n    {smooth3D.a.D()};  {smooth3D.b.D()};  {smooth3D.c.D()};  {smooth3D.d.D()}");
-
-        //        segATx -= segAT;
-        //        segBTx -= segBT;
-        //        if ((segATx < -0.05 || segATx > 0.05) || (segBTx < -0.05 || segBTx > 0.05)) continue;
-        //        msg += $" yes, attempting dejank;";
-
-        //        float3 mag = smooth3D.d - smooth3D.a;
-        //        float3 segAOffset = math.lerp(smooth3D.a, smooth3D.d, segAT);
-        //        float3 segBOffset = math.lerp(smooth3D.a, smooth3D.d, segBT);
-        //        if (segAIsStart) segABezier.a = segAOffset;
-        //        else segABezier.d = segAOffset;
-        //        if (segBIsStart) segBBezier.a = segBOffset;
-        //        else segBBezier.d = segBOffset;
-
-        //        segACurve.m_Bezier = segABezier;
-        //        segBCurve.m_Bezier = segBBezier;
-        //        EntityManager.SetComponentData(segAEntity, segACurve);
-        //        EntityManager.SetComponentData(segBEntity, segBCurve);
-
-        //        EdgeGeometry edge = EntityManager.GetComponentData<EdgeGeometry>(segAEntity);
-        //        if (segAIsStart)
-        //        {
-        //            StartNodeGeometry nodeGeo = EntityManager.GetComponentData<StartNodeGeometry>(segAEntity);
-        //            EdgeNodeGeometry geo = nodeGeo.m_Geometry;
-
-        //            Segment segL = geo.m_Left;
-        //            segL.m_Left = new(segL.m_Left.d, segL.m_Left.d, segL.m_Left.d, segL.m_Left.d);
-        //            segL.m_Right = new(segL.m_Right.d, segL.m_Right.d, segL.m_Right.d, segL.m_Right.d);
-        //            float3 a = segL.m_Left.a;
-        //            edge.m_Start.m_Right.a = a; // Start node is Left-Right
-        //            segL.m_Length = new(0f, 0f);
-        //            geo.m_Left = segL;
-
-        //            Segment segR = geo.m_Right;
-        //            segR.m_Left = new(segR.m_Left.d, segR.m_Left.d, segR.m_Left.d, segR.m_Left.d);
-        //            segR.m_Right = new(segR.m_Right.d, segR.m_Right.d, segR.m_Right.d, segR.m_Right.d);
-        //            float3 b = segR.m_Right.a;
-        //            edge.m_Start.m_Left.a = b;
-        //            segR.m_Length = new(0f, 0f);
-        //            geo.m_Right = segL;
-
-        //            geo.m_Middle = new(geo.m_Middle.d, geo.m_Middle.d, geo.m_Middle.d, geo.m_Middle.d);
-        //            geo.m_Bounds = new(new float3(math.min(a.x, b.x), math.min(a.y, b.y), math.min(a.z, b.z)), new float3(math.max(a.x, b.x), math.max(a.y, b.y), math.max(a.z, b.z)));
-        //            nodeGeo.m_Geometry = geo;
-        //            EntityManager.SetComponentData(segAEntity, nodeGeo);
-        //        }
-        //        else
-        //        {
-        //            EndNodeGeometry nodeGeo = EntityManager.GetComponentData<EndNodeGeometry>(segAEntity);
-        //            EdgeNodeGeometry geo = nodeGeo.m_Geometry;
-
-        //            Segment segL = geo.m_Left;
-        //            segL.m_Left = new(segL.m_Left.d, segL.m_Left.d, segL.m_Left.d, segL.m_Left.d);
-        //            segL.m_Right = new(segL.m_Right.d, segL.m_Right.d, segL.m_Right.d, segL.m_Right.d);
-        //            float3 a = segL.m_Left.a;
-        //            edge.m_End.m_Left.d = a; // End node is Left-Left
-        //            segL.m_Length = new(0f, 0f);
-        //            geo.m_Left = segL;
-
-        //            Segment segR = geo.m_Right;
-        //            segR.m_Left = new(segR.m_Left.d, segR.m_Left.d, segR.m_Left.d, segR.m_Left.d);
-        //            segR.m_Right = new(segR.m_Right.d, segR.m_Right.d, segR.m_Right.d, segR.m_Right.d);
-        //            float3 b = segR.m_Right.a;
-        //            edge.m_End.m_Right.d = b;
-        //            segR.m_Length = new(0f, 0f);
-        //            geo.m_Right = segL;
-
-        //            geo.m_Middle = new(geo.m_Middle.d, geo.m_Middle.d, geo.m_Middle.d, geo.m_Middle.d);
-        //            geo.m_Bounds = new(new float3(math.min(a.x, b.x), math.min(a.y, b.y), math.min(a.z, b.z)), new float3(math.max(a.x, b.x), math.max(a.y, b.y), math.max(a.z, b.z)));
-        //            nodeGeo.m_Geometry = geo;
-        //            EntityManager.SetComponentData(segAEntity, nodeGeo);
-        //        }
-        //        EntityManager.SetComponentData(segAEntity, edge);
-        //        EntityManager.AddComponent<BatchesUpdated>(segAEntity);
-        //        msg += $" A done,";
-
-        //        edge = EntityManager.GetComponentData<EdgeGeometry>(segBEntity);
-        //        if (segBIsStart)
-        //        {
-        //            StartNodeGeometry nodeGeo = EntityManager.GetComponentData<StartNodeGeometry>(segBEntity);
-        //            EdgeNodeGeometry geo = nodeGeo.m_Geometry;
-
-        //            Segment segL = geo.m_Left;
-        //            segL.m_Left = new(segL.m_Left.d, segL.m_Left.d, segL.m_Left.d, segL.m_Left.d);
-        //            segL.m_Right = new(segL.m_Right.d, segL.m_Right.d, segL.m_Right.d, segL.m_Right.d);
-        //            float3 a = segL.m_Left.a;
-        //            edge.m_Start.m_Right.a = a; // Start node is Left-Right
-        //            segL.m_Length = new(0f, 0f);
-        //            geo.m_Left = segL;
-
-        //            Segment segR = geo.m_Right;
-        //            segR.m_Left = new(segR.m_Left.d, segR.m_Left.d, segR.m_Left.d, segR.m_Left.d);
-        //            segR.m_Right = new(segR.m_Right.d, segR.m_Right.d, segR.m_Right.d, segR.m_Right.d);
-        //            float3 b = segR.m_Right.a;
-        //            edge.m_Start.m_Left.a = b;
-        //            segR.m_Length = new(0f, 0f);
-        //            geo.m_Right = segR;
-
-        //            geo.m_Middle = new(geo.m_Middle.d, geo.m_Middle.d, geo.m_Middle.d, geo.m_Middle.d);
-        //            geo.m_Bounds = new(new float3(math.min(a.x, b.x), math.min(a.y, b.y), math.min(a.z, b.z)), new float3(math.max(a.x, b.x), math.max(a.y, b.y), math.max(a.z, b.z)));
-        //            nodeGeo.m_Geometry = geo;
-        //            EntityManager.SetComponentData(segBEntity, nodeGeo);
-        //        }
-        //        else
-        //        {
-        //            EndNodeGeometry nodeGeo = EntityManager.GetComponentData<EndNodeGeometry>(segBEntity);
-        //            EdgeNodeGeometry geo = nodeGeo.m_Geometry;
-
-        //            Segment segL = geo.m_Left;
-        //            segL.m_Left = new(segL.m_Left.d, segL.m_Left.d, segL.m_Left.d, segL.m_Left.d);
-        //            segL.m_Right = new(segL.m_Right.d, segL.m_Right.d, segL.m_Right.d, segL.m_Right.d);
-        //            float3 a = segL.m_Left.a;
-        //            edge.m_End.m_Left.d = a; // End node is Left-Left
-        //            segL.m_Length = new(0f, 0f);
-        //            geo.m_Left = segL;
-
-        //            Segment segR = geo.m_Right;
-        //            segR.m_Left = new(segR.m_Left.d, segR.m_Left.d, segR.m_Left.d, segR.m_Left.d);
-        //            segR.m_Right = new(segR.m_Right.d, segR.m_Right.d, segR.m_Right.d, segR.m_Right.d);
-        //            float3 b = segR.m_Right.a;
-        //            edge.m_End.m_Right.d = b;
-        //            segR.m_Length = new(0f, 0f);
-        //            geo.m_Right = segR;
-
-        //            geo.m_Middle = new(geo.m_Middle.d, geo.m_Middle.d, geo.m_Middle.d, geo.m_Middle.d);
-        //            geo.m_Bounds = new(new float3(math.min(a.x, b.x), math.min(a.y, b.y), math.min(a.z, b.z)), new float3(math.max(a.x, b.x), math.max(a.y, b.y), math.max(a.z, b.z)));
-        //            nodeGeo.m_Geometry = geo;
-        //            EntityManager.SetComponentData(segBEntity, nodeGeo);
-        //        }
-        //        EntityManager.SetComponentData(segBEntity, edge);
-        //        EntityManager.AddComponent<BatchesUpdated>(segBEntity);
-        //        msg += $" B done!";
-
-        //        EntityManager.AddComponent<BatchesUpdated>(node.m_Entity);
-        //        previousFailed = false;
-        //    }
-        //    if (previousFailed) msg += " No, skipping Moveable.";
-        //    Log.Debug(msg);
-        //}
-
-        //internal static HashSet<Bounds2> MergeBounds(HashSet<Bounds2> outerList)
-        //{
-        //    HashSet<Bounds2> innerList = new();
-        //    HashSet<Bounds2> newList = new();
-        //    int c = 0;
-        //    int originalCount = outerList.Count;
-
-        //    do
-        //    {
-        //        foreach (Bounds2 outer in outerList)
-        //        {
-        //            m_Instance.AddDebugBounds(outer);
-
-        //            bool merged = false;
-
-        //            float2 outerSize = outer.Size();
-        //            float outerArea = outerSize.x * outerSize.y;
-        //            foreach (Bounds2 inner in innerList)
-        //            {
-        //                float2 innerSize = inner.Size();
-        //                float separateArea = (innerSize.x * innerSize.y) + outerArea;
-
-        //                Bounds2 encapsulated = inner;
-        //                encapsulated = encapsulated.Encapsulate(outer);
-        //                float2 encapSize = encapsulated.Size();
-        //                float encapsulateArea = encapSize.x * encapSize.y;
-
-        //                if (!merged && encapsulateArea < separateArea)
-        //                {
-        //                    newList.Add(encapsulated);
-        //                    merged = true;
-        //                }
-        //                else
-        //                {
-        //                    newList.Add(inner);
-        //                }
-        //            }
-        //            if (!merged)
-        //            {
-        //                newList.Add(outer);
-        //            }
-
-        //            innerList = new HashSet<Bounds2>(newList);
-        //            newList.Clear();
-        //        }
-
-        //        if (outerList.Count <= innerList.Count)
-        //        {
-        //            break;
-        //        }
-        //        outerList = new HashSet<Bounds2>(innerList);
-        //        innerList.Clear();
-
-        //        if (c > 1000)
-        //        {
-        //            Log.Error($"Looped bounds-merge a thousand times", "[M04]");
-        //            break;
-        //        }
-
-        //        c++;
-        //    }
-        //    while (true);
-
-        //    foreach (Bounds2 b in innerList)
-        //    {
-        //        m_Instance.AddDebugBounds(b, new Color(255, 0, 0, 200));
-        //    }
-        //    MIT.Log.Debug($"\nStart:{originalCount}\nInner:{innerList.Count}");
-        //    return innerList;
-        //}
+        internal void ResetWorkflow(Workflow workflow)
+        {
+            m_Workflow[(int)workflow] = WorkflowProgression.NotStarted;
+        }
 
         public override string toolID => "MoveItTool";
         public override Game.Prefabs.PrefabBase GetPrefab() => null;

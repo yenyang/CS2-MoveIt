@@ -55,6 +55,13 @@ namespace MoveIt.Tool
                 .WithAll<MIT_Selected>()
                 .WithNone<Game.Tools.Temp, Game.Common.Overridden, Game.Common.Deleted, MIT_ControlPoint>()
                 .Build();
+
+            m_Workflow = new WorkflowProgression[(int)Workflow.AlignTerrainHeight];
+
+            for (int i = 0; i < m_Workflow.Length; i++)
+            {
+                m_Workflow[i] = WorkflowProgression.NotStarted;
+            }
         }
 
         // Runs on every load, after OnCreate

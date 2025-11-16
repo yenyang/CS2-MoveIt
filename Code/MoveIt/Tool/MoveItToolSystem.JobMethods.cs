@@ -63,16 +63,19 @@ namespace MoveIt.Tool
 
         private JobHandle Update(JobHandle inputDeps)
         {
-            if (GetRaycastResult(out ControlPoint controlPoint, out bool forceUpdate) ||
-                Deleting)
+            if ((GetRaycastResult(out Entity hitEntity, out RaycastHit raycastHit, out bool forceUpdate) &&
+                (!UseMarquee ||
+                 hitEntity != Entity.Null ||
+                !m_TempQuery.IsEmptyIgnoreFilter)) ||
+                 Deleting)
             {
                 if (m_InputSystem.MouseApply.WasPressedThisFrame() ||
                     m_InputSystem.MouseCancel.WasPressedThisFrame() &&
                    !m_InputSystem.MouseApply.IsPressed())                    
                 {
                     applyMode = ApplyMode.Clear;
-                    m_StartPoint = controlPoint;
-                    m_LastRaycastPoint = controlPoint;
+                    m_StartPoint = new ControlPoint() { m_Position = m_RaycastTerrain.HitPosition };
+                    m_LastRaycastPoint = new ControlPoint() { m_Position = m_RaycastTerrain.HitPosition }; ;
                     return UpdateDefinitions(inputDeps);
                 } 
                 else if (!m_InputSystem.MouseApply.IsPressed() &&
@@ -91,7 +94,7 @@ namespace MoveIt.Tool
                     }
                 }
                 else if (!Deleting &&
-                        m_LastRaycastPoint.Equals(controlPoint) &&
+                        m_LastRaycastPoint.Equals(new ControlPoint() { m_Position = m_RaycastTerrain.HitPosition }) &&
                         !forceUpdate &&
                         !MovementKeyPressed)
                 {
@@ -122,7 +125,7 @@ namespace MoveIt.Tool
 
                 if (m_InputSystem.MouseApply.IsPressed() || Copying)
                 {
-                    m_LastRaycastPoint = controlPoint;
+                    m_LastRaycastPoint = new ControlPoint() { m_Position = m_RaycastTerrain.HitPosition };
                 }
                 return UpdateDefinitions(inputDeps);
             }

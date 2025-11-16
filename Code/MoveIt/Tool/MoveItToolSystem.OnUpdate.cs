@@ -1,4 +1,6 @@
-﻿using Game.Prefabs;
+﻿using Game.Common;
+using Game.Prefabs;
+using Game.Tools;
 using MoveIt.Actions.Select;
 using MoveIt.Input;
 using MoveIt.Managers;
@@ -61,6 +63,11 @@ namespace MoveIt.Tool
                         break;
                     }
 
+                    if (!m_TempQuery.IsEmptyIgnoreFilter)
+                    {
+                        break;
+                    }
+
                     if (Queue.Current is not SelectMarqueeAction sma)
                     {
                         Log.Debug($"Update DrawingSelection but current action is {Queue.Current.Name}");
@@ -74,8 +81,8 @@ namespace MoveIt.Tool
 
             Queue.FireAction(ref inputDeps, ref buffer);
 
-            
 
+            bool Moving = m_Workflow[(int)Workflow.Move] == WorkflowProgression.Starting || m_Workflow[(int)Workflow.Move] == WorkflowProgression.InProgress;
 
             if (!UIHasFocus &&
                (MITState == MITStates.Default ||
@@ -93,16 +100,17 @@ namespace MoveIt.Tool
                 {
                     return Apply(inputDeps);
                 }
-                else if (m_InputSystem.MouseApply.IsPressed() ||
+                else if ((m_InputSystem.MouseApply.IsPressed() ||
                          Copying ||
                          m_InputSystem.MouseCancel.IsPressed() ||
-                         MovementKeyPressed)
+                         MovementKeyPressed) &&
+                        (!UseMarquee ||
+                         GetRaycastResult(out Entity hitEntity, out RaycastHit raycastHit) && 
+                         hitEntity != Entity.Null)) 
                 {
                     return Update(inputDeps);
                 }
             }
-
-            ;
 
             if (MITState == MITStates.Cancelling)
             {
