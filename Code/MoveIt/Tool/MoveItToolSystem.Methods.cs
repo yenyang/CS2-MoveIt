@@ -195,21 +195,81 @@ namespace MoveIt.Tool
         internal void StartWorkflow(Workflow workflow)
         {
             m_Workflow[(int)workflow] = WorkflowProgression.Starting;
+            QLog.Debug($"{nameof(MoveItToolSystem)}.Methods | Starting workflow: {workflow}");
         }
 
         internal void CompeleteWorkflow(Workflow workflow)
         {
             m_Workflow[(int)workflow] = WorkflowProgression.Complete;
+            QLog.Debug($"{nameof(MoveItToolSystem)}.Methods | Workflow complete: {workflow}");
         }
 
         internal void SetWorkflowInProgess(Workflow workflow)
         {
             m_Workflow[(int)workflow] = WorkflowProgression.InProgress;
+            QLog.Debug($"{nameof(MoveItToolSystem)}.Methods | Workflow In Progress: {workflow}");
         }
 
         internal void ResetWorkflow(Workflow workflow)
         {
             m_Workflow[(int)workflow] = WorkflowProgression.NotStarted;
+            QLog.Debug($"{nameof(MoveItToolSystem)}.Methods | Workflow Reset: {workflow}");
+        }
+
+        internal bool ShouldClear()
+        {
+            if (UIHasFocus)
+            {
+                QLog.Debug($"{nameof(MoveItToolSystem)}.Methods | UI Has focus.");
+                return true;
+            }
+
+            for (int i = 0; i < m_Workflow.Length; i++)
+            {
+                if (m_Workflow[i] != WorkflowProgression.NotStarted)
+                {
+                    return false;
+                }
+            }
+
+
+            QLog.Debug($"{nameof(MoveItToolSystem)}.Methods | Should clear.");
+
+            return true;
+        }
+
+        internal bool ShouldApply()
+        {
+            for (int i = 0; i < m_Workflow.Length; i++)
+            {
+                if (m_Workflow[i] == WorkflowProgression.Complete)
+                {
+                    QLog.Debug($"{nameof(MoveItToolSystem)}.Methods | Should Apply.");
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        internal bool ShouldUpdate(bool checkShouldApply = false)
+        {
+            if (checkShouldApply && ShouldApply())
+            {
+                return false;
+            }
+
+            for (int i = 0; i < m_Workflow.Length; i++)
+            {
+                if (m_Workflow[i] == WorkflowProgression.InProgress ||
+                    m_Workflow[i] == WorkflowProgression.Starting)
+                {
+                    QLog.Debug($"{nameof(MoveItToolSystem)}.Methods | Should Update.");
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public override string toolID => "MoveItTool";

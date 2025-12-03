@@ -84,29 +84,13 @@ namespace MoveIt.Tool
 
             bool Moving = m_Workflow[(int)Workflow.Move] == WorkflowProgression.Starting || m_Workflow[(int)Workflow.Move] == WorkflowProgression.InProgress;
 
-            if (!UIHasFocus &&
-               (MITState == MITStates.Default ||
-                MITState == MITStates.ApplyButtonHeld ||
-                MITState == MITStates.SecondaryButtonHeld) || 
-               (Deleting &&
-                MITState != MITStates.DrawingSelection))
+            if (!ShouldClear())
             {
-                if (m_InputSystem.MouseApply.WasReleasedThisFrame() ||
-                   (!Deleting &&
-                    !Copying && 
-                    !m_InputSystem.MouseApply.IsPressed() &&
-                   (m_InputSystem.MouseCancel.WasReleasedThisFrame() ||
-                    MovementKeyReleased)))
+                if (ShouldApply())
                 {
                     return Apply(inputDeps);
                 }
-                else if ((m_InputSystem.MouseApply.IsPressed() ||
-                         Copying ||
-                         m_InputSystem.MouseCancel.IsPressed() ||
-                         MovementKeyPressed) &&
-                        (!UseMarquee ||
-                         GetRaycastResult(out Entity hitEntity, out RaycastHit raycastHit) && 
-                         hitEntity != Entity.Null)) 
+                else if (ShouldUpdate()) 
                 {
                     return Update(inputDeps);
                 }
