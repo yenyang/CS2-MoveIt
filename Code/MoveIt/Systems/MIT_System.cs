@@ -39,6 +39,10 @@ namespace MoveIt.Systems
     {
         protected static MIT _MIT;
 
+        public MIT_ToolSystem ()
+        {
+        } 
+
         protected override void OnCreate()
         {
             _MIT = World.GetOrCreateSystemManaged<MIT>();
