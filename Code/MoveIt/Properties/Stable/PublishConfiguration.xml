@@ -116,7 +116,7 @@ Translators: Pingwin_PL and karmel68 (Polish), elGendo87 (Spanish), ti4goc (Port
   <Dependency Id="74417" DisplayName="Unified Icon Library" Version="1.0.13" />
   <!--Change log for new version. Single line or multi line. Supports minimal markdown subset-->
   <ChangeLog># Patch v0.5.11
-* Settings compatibility fixes for game version 1.5.2f1.</ChangeLog>
+* Compatibility fixes for game version 1.5.2f1.</ChangeLog>
   <!--External link. supported types are discord, github, youtube, twitch, x, paypal, patreon-->
   <ExternalLink Type="discord" Url="https://discord.gg/nURB9MQ" />
   <ExternalLink Type="paypal" Url="https://www.paypal.me/QuboidCSL1" />
