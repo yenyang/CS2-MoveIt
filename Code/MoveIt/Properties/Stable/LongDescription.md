@@ -1,15 +1,4 @@
-<Publish>
-  <!--Id must be set in order to update existed mod. it is not required for publishing mod for the first time-->
-  <!--Stable ID: 74324 | Beta ID:  83596-->
-  <ModId Value="74324" />
-  <!--Name of the mod to display to players-->
-  <!--Stable Name: Move It | Beta Name:  Move It [Beta]-->
-  <DisplayName Value="Move It" />
-  <!--Short description of the mod-->
-  <ShortDescription Value="Move Things" />
-  <!--Long description of the mod. Single line or multi line. Supports minimal markdown subset-->
-  <!--Change name in long description-->
-  <LongDescription># Move It for Cities Skylines 2.
+﻿# Move It for Cities Skylines 2.
 
 You can move trees, props, decals, buildings, surfaces, nodes, and segment curves.
 
@@ -26,7 +15,7 @@ Unified Icon Library
 If you want to say thank you to **Quboid** with a donation you can do so on Paypal. I will replace the donation link once I've implemented sufficient changes.
 
 ## Translations
-I am looking for volunteers to help translate the mod into the other languages. For those interested please discuss the translation project in Cities Skylines Modding Discord. Thread: CSM Community Projects -&gt; move-it -&gt; Move It: Translations. CrowdIn Link available here.
+I am looking for volunteers to help translate the mod into the other languages. For those interested please discuss the translation project in Cities Skylines Modding Discord. Thread: CSM Community Projects -> move-it -> Move It: Translations. CrowdIn Link available here.
 
 ## Selecting:
 
@@ -93,37 +82,4 @@ Icons from SVG Repo, and from WishForge.Games under CC Attribution License.
 
 Unified Icon Library icons by Chameleon TBN
 
-Translators: Pingwin_PL and karmel68 (Polish), elGendo87 (Spanish), ti4goc (Portuguese), Morgan, aidan taylor and prospr (French), nemoriees and 0belix (Portugese, Brazilian), ExpedientFalcon and allegretic (Japenese), Nullpinter and RilkeXS (Chinese Simplified), allegretic (Chinese Traditional), MyNameIsntRealHere and WISSAH (Dutch)</LongDescription>
-  <!--Thumbnail-->
-  <!-- Stable: Properties/ThumbnailStable.png  | Beta: Properties/ThumbnailBeta.png-->
-  <Thumbnail Value="Properties/ThumbnailStable.png" />
-  <!--Screenshot, can be set multiple-->
-  <Screenshot Value="../../Resources/Screenshots/Mooose_A_Before.png" />
-  <Screenshot Value="../../Resources/Screenshots/Mooose_B_During.png" />
-  <Screenshot Value="../../Resources/Screenshots/Mooose_C_After.png" />
-  <Screenshot Value="../../Resources/Screenshots/Mooose_D_UI_01.png" />
-  <Screenshot Value="../../Resources/Screenshots/Mooose_E_UI_02.png" />
-  <!--Tag, can be set multiple-->
-  <Tag Value="Code Mod" />
-  <!--Link to the forum post where the mod can be discussed-->
-  <!-- Stable Forum Link: https://forum.paradoxplaza.com/forum/threads/move-it.1684140/  -->
-  <!-- Beta Forum Link: https://forum.paradoxplaza.com/forum/threads/move-it-unstable.1691126/ -->
-  <ForumLink Value="https://forum.paradoxplaza.com/forum/threads/move-it.1684140/" />
-  <!--Version of the mod-->
-  <ModVersion Value="0.5.11" />
-  <!--Recommended version of the base game to use the mod-->
-  <GameVersion Value="1.5.*" />
-  <!--Dependency for the mod, can be set multiple-->
-  <Dependency Id="74417" DisplayName="Unified Icon Library" Version="1.0.13" />
-  <!--Change log for new version. Single line or multi line. Supports minimal markdown subset-->
-  <ChangeLog># Patch v0.5.11
-* Settings compatibility fixes for game version 1.5.2f1.</ChangeLog>
-  <!--External link. supported types are discord, github, youtube, twitch, x, paypal, patreon-->
-  <ExternalLink Type="discord" Url="https://discord.gg/nURB9MQ" />
-  <ExternalLink Type="paypal" Url="https://www.paypal.me/QuboidCSL1" />
-  <ExternalLink Type="github" Url="https://github.com/yenyang/CS2-MoveIt" />
-  <ExternalLink Type="crowdin" Url="https://crowdin.com/project/csl2-mod-move-it" />
-  <ExternalLink Type="youtube" Url="https://www.youtube.com/watch?v=LnfPTtVr3p0" />
-  <!-- Supported values Public, Private, Unlisted -->
-  <AccessLevel Value="Public" />
-</Publish>
+Translators: Pingwin_PL and karmel68 (Polish), elGendo87 (Spanish), ti4goc (Portuguese), Morgan, aidan taylor and prospr (French), nemoriees and 0belix (Portugese, Brazilian), ExpedientFalcon and allegretic (Japenese), Nullpinter and RilkeXS (Chinese Simplified), allegretic (Chinese Traditional), MyNameIsntRealHere and WISSAH (Dutch)

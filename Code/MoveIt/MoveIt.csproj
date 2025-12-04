@@ -3,17 +3,17 @@
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
 		<LangVersion>9</LangVersion>
-		<Configurations>Debug;Release</Configurations>
+		<Configurations>Debug;Release;Stable</Configurations>
 		<Deterministic>False</Deterministic>
 		
 		<!--The folder where Game.dll is located. Set it only if the game is not installed in the default location, otherwise keep it empty-->
 		<CustomManagedPath></CustomManagedPath>
 		
 		<!--The file where mod information which is required for publishing mod on PDX mods are stored-->
-		<PublishConfigurationPath>Properties\PublishConfiguration.xml</PublishConfigurationPath>
+		<PublishConfigurationPath>Properties\$(Configuration)\PublishConfiguration.xml</PublishConfigurationPath>
     <Version>0.5.11</Version>
-    <AssemblyVersion>0.5.11</AssemblyVersion>
-    <FileVersion>0.5.11</FileVersion>
+    <AssemblyVersion>$(AssemblyVersion)</AssemblyVersion>
+    <FileVersion>$(AssemblyVersion)</FileVersion>
 	</PropertyGroup>
 	
 	<!--Imports must be after PropertyGroup block-->
@@ -25,6 +25,11 @@
 	</PropertyGroup>
 	
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+	  <DefineConstants>$(DefineConstants);USE_BURST</DefineConstants>
+	  <WarningLevel>4</WarningLevel>
+	</PropertyGroup>
+	
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Stable|AnyCPU'">
 	  <DefineConstants>$(DefineConstants);USE_BURST</DefineConstants>
 	  <WarningLevel>4</WarningLevel>
 	</PropertyGroup>
@@ -45,9 +50,9 @@
 		<Copy SourceFiles="@(UIFiles)" DestinationFiles="@(UIFiles->'$(DeployDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
 	</Target>
 
-	<Target Name="SetupAttributes" BeforeTargets="BeforeBuild">
-		<XmlPoke XmlInputPath="$(PublishConfigurationPath)" Value="$([System.IO.File]::ReadAllText($(ProjectDir)/LongDescription.md))" Query="//LongDescription" />
-		<XmlPoke XmlInputPath="$(PublishConfigurationPath)" Value="$([System.IO.File]::ReadAllText($(ProjectDir)/ChangeLog.md))" Query="//ChangeLog" />
+	<Target Name="SetupAttributes" BeforeTargets="BeforeBuild" Condition="'$(Configuration)' != 'Debug'">
+		<XmlPoke XmlInputPath="$(PublishConfigurationPath)" Value="$([System.IO.File]::ReadAllText(Properties/$(Configuration)/LongDescription.md))" Query="//LongDescription" />
+		<XmlPoke XmlInputPath="$(PublishConfigurationPath)" Value="$([System.IO.File]::ReadAllText(Properties/$(Configuration)/ChangeLog.md))" Query="//ChangeLog" />
 		<XmlPoke XmlInputPath="$(PublishConfigurationPath)" Value="$(Version)" Query="//ModVersion/@Value" />
 	</Target>
 
