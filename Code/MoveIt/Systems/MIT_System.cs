@@ -33,35 +33,4 @@ namespace MoveIt.Systems
             Enabled = false;
         }
     }
-
-
-    internal abstract partial class MIT_ToolSystem : ObjectToolBaseSystem
-    {
-        protected static MIT _MIT;
-
-        public MIT_ToolSystem ()
-        {
-        } 
-
-        protected override void OnCreate()
-        {
-            _MIT = World.GetOrCreateSystemManaged<MIT>();
-            Enabled = false;
-        }
-
-        internal virtual void Start()
-        {
-            Enabled = true;
-        }
-
-        internal virtual void Start(Actions.Action action, int actionIndex)
-        {
-            Enabled = true;
-        }
-
-        internal virtual void End()
-        {
-            Enabled = false;
-        }
-    }
 }
