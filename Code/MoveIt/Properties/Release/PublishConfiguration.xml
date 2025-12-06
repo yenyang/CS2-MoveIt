@@ -105,7 +105,7 @@ Translators: Pingwin_PL and karmel68 (Polish), elGendo87 (Spanish), ti4goc (Port
   <!--Link to the forum post where the mod can be discussed-->
   <ForumLink Value="https://forum.paradoxplaza.com/forum/threads/move-it-unstable.1691126/" />
   <!--Version of the mod-->
-  <ModVersion Value="0.5.11" />
+  <ModVersion Value="0.5.11.101" />
   <!--Recommended version of the base game to use the mod-->
   <GameVersion Value="1.5.*" />
   <!--Dependency for the mod, can be set multiple-->
@@ -121,5 +121,5 @@ Translators: Pingwin_PL and karmel68 (Polish), elGendo87 (Spanish), ti4goc (Port
   <ExternalLink Type="crowdin" Url="https://crowdin.com/project/csl2-mod-move-it" />
   <ExternalLink Type="youtube" Url="https://www.youtube.com/watch?v=LnfPTtVr3p0" />
   <!-- Supported values Public, Private, Unlisted -->
-  <AccessLevel Value="Unlisted" />
+  <AccessLevel Value="Public" />
 </Publish>

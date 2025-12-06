@@ -1,3 +1,2 @@
-﻿# Patch v0.5.11
-* Compatibility fixes for game version 1.5.2f1.
-* Beta version is now unlisted.
+﻿# Patch v0.5.11.101
+* Fix for using modifiers such as shift, alt, and ctrl keys while using other mouse and keyboard commands.
