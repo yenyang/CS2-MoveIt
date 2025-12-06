@@ -27,13 +27,18 @@ namespace MoveIt
     {
         public const string MOD_NAME = "Move It";
         public const string MOD_UI = "MoveIt";
-        
+
 #if IS_DEBUG
         public const bool IS_BETA = true;
         public static string Version => Assembly.GetExecutingAssembly().GetName().Version.ToString(4);
 #else
+#if RELEASE
+        public const bool IS_BETA = false;
+        public static string Version => Assembly.GetExecutingAssembly().GetName().Version.ToString(4);
+#else
         public const bool IS_BETA = false;
         public static string Version => Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
+#endif
 #endif
 
         public static Settings.Settings Settings;
