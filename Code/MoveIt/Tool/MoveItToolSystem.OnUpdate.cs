@@ -1,19 +1,24 @@
-﻿using Game.Prefabs;
+﻿using Game.Common;
+using Game.Prefabs;
+using Game.Tools;
 using MoveIt.Actions.Select;
+using MoveIt.Input;
 using MoveIt.Managers;
 using MoveIt.Systems;
 using QCommonLib;
 using System;
 using Unity.Entities;
 using Unity.Jobs;
+using UnityEngine.InputSystem;
 
 namespace MoveIt.Tool
 {
-    public partial class MIT : Game.Tools.ObjectToolBaseSystem
+    public partial class MoveItToolSystem : Game.Tools.ObjectToolBaseSystem
     {
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
             m_InputDeps = base.OnUpdate(inputDeps);
+            EntityCommandBuffer buffer = m_ToolOutputBarrier.CreateCommandBuffer();
             //ClearDebugOverlays();
 
             // If tool is opened before OnUpdate runs, m_RaycastTerrain won't be set. Skip this frame.
@@ -58,6 +63,11 @@ namespace MoveIt.Tool
                         break;
                     }
 
+                    if (!m_TempQuery.IsEmptyIgnoreFilter)
+                    {
+                        break;
+                    }
+
                     if (Queue.Current is not SelectMarqueeAction sma)
                     {
                         Log.Debug($"Update DrawingSelection but current action is {Queue.Current.Name}");
@@ -66,21 +76,32 @@ namespace MoveIt.Tool
 
                     UpdateMarqueeList(m_Marquee);
                     sma.AddMarqueeSelection(m_Marquee, true);
-                    //ToolAction = ToolActions.Do;
                     break;
             }
 
-            Queue.FireAction();
+            Queue.FireAction(ref inputDeps, ref buffer);
 
-            //DebugDumpSelections();
 
-            //MIT_ToolTipSystem.instance.Set(
-            //    $"Hov:{Hovered.Definition.m_Entity.DX()}/Norm:{Hover.Normal.Definition.m_Entity.DX()}/Child:{Hover.Child.Definition.m_Entity.DX()}/ChildPar:{Hover.Child.Definition.m_Parent.DX()}, " +
-            //    $"Press:{Hover.TopPressed.m_Entity.DX()}/{Hover.Normal.OnPress.m_Entity.DX()}/{Hover.Child.OnPress.m_Entity.DX()}");
+            bool Moving = m_Workflow[(int)Workflow.Move] == WorkflowProgression.Starting || m_Workflow[(int)Workflow.Move] == WorkflowProgression.InProgress;
 
-            //Moveables.DebugDumpFullBundle("ONUPDATE");
+            if (!ShouldClear())
+            {
+                if (ShouldApply())
+                {
+                    return Apply(inputDeps);
+                }
+                else if (ShouldUpdate()) 
+                {
+                    return Update(inputDeps);
+                }
+            }
 
-            return m_InputDeps;
+            if (MITState == MITStates.Cancelling)
+            {
+                MITState = MITStates.Default;
+            }
+
+            return Clear(inputDeps);
         }
 
         internal PrefabInfo GetPrefabInfo(Entity e)

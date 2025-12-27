@@ -54,7 +54,7 @@ namespace MoveIt.Searcher
         /// <param name="e">The entity to check and, if valid, add to result</param>
         public void Iterate(Game.Common.QuadTreeBoundsXZ bounds, Entity e)
         {
-            if (!MIT.IsValid(m_Manager, e)) return;
+            if (!MoveItToolSystem.IsValid(m_Manager, e)) return;
             if (m_EntityList.Length >= (Selection.SelectionBase.MAX_SELECTION_SIZE * 2)) return;
             if (m_Type == SearchTypes.Marquee || m_Type == SearchTypes.Bounds)
             {
@@ -299,7 +299,7 @@ namespace MoveIt.Searcher
         {
             Entity e = areaSearchItem.m_Area;
 
-            if (!MIT.IsValid(m_Manager, e)) return;
+            if (!MoveItToolSystem.IsValid(m_Manager, e)) return;
             if (m_EntityList.Length >= (Selection.SelectionBase.MAX_SELECTION_SIZE * 2)) return;
             if (m_Type == SearchTypes.Marquee || m_Type == SearchTypes.Bounds)
             {

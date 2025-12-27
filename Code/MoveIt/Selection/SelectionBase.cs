@@ -1,5 +1,7 @@
 ﻿using Colossal.IO.AssetDatabase.Internal;
 using Colossal.Mathematics;
+using Game.Tools;
+using MoveIt.Components;
 using MoveIt.Moveables;
 using MoveIt.Overlays.Children;
 using MoveIt.Tool;
@@ -27,7 +29,7 @@ namespace MoveIt.Selection
         public const int MAX_SELECTION_SIZE     = 10000;
         public const int MAX_CIRCLECALC_SIZE    = 1000;
 
-        protected static readonly MIT _MIT = MIT.m_Instance;
+        protected static readonly MoveItToolSystem _MIT = MoveItToolSystem.m_Instance;
 
         internal abstract string Name { get; }
         protected HashSet<MVDefinition> _Buffer;
@@ -141,6 +143,9 @@ namespace MoveIt.Selection
 
             _Buffer.Add(mvd);
             mv.OnSelect();
+
+            EntityCommandBuffer buffer = _MIT.m_Barrier.CreateCommandBuffer();
+            buffer.AddComponent<MIT_Selected>(mvd.m_Entity);
             return true;
         }
 
@@ -176,7 +181,7 @@ namespace MoveIt.Selection
                         {
                             // If CP entity no longer exists (e.g. was cleaned up by Moveables.Refresh()), this will create a new entity
                             var cp = GetMV<MVControlPoint>(mvd);
-                            MIT.Log.Debug($"Refreshing CP:\nMVD: {mvd}\n CP: {cp.Definition} <{cp.GetType().Name}>");
+                            MoveItToolSystem.Log.Debug($"Refreshing CP:\nMVD: {mvd}\n CP: {cp.Definition} <{cp.GetType().Name}>");
                             if (!mvd.m_Entity.Equals(cp.m_Entity))
                             {
                                 toRemove.Add(mvd);
@@ -208,7 +213,7 @@ namespace MoveIt.Selection
             }
             catch (Exception ex)
             {
-                MIT.Log.Error($"SB.Refresh failed {ex}\n{QCommon.GetStackTrace(8)}", "SB01");
+                MoveItToolSystem.Log.Error($"SB.Refresh failed {ex}\n{QCommon.GetStackTrace(8)}", "SB01");
             }
             // BUG this removed newly recreated CPs
             try
@@ -232,7 +237,7 @@ namespace MoveIt.Selection
             }
             catch (Exception ex)
             {
-                MIT.Log.Error($"SB.Refresh failed {ex}\n{QCommon.GetStackTrace(8)}", "SB02");
+                MoveItToolSystem.Log.Error($"SB.Refresh failed {ex}\n{QCommon.GetStackTrace(8)}", "SB02");
             }
 
             try
@@ -246,10 +251,10 @@ namespace MoveIt.Selection
             }
             catch (Exception ex)
             {
-                MIT.Log.Error($"SB.Refresh failed {ex}\n{QCommon.GetStackTrace(8)}", "SB03");
+                MoveItToolSystem.Log.Error($"SB.Refresh failed {ex}\n{QCommon.GetStackTrace(8)}", "SB03");
             }
 
-            MIT.Log.Debug($"{msg}, NewBuffer:{_Buffer.Count}" +
+            MoveItToolSystem.Log.Debug($"{msg}, NewBuffer:{_Buffer.Count}" +
                 $"{(swapping.Length > 0 ? $"\n  Swapping: {swapping}" : "")}" +
                 $"{(readding.Length > 0 ? $"\n    Adding: {readding}" : "")}" +
                 $"{(removing.Length > 0 ? $"\n  Removing: {removing}" : "")}" +
@@ -261,7 +266,7 @@ namespace MoveIt.Selection
             }
             catch (Exception ex)
             {
-                MIT.Log.Error($"SB.Refresh failed {ex}\n{QCommon.GetStackTrace(8)}", "SB04");
+                MoveItToolSystem.Log.Error($"SB.Refresh failed {ex}\n{QCommon.GetStackTrace(8)}", "SB04");
             }
             //_MIT.Moveables.DebugDumpFull($"{Name}.RefreshFromArchive Full-MoveablesManager-Dump ");
         }
@@ -416,7 +421,7 @@ namespace MoveIt.Selection
             }
             catch (Exception ex)
             {
-                MIT.Log.Warning($"CalculateCenter failed!\n{MIT.DebugDefinitions(mvds)}\n{ex}");
+                MoveItToolSystem.Log.Warning($"CalculateCenter failed!\n{MoveItToolSystem.DebugDefinitions(mvds)}\n{ex}");
             }
 
             if (mvds.Count > MAX_CIRCLECALC_SIZE)
@@ -507,7 +512,7 @@ namespace MoveIt.Selection
 
         public void DebugDumpSelection(string prefix = "")
         {
-            MIT.Log.Debug(prefix + DebugSelection());
+            MoveItToolSystem.Log.Debug(prefix + DebugSelection());
         }
     }
 }

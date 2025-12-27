@@ -20,6 +20,9 @@ export interface TopRowButtonStates
     ButtonMarquee : ButtonState;
     ButtonManipulation : ButtonState;
     ButtonRedo : ButtonState;
+    ButtonFollowTerrain : ButtonState;
+    ButtonCopy : ButtonState;
+    ButtonDelete : ButtonState;
 }
 
 export interface PanelState

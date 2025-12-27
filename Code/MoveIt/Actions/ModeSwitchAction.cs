@@ -2,6 +2,8 @@
 using MoveIt.Selection;
 using MoveIt.Tool;
 using System.Collections.Generic;
+using Unity.Entities;
+using Unity.Jobs;
 
 namespace MoveIt.Actions
 {
@@ -24,9 +26,9 @@ namespace MoveIt.Actions
         /// Maintain the selection for this mode by searching back in the queue for the last switch and use it's initial (pre-mode switch) selection
         /// If no last switch found, selection is empty.
         /// </summary>
-        public override void Do()
+        public override void Do(ref JobHandle jobHandle, ref EntityCommandBuffer buffer)
         {
-            base.Do();
+            base.Do(ref jobHandle, ref buffer);
             List<MVDefinition> fromSelection = _InitialSelectionState.Definitions;
             ModeSwitchAction prev = _MIT.Queue.GetPrevious<ModeSwitchAction>();// GetPrecedingModeSwitchActionFromQueue(false);
             List<MVDefinition> toSelection = prev is null ? new() : prev.GetInitialSelectionStates();
@@ -46,7 +48,7 @@ namespace MoveIt.Actions
         {
             _SelectionState.CleanDefinitions();
             _InitialSelectionState.CleanDefinitions();
-            MIT.Log.Debug($"MSA.Unarchive {idx}:{_MIT.Queue.Current.Name} ToolAction:{phase}");
+            MoveItToolSystem.Log.Debug($"MSA.Unarchive {idx}:{_MIT.Queue.Current.Name} ToolAction:{phase}");
         }
 
         /// <summary>
@@ -86,10 +88,10 @@ namespace MoveIt.Actions
         {
             SelectionState newSelectionStates = new(_MIT.m_IsManipulateMode, toSelection);
 
-            MIT.Log.Debug($"ModeSwitchAction.ProcessModeSelectionChange" +
-                $"\n FromSelection: {MIT.DebugDefinitions(fromSelection)}" +
-                $"\n   ToSelection: {MIT.DebugDefinitions(toSelection)}" +
-                $"\n         Final: {MIT.DebugDefinitions(newSelectionStates.Definitions)}");
+            MoveItToolSystem.Log.Debug($"ModeSwitchAction.ProcessModeSelectionChange" +
+                $"\n FromSelection: {MoveItToolSystem.DebugDefinitions(fromSelection)}" +
+                $"\n   ToSelection: {MoveItToolSystem.DebugDefinitions(toSelection)}" +
+                $"\n         Final: {MoveItToolSystem.DebugDefinitions(newSelectionStates.Definitions)}");
 
             try
             {
@@ -98,7 +100,7 @@ namespace MoveIt.Actions
             }
             catch (System.Exception ex)
             {
-                MIT.Log.Error($"Failed ProcessModeSelectionChange toSel:{toSelection.Count}, newSelStates:{newSelectionStates.Count}\n" + ex);
+                MoveItToolSystem.Log.Error($"Failed ProcessModeSelectionChange toSel:{toSelection.Count}, newSelStates:{newSelectionStates.Count}\n" + ex);
 
                 _MIT.Selection = _MIT.m_IsManipulateMode ? new SelectionManip() : new SelectionNormal();
                 _MIT.Selection.Refresh();

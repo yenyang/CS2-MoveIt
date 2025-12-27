@@ -46,7 +46,7 @@ namespace MoveIt.Actions.Transform
                 if (_MIT.UsingPrecisionMode)
                 {
                     float mouseRotateBefore = _MIT.m_SensitivityTogglePosX - _MIT.m_MouseStartX;
-                    float mouseRotateAfter = (QCommon.MouseScreenPosition.x - _MIT.m_SensitivityTogglePosX) / 6;
+                    float mouseRotateAfter = (QCommon.MouseScreenPosition.x - _MIT.m_SensitivityTogglePosX) / 6f;
                     mouseTravel = mouseRotateBefore + mouseRotateAfter;
                 }
                 else
@@ -60,10 +60,10 @@ namespace MoveIt.Actions.Transform
                 if (QKeyboard.Alt)
                 {
                     // Snap to 45 degrees
-                    angle = Mathf.Round(angle * 8f) / 8;
+                    angle = Mathf.Round(angle * 8f) / 8f;
                 }
 
-                newAngleDelta = angle * 360;
+                newAngleDelta = angle * 360f;
             }
 
             m_UpdateMove = false;
@@ -87,7 +87,8 @@ namespace MoveIt.Actions.Transform
             MoveDelta = newMoveDelta;
             AngleDelta = newAngleDelta;
 
-            DoFromDeltas();
+            // Commented out to try and prevent Quboid's setup from moving things.
+            // DoFromDeltas();
 
             return true;
         }

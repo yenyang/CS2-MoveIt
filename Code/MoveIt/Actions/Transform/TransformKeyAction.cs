@@ -5,7 +5,7 @@ namespace MoveIt.Actions.Transform
 {
     internal class TransformKeyAction : TransformBase
     {
-        private readonly float3 _FACTOR = new(0.25f, 0.015625f, 0.25f); // y = 1/64
+        private readonly float3 _FACTOR = new(0f, 0f, 0f); // set to 0 to prevent Quboid's setup from moving things.
         public override string Name => "TransformKeyAction";
 
         internal void Process(float3 direction)
@@ -29,7 +29,9 @@ namespace MoveIt.Actions.Transform
         protected override bool ToolDo()
         {
             m_UpdateMove = true;
-            DoFromDeltas();
+            
+            // Commented out to prevent Quboid's Setup from moving things.
+            // DoFromDeltas();
             return true;
         }
 

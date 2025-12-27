@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Game.Simulation;
 using Game.Tools;
+using MoveIt.Input;
 using MoveIt.Managers;
 using MoveIt.Searcher;
 using MoveIt.Selection;
 using MoveIt.Systems;
 using QCommonLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Entities;
@@ -20,6 +22,7 @@ namespace MoveIt.Tool
         SecondaryButtonHeld,
         DrawingSelection,
         ToolActive,
+        Cancelling,
     }
 
     [Flags]
@@ -38,9 +41,36 @@ namespace MoveIt.Tool
         ParentManipulating  = 512,
     }
 
-    public partial class MIT : ObjectToolBaseSystem
+    public enum Workflow
     {
-        internal static MIT m_Instance;
+        SelectingIndividual,
+        DrawingMarquee,
+        DeselectAll,
+        Move,
+        Rotate,
+        Elevate,
+        Lower,
+        Copy,
+        Delete,
+        Undo,
+        Redo,
+        AlignObjectHeight,
+        AlignRotateAtCenter,
+        AlignRotateInPlace,
+        AlignTerrainHeight,
+    }
+
+    public enum WorkflowProgression
+    {
+        NotStarted = 0,
+        Starting = 1,
+        InProgress = 2,
+        Complete = 3,
+    }
+
+    public partial class MoveItToolSystem : ObjectToolBaseSystem
+    {
+        internal static MoveItToolSystem m_Instance;
 
         internal ControlPointManager ControlPointManager;
         internal InputManager InputManager;
@@ -51,15 +81,19 @@ namespace MoveIt.Tool
         internal ToolboxManager ToolboxManager;
         internal FilterManager Filtering;
 
-        internal MIT_VanillaOverlaySystem m_VanillaOverlaySystem;
-        internal MIT_RemoveOverriddenSystem m_RemoveOverriddenSystem;
-        //internal MIT_RenderSystem m_RenderSystem;
         internal MIT_UISystem m_UISystem;
         internal MIT_PostToolSystem m_PostToolSystem;
         internal MIT_InputSystem m_InputSystem;
-        //internal MIT_HoverSystem m_HoverSystem;
         internal Overlays.MIT_OverlaySystem m_OverlaySystem;
         internal Systems.MIT_ToolTipSystem m_ToolTipSystem;
+        internal ToolOutputBarrier m_Barrier;
+        internal ControlPoint m_LastRaycastPoint;
+        internal ControlPoint m_StartPoint;
+        internal ControlPoint m_RotationStartPoint;
+        internal float m_RotationAboutCenter;
+        internal float m_PreviousRotation;
+        internal float m_VerticalDisplacement;
+        internal WorkflowProgression[] m_Workflow;
 
         internal Game.Common.RaycastSystem m_RaycastSystem;
 
@@ -80,6 +114,8 @@ namespace MoveIt.Tool
         internal EntityQuery m_TempQuery;
         internal EntityQuery m_ControlPointQuery;
         internal EntityQuery m_SurfacesQuery;
+        internal EntityQuery m_MIT_SelectedQuery;
+        private EntityQuery m_DefinitionGroup;
 
         // Options
         internal bool ShowDebugPanel        => Mod.Settings.ShowDebugPanel;
@@ -98,6 +134,14 @@ namespace MoveIt.Tool
         /// Empty hashset if nothing selected.
         /// </summary>
         public HashSet<Entity> SelectedEntities => Selection.Definitions.Select(mvd => mvd.m_Entity).ToHashSet();
+
+        /// <summary>
+        /// Gets current depenencies for MIT.
+        /// </summary>
+        public JobHandle Dependencies
+        {
+            get { return Dependency; }
+        }
 
         /// <summary>
         /// Raycaster which only hits terrain
@@ -171,5 +215,66 @@ namespace MoveIt.Tool
         public bool m_SelectionDirty = true;
 
         internal const float TERRAIN_UPDATE_MARGIN = 16f;
+
+        /// <summary>
+        /// Gets a value indicating whether objects are following terrain or moving along a flat plane.
+        /// </summary>
+        internal bool m_FollowingTerrain;
+
+        private Game.Tools.CreationFlags m_CreationFlags;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether MIT is copying.
+        /// </summary>
+        public bool Copying
+        {
+            get { return m_CreationFlags == 0; }
+            set { m_CreationFlags = value ? 0 : CreationFlags.Relocate; }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether objects are selected and therefore can be copied or deleted.
+        /// </summary>
+        public bool CanCopyOrDelete
+        {
+            get { return !m_MIT_SelectedQuery.IsEmptyIgnoreFilter; }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether MIT is deleting or preparing to delete.
+        /// </summary>
+        public bool Deleting
+        {
+            get { return m_CreationFlags == CreationFlags.Delete; }
+            set { m_CreationFlags = value ? CreationFlags.Delete : CreationFlags.Relocate; }
+        }
+
+        /// <summary>
+        /// Gets whether any movement key is pressed.
+        /// </summary>
+        public bool MovementKeyPressed
+        {
+            get
+            {
+                return  m_InputSystem.GetBinding(Inputs.KEY_MOVEUP).m_Action.IsPressed() ||
+                        m_InputSystem.GetBinding(Inputs.KEY_MOVEDOWN).m_Action.IsPressed() ||
+                        m_InputSystem.GetBinding(Inputs.KEY_MOVEUP2).m_Action.IsPressed() ||
+                        m_InputSystem.GetBinding(Inputs.KEY_MOVEDOWN2).m_Action.IsPressed();      
+            }
+        }
+
+        /// <summary>
+        /// Gets whether any movemene was released this frame.
+        /// </summary>
+        public bool MovementKeyReleased
+        {
+            get
+            {
+                return   m_InputSystem.GetBinding(Inputs.KEY_MOVEUP).m_Action.WasReleasedThisFrame() ||
+                         m_InputSystem.GetBinding(Inputs.KEY_MOVEDOWN).m_Action.WasReleasedThisFrame() ||
+                         m_InputSystem.GetBinding(Inputs.KEY_MOVEUP2).m_Action.WasReleasedThisFrame() ||
+                         m_InputSystem.GetBinding(Inputs.KEY_MOVEDOWN2).m_Action.WasReleasedThisFrame();
+            }
+        }
     }
 }

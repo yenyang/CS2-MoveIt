@@ -9,7 +9,7 @@ namespace MoveIt.Moveables
     {
         public MVOther(Entity e) : base(e, Identity.Other)
         {
-            MIT.Log.Debug($"Other.Ctor {e.DX()}\n{QCommon.GetStackTrace(8)}");
+            MoveItToolSystem.Log.Debug($"Other.Ctor {e.DX()}\n{QCommon.GetStackTrace(8)}");
             m_Overlay = new OverlayOther(this);
             RefreshFromAbstract();
         }

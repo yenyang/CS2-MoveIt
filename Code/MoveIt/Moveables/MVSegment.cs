@@ -19,7 +19,7 @@ namespace MoveIt.Moveables
         {
             if (!_MIT.EntityManager.Exists(e))
             {
-                MIT.Log.Error($"Segment.GetDefaultWidth - entity {e.D()} doesn't exist!\n{QCommon.GetStackTrace()}");
+                MoveItToolSystem.Log.Error($"Segment.GetDefaultWidth - entity {e.D()} doesn't exist!\n{QCommon.GetStackTrace()}");
                 return 0f;
             }
             Game.Prefabs.PrefabRef segPrefab = _MIT.EntityManager.GetComponentData<Game.Prefabs.PrefabRef>(e);

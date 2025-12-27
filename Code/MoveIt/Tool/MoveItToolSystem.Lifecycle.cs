@@ -5,6 +5,8 @@
 
 using Colossal.Serialization.Entities;
 using Game;
+using Game.Common;
+using Game.Simulation;
 using Game.Tools;
 using MoveIt.Components;
 using MoveIt.Selection;
@@ -13,7 +15,7 @@ using Unity.Entities;
 
 namespace MoveIt.Tool
 {
-    public partial class MIT : ObjectToolBaseSystem
+    public partial class MoveItToolSystem : ObjectToolBaseSystem
     {
         // Runs on first load
         protected override void OnCreate()
@@ -24,20 +26,20 @@ namespace MoveIt.Tool
             Enabled = false;
 
             m_OverlaySystem = World.GetOrCreateSystemManaged<Overlays.MIT_OverlaySystem>();
-            m_VanillaOverlaySystem = World.GetOrCreateSystemManaged<Systems.MIT_VanillaOverlaySystem>();
-            m_RemoveOverriddenSystem = World.GetOrCreateSystemManaged<Systems.MIT_RemoveOverriddenSystem>();
             m_UISystem = World.GetOrCreateSystemManaged<Systems.MIT_UISystem>();
             m_PostToolSystem = World.GetOrCreateSystemManaged<Systems.MIT_PostToolSystem>();
             m_InputSystem = World.GetOrCreateSystemManaged<Systems.MIT_InputSystem>();
             m_ToolTipSystem = World.GetOrCreateSystemManaged<Systems.MIT_ToolTipSystem>();
-
+            m_Barrier = World.GetOrCreateSystemManaged<ToolOutputBarrier>();
             m_RaycastSystem = World.GetOrCreateSystemManaged<Game.Common.RaycastSystem>();
 
             QKeyboard.Init();
 
+            m_DefinitionGroup = GetDefinitionQuery();
+
             m_TempQuery = SystemAPI.QueryBuilder()
-                .WithAll<Temp, Game.Objects.Transform>()
-                .WithNone<Game.Common.Owner>()
+                .WithAll<Temp>()
+                .WithNone<Deleted, Game.Common.Overridden>()
                 .Build();
 
             m_ControlPointQuery = SystemAPI.QueryBuilder()
@@ -48,6 +50,18 @@ namespace MoveIt.Tool
                 .WithAll<Game.Areas.Area, Game.Areas.Surface>()
                 .WithNone<Game.Common.Owner>()
                 .Build();
+
+            m_MIT_SelectedQuery = SystemAPI.QueryBuilder()
+                .WithAll<MIT_Selected>()
+                .WithNone<Game.Tools.Temp, Game.Common.Overridden, Game.Common.Deleted, MIT_ControlPoint>()
+                .Build();
+
+            m_Workflow = new WorkflowProgression[(int)Workflow.AlignTerrainHeight];
+
+            for (int i = 0; i < m_Workflow.Length; i++)
+            {
+                m_Workflow[i] = WorkflowProgression.NotStarted;
+            }
         }
 
         // Runs on every load, after OnCreate
@@ -75,6 +89,8 @@ namespace MoveIt.Tool
             m_IsManipulateMode = false;
             Selection ??= new SelectionNormal();
 
+            m_CreationFlags = CreationFlags.Relocate;
+
             m_OverlaySystem.DestroyAllEntities();
         }
 
@@ -86,11 +102,10 @@ namespace MoveIt.Tool
 
             m_ToolTipSystem.Enabled = true;
             m_InputSystem.OnToolEnable();
-            m_RemoveOverriddenSystem.Start();
             m_PostToolSystem.Start();
-            m_VanillaOverlaySystem.Start();
             m_OverlaySystem.Start();
             InputManager.OnToolEnable();
+            m_LastRaycastPoint = default;
 
             Moveables.Refresh();
             Selection.Refresh();
@@ -105,11 +120,11 @@ namespace MoveIt.Tool
             Hover.Clear();
             InputManager.OnToolDisable();
             m_OverlaySystem.End();
-            m_VanillaOverlaySystem.End();
             m_PostToolSystem.End();
-            m_RemoveOverriddenSystem.End();
             m_InputSystem.OnToolDisable();
             m_ToolTipSystem.Enabled = false;
+            Copying = false;
+            // secondaryApplyAction.enabled = false;
 
             QLog.FlushBundle();
         }

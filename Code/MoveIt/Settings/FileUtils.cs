@@ -33,13 +33,13 @@ namespace MoveIt.Settings
             string pathLogs         = Path.Combine(pathAppData, "Logs");
             string[] rootFiles      = new string[5] { "Player.log", "Player-prev.log", "MoveIt.coc", "Settings.coc", "UserState.coc" };
 
-            MIT.Log.Info($"Saving log files from {pathAppData} at {logTime}");
+            MoveItToolSystem.Log.Info($"Saving log files from {pathAppData} at {logTime}");
 
             try
             {
                 if (!Directory.Exists(pathLogs))
                 {
-                    MIT.Log.Info($"Log folder {pathLogs} not found.");
+                    MoveItToolSystem.Log.Info($"Log folder {pathLogs} not found.");
                     return;
                 }
 
@@ -60,7 +60,7 @@ namespace MoveIt.Settings
             }
             catch (Exception ex)
             {
-                MIT.Log.Error(ex.Message);
+                MoveItToolSystem.Log.Error(ex.Message);
             }
         }
     }

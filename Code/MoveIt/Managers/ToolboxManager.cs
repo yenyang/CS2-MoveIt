@@ -3,12 +3,16 @@
 // Forked with permission from Quboid's CS2-MoveIt project.
 // </copyright>
 
+using Game;
+using Game.Tools;
 using MoveIt.Actions.Toolbox;
 using MoveIt.Tool;
 using MoveIt.UI.Foldout;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Entities;
+using Unity.Jobs;
 
 namespace MoveIt.Managers
 {
@@ -25,7 +29,7 @@ namespace MoveIt.Managers
 
         private Moveables.Moveable _Clicked;
         private ToolBoxTool _ActiveTool;
-
+        private ToolOutputBarrier _Barrier;
         private static List<ToolBoxTool> _ToolList = null;
 
         internal static List<ToolBoxTool> ToolList
@@ -66,7 +70,9 @@ namespace MoveIt.Managers
         }
 
         internal ToolboxManager()
-        { }
+        {
+            _Barrier = World.DefaultGameObjectInjectionWorld?.GetOrCreateSystemManaged<ToolOutputBarrier>();
+        }
 
         internal bool IsActive(string id)
             => _ActiveTool is not null && _ActiveTool.m_Id.Equals(id);
@@ -138,7 +144,7 @@ namespace MoveIt.Managers
             }
             catch (Exception ex)
             {
-                MIT.Log.Error($"Failed to prepare tool '{id}'.\n{ex}");
+                MoveItToolSystem.Log.Error($"Failed to prepare tool '{id}'.\n{ex}");
                 return false;
             }
             return true;
@@ -155,15 +161,17 @@ namespace MoveIt.Managers
         {
             try
             {
+                JobHandle jobHandle = _MIT.Dependencies;
+                EntityCommandBuffer buffer = _Barrier.CreateCommandBuffer();
                 Phase = Phases.Processing;
                 Actions.Transform.TransformToolbox action = (Actions.Transform.TransformToolbox)Activator.CreateInstance(_ActiveTool.m_ActionType);
                 _MIT.Queue.Push(action);
                 action.Moveable = _Clicked;
-                _MIT.Queue.Do();
+                _MIT.Queue.Do(ref jobHandle, ref buffer);
             }
             catch (Exception ex)
             {
-                MIT.Log.Error($"Failed to activate tool '{_ActiveTool.m_Id}'.\n{ex}");
+                MoveItToolSystem.Log.Error($"Failed to activate tool '{_ActiveTool.m_Id}'.\n{ex}");
                 return false;
             }
 

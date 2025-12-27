@@ -5,13 +5,15 @@ using MoveIt.Selection;
 using MoveIt.Tool;
 using QCommonLib;
 using System.Text;
+using Unity.Entities;
+using Unity.Jobs;
 
 namespace MoveIt.Managers
 {
     internal class QueueManager
     {
         protected const int QUEUE_LENGTH = 100;
-        protected static readonly MIT _MIT = MIT.m_Instance;
+        protected static readonly MoveItToolSystem _MIT = MoveItToolSystem.m_Instance;
         protected Action _CreationAction;
 
         internal QueueManager()
@@ -22,7 +24,13 @@ namespace MoveIt.Managers
             _MIT.Selection ??= new SelectionNormal();
             _Actions[Index] = new SelectAction();
             _CreationAction = null;
-            Do();
+            JobHandle jobHandle = _MIT.Dependencies;
+            EntityCommandBuffer buffer = new EntityCommandBuffer();
+            Do(ref jobHandle, ref buffer);
+            if (!buffer.IsEmpty)
+            {
+                buffer.Playback(_MIT.EntityManager);
+            }
         }
 
         private readonly Action[] _Actions = new Action[QUEUE_LENGTH];
@@ -75,7 +83,7 @@ namespace MoveIt.Managers
                 _Tail = (Index + 2) % QUEUE_LENGTH;
             }
 
-            MIT.Log.Info($"--- QueueManager.Push Phase:{Action.Phase}");
+            MoveItToolSystem.Log.Info($"--- QueueManager.Push Phase:{Action.Phase}");
             Current.Archive(Phases.None, Index);
             if (Index != _Head)
             {
@@ -87,10 +95,10 @@ namespace MoveIt.Managers
 
             _Actions[Index] = action;
 
-            MIT.Log.Info($"Push {Index}:{_Actions[Index].Name}");
+            MoveItToolSystem.Log.Info($"Push {Index}:{_Actions[Index].Name}");
         }
 
-        public void FireAction()
+        public void FireAction(ref JobHandle jobHandle, ref EntityCommandBuffer buffer)
         {
             switch (Action.Phase)
             {
@@ -100,7 +108,7 @@ namespace MoveIt.Managers
                     break;
 
                 case Phases.Do:
-                    Do();
+                    Do(ref jobHandle, ref buffer);
                     break;
 
                 case Phases.Undo:
@@ -136,10 +144,10 @@ namespace MoveIt.Managers
             _Actions[Index].Initialise();
         }
 
-        public void Do()
+        public void Do(ref JobHandle jobHandle, ref EntityCommandBuffer buffer)
         {
-            //MIT.Log.Debug($"{UnityEngine.Time.frameCount} Do {Debug()}");
-            _Actions[Index].Do();
+            MoveItToolSystem.Log.Debug($"{UnityEngine.Time.frameCount} Do Index: {Index} _Actions[Index]:{_Actions[Index].Name} ");
+            _Actions[Index].Do(ref jobHandle, ref buffer);
         }
 
         public bool CanUndo()
@@ -151,7 +159,7 @@ namespace MoveIt.Managers
         {
             if (!CanUndo()) return;
 
-            MIT.Log.Debug("--- QueueManager.Undo");
+            MoveItToolSystem.Log.Debug("--- QueueManager.Undo");
             _Actions[Index].Archive(Phases.Undo, Index);
             _Actions[IndexPrev].Unarchive(Phases.Undo, IndexPrev);
 
@@ -171,7 +179,7 @@ namespace MoveIt.Managers
         {
             if (!CanRedo()) return;
 
-            MIT.Log.Debug("--- QueueManager.Redo");
+            MoveItToolSystem.Log.Debug("--- QueueManager.Redo");
             _Actions[Index].Archive(Phases.Redo, Index);
             _Actions[IndexNext].Unarchive(Phases.Redo, IndexNext);
 
@@ -255,7 +263,7 @@ namespace MoveIt.Managers
                 _Actions[idx] = null;
             }
 
-            MIT.Log.Info($"QM.Invalidate ({_Tail}-{Index}-{_Head}) {start}-{end} lastIdx:{idx}/{i}\n{prewipeDebug}");
+            MoveItToolSystem.Log.Info($"QM.Invalidate ({_Tail}-{Index}-{_Head}) {start}-{end} lastIdx:{idx}/{i}\n{prewipeDebug}");
             _Head = Index;
         }
 

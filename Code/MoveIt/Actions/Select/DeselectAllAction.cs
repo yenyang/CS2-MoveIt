@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Jobs;
 
 namespace MoveIt.Actions.Select
 {
@@ -22,9 +23,9 @@ namespace MoveIt.Actions.Select
         /// </summary>
         protected SelectionState _InitialStateManip;
 
-        public override void Do()
+        public override void Do(ref JobHandle jobHandle, ref EntityCommandBuffer buffer)
         {
-            base.Do();
+            base.Do(ref jobHandle, ref buffer);
 
             List<MVDefinition> normal = m_IsManipulationMode ? GetModeSwitchList() : GetPreviousList();
             List<MVDefinition> manip = m_IsManipulationMode ? GetPreviousList() : GetModeSwitchList();
@@ -72,7 +73,7 @@ namespace MoveIt.Actions.Select
             _MIT.EntityManager.DestroyEntity(overlayQuery);
             overlayQuery.Dispose();
 
-            MIT.Log.Info($"DeselectAllAction - MVs:{countSel}, overlays:{countOlay}");
+            MoveItToolSystem.Log.Info($"DeselectAllAction - MVs:{countSel}, overlays:{countOlay}");
         }
 
         private List<MVDefinition> GetModeSwitchList()

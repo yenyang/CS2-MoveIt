@@ -14,7 +14,7 @@ namespace MoveIt.Managers
 {
     public record HoverHolder
     {
-        protected readonly MIT _MIT = MIT.m_Instance;
+        protected readonly MoveItToolSystem _MIT = MoveItToolSystem.m_Instance;
 
         public bool IsForChild => _IsForChild;
         private readonly bool _IsForChild;
@@ -387,11 +387,11 @@ namespace MoveIt.Managers
             string msg = prefix + DebugVanillaResults(networkResults, surfaceResults);
             if (bundle.Equals(string.Empty))
             {
-                MIT.Log.Debug(msg);
+                MoveItToolSystem.Log.Debug(msg);
             }
             else
             {
-                MIT.Log.Bundle(bundle, msg);
+                MoveItToolSystem.Log.Bundle(bundle, msg);
             }
         }
     }

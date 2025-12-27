@@ -9,7 +9,7 @@ namespace MoveIt.Overlays
 {
     public abstract class Overlay : IDisposable
     {
-        protected static readonly MIT _MIT = MIT.m_Instance;
+        protected static readonly MoveItToolSystem _MIT = MoveItToolSystem.m_Instance;
 
         public const float LINE_MIN_WIDTH           = 0.1f;
         public const float LINE_MAX_WIDTH           = 3f;
@@ -147,12 +147,12 @@ namespace MoveIt.Overlays
             //MIT.Log.Debug($"Adding flag {flags} to olay {m_Entity.D()} of {m_Owner.DX()}");
             if (!m_Owner.Exists(_MIT.EntityManager))
             {
-                MIT.Log.Error($"{this} does not have a CP entity! ({m_Owner.DX()}, exists:{_MIT.EntityManager.Exists(m_Owner)})");
+                MoveItToolSystem.Log.Error($"{this} does not have a CP entity! ({m_Owner.DX()}, exists:{_MIT.EntityManager.Exists(m_Owner)})");
                 return;
             }
             if (!m_Entity.Exists(_MIT.EntityManager))
             {
-                MIT.Log.Error($"{this} does not have an overlay entity!");
+                MoveItToolSystem.Log.Error($"{this} does not have an overlay entity!");
                 return;
             }
 
@@ -185,7 +185,7 @@ namespace MoveIt.Overlays
         {
             if (!m_Entity.Exists(_MIT.EntityManager))
             {
-                MIT.Log.Error($"Destroying overlay when none exists for {m_Owner.DX(true)}.", "MIT02");
+                MoveItToolSystem.Log.Error($"Destroying overlay when none exists for {m_Owner.DX(true)}.", "MIT02");
                 return false;
             }
 

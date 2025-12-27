@@ -22,7 +22,7 @@ namespace MoveIt.Selection
 
             if (mv.IsManipulatable)
             {
-                MIT.Log.Error($"Attempted to add manipulatable Moveable of type {mv.m_Identity} to Normal selection");
+                MoveItToolSystem.Log.Error($"Attempted to add manipulatable Moveable of type {mv.m_Identity} to Normal selection");
             }
 
             if (append && Has(mvd))

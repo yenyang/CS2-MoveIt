@@ -116,7 +116,7 @@ namespace MoveIt.Snapper
     {
         public const float MAX_SNAP_DISTANCE = 6f;
 
-        protected readonly MIT _MIT = MIT.m_Instance;
+        protected readonly MoveItToolSystem _MIT = MoveItToolSystem.m_Instance;
         protected readonly TransformBase _Action;
         protected Selection.SelectionBase Selection => _MIT.Selection;
         protected NativeList<SnapCandidate> _Candidates;
@@ -211,7 +211,7 @@ namespace MoveIt.Snapper
             {
                 msg += "\n    " + _Candidates[i].ToString();
             }
-            MIT.Log.Debug(msg);
+            MoveItToolSystem.Log.Debug(msg);
         }
 
         internal void DebugDumpResults(NativeList<SnapResult> results)
@@ -221,7 +221,7 @@ namespace MoveIt.Snapper
             {
                 msg += "\n    " + results[i].ToString();
             }
-            MIT.Log.Bundle("SNAP", msg);
+            MoveItToolSystem.Log.Bundle("SNAP", msg);
         }
     }
 

@@ -2,6 +2,8 @@
 using MoveIt.Selection;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Entities;
+using Unity.Jobs;
 
 namespace MoveIt.Actions.Select
 {
@@ -35,9 +37,9 @@ namespace MoveIt.Actions.Select
             _IsForChild = isForChild;
         }
 
-        public override void Do()
+        public override void Do(ref JobHandle jobHandle, ref EntityCommandBuffer buffer)
         {
-            base.Do();
+            base.Do(ref jobHandle, ref buffer);
 
             _MIT.Selection = m_IsManipulating ? new SelectionManip(_MIT.Selection) : new SelectionNormal(_MIT.Selection);
 

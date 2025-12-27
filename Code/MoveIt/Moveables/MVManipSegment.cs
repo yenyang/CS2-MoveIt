@@ -28,7 +28,7 @@ namespace MoveIt.Moveables
 
         internal override void MoveIt(TransformBase action, State state, bool move, bool rotate)
         {
-            MIT.Log.Error($"Attempted to move ManipulateSegment {m_Entity.D()}");
+            MoveItToolSystem.Log.Error($"Attempted to move ManipulateSegment {m_Entity.D()}");
         }
     }
 }
