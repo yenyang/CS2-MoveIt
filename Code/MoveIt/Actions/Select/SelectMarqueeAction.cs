@@ -1,6 +1,8 @@
 ﻿using Colossal.IO.AssetDatabase.Internal;
 using MoveIt.Moveables;
 using MoveIt.Selection;
+using MoveIt.Tool;
+using QCommonLib;
 using System.Collections.Generic;
 using Unity.Entities;
 using Unity.Jobs;
@@ -41,7 +43,8 @@ namespace MoveIt.Actions.Select
         {
             base.Do(ref jobHandle, ref buffer);
 
-            if (!_IsAppend)
+            if (!_IsAppend &&
+                _MIT.m_Workflow[(int)Workflow.DrawingMarquee] == WorkflowProgression.Starting)
             {
                 _MIT.Selection.Clear();
                 _MIT.Moveables.Refresh();
@@ -101,6 +104,8 @@ namespace MoveIt.Actions.Select
             {
                 _MIT.Selection.UpdateFull();
             }
+
+            _MIT.SetWorkflowInProgess(Tool.Workflow.DrawingMarquee);
         }
     }
 }

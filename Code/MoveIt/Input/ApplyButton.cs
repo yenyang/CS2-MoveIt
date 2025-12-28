@@ -91,6 +91,7 @@ namespace MoveIt.Input
                 {
                     _MIT.MITState = MITStates.DrawingSelection;
                     _MIT.m_Marquee = new(_MIT.m_PointerPos);
+                    _MIT.StartWorkflow(Workflow.DrawingMarquee);
                 }
             }
         }
@@ -139,6 +140,11 @@ namespace MoveIt.Input
             if (_MIT.MITState == MITStates.DrawingSelection)
             {
                 _MIT.MITState = MITStates.Default;
+
+                if (_MIT.m_Workflow[(int)Workflow.DrawingMarquee] == WorkflowProgression.InProgress)
+                {
+                    _MIT.CompeleteWorkflow(Workflow.DrawingMarquee);
+                }
             }
             _MIT.m_Marquee?.Dispose();
             _MIT.m_Marquee = null;
