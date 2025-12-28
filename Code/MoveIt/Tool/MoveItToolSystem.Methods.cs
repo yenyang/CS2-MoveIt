@@ -283,7 +283,7 @@ namespace MoveIt.Tool
                 if (m_Workflow[(int)workflow] == WorkflowProgression.Starting ||
                     m_Workflow[(int)workflow] == WorkflowProgression.InProgress)
                 {
-                    m_Workflow[(int)workflow] = WorkflowProgression.InProgress;
+                    SetWorkflowInProgess(workflow);
                     return true;
                 }
             }

@@ -69,7 +69,7 @@ namespace MoveIt.Input
         protected override void OnHoldEnd()
         {
             //MIT.Log.Debug($"SecondaryButton.OnHoldEnd ts:{MITState}");
-            if (m_Status == ButtonStatus.Down && _MIT.Queue.Current is TransformBase ta && _MIT.MITState == MITStates.SecondaryButtonHeld)
+            if (m_Status == ButtonStatus.Down && _MIT.MITState == MITStates.SecondaryButtonHeld)
             {
                 _MIT.RotationEnd();
             }
@@ -81,11 +81,7 @@ namespace MoveIt.Input
             m_Status = ButtonStatus.None;
             if (_MIT.m_Workflow[(int)Workflow.DeselectAll] != WorkflowProgression.NotStarted)
             {
-                _MIT.m_Workflow[(int)Workflow.DeselectAll] = WorkflowProgression.Complete;
-            }
-            if (_MIT.m_Workflow[(int)Workflow.Rotate] != WorkflowProgression.NotStarted)
-            {
-                _MIT.m_Workflow[(int)Workflow.Rotate] = WorkflowProgression.Complete;
+                _MIT.CompeleteWorkflow(Workflow.DeselectAll);
             }
             //MIT.Log.Debug($"SecondaryButton.OnRelease");
         }

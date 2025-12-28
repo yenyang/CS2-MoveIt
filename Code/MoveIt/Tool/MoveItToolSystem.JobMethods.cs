@@ -39,7 +39,7 @@ namespace MoveIt.Tool
                 m_EdgeLookup = SystemAPI.GetComponentLookup<Game.Net.Edge>(isReadOnly: true),
                 m_NetElevationLookup = SystemAPI.GetComponentLookup<Game.Net.Elevation>(isReadOnly: true),
                 m_StartPoint = new ControlPoint() { m_Position = m_ClickPositionAbs },
-                m_EndPoint = new ControlPoint() { m_Position = m_PointerPos },
+                m_EndPoint = GetEndPosition(),
                 m_Centroid = new ControlPoint() { m_Position = _Selection.Center },
                 m_FollowTerrain = m_FollowingTerrain,
                 m_TerrainHeightData = m_TerrainSystem.GetHeightData(false),
@@ -64,6 +64,16 @@ namespace MoveIt.Tool
         private JobHandle Update(JobHandle inputDeps)
         {
             applyMode = ApplyMode.Clear;
+            if (m_Workflow[(int)Workflow.Rotate] == WorkflowProgression.InProgress)
+            {
+                float newRotation = (QCommon.MouseScreenPosition.x - m_MouseStartX) / (float)(Screen.height * 1.5f) * RotationDirection * 4f;
+                if (!Mathf.Approximately(newRotation, m_PreviousRotation))
+                {
+                    m_RotationAboutCenter += newRotation - m_PreviousRotation;
+                    m_PreviousRotation = newRotation;
+                }
+            }
+
             inputDeps = UpdateDefinitions(inputDeps);
             return inputDeps;       
         }
@@ -102,6 +112,17 @@ namespace MoveIt.Tool
             }
 
             return inputDeps;
+        }
+
+        private ControlPoint GetEndPosition()
+        {
+            if (m_Workflow[(int)Workflow.Move] == WorkflowProgression.InProgress ||
+                m_Workflow[(int)Workflow.Copy] == WorkflowProgression.InProgress)
+            {
+                return new ControlPoint() { m_Position = m_PointerPos };
+            }
+
+            return new ControlPoint() { m_Position = m_ClickPositionAbs };
         }
 
     }
