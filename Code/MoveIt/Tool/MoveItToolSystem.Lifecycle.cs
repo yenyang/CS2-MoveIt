@@ -105,7 +105,6 @@ namespace MoveIt.Tool
             m_PostToolSystem.Start();
             m_OverlaySystem.Start();
             InputManager.OnToolEnable();
-            m_LastRaycastPoint = default;
 
             Moveables.Refresh();
             Selection.Refresh();

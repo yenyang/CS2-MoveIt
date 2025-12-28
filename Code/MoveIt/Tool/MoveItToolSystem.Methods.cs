@@ -224,14 +224,21 @@ namespace MoveIt.Tool
                 return true;
             }
 
-            for (int i = 0; i < m_Workflow.Length; i++)
+            foreach (Workflow workflow in m_ShouldClearWorkflows)
             {
-                if (m_Workflow[i] != WorkflowProgression.NotStarted)
+                if (m_Workflow[(int)workflow] != WorkflowProgression.NotStarted)
+                {
+                    return true;
+                }
+            }
+
+            foreach (Workflow workflow in m_ShouldUpdateWorkflows)
+            {
+                if (m_Workflow[(int)workflow] != WorkflowProgression.NotStarted)
                 {
                     return false;
                 }
             }
-
 
             QLog.Debug($"{nameof(MoveItToolSystem)}.Methods | Should clear.");
 
@@ -259,12 +266,11 @@ namespace MoveIt.Tool
                 return false;
             }
 
-            for (int i = 0; i < m_Workflow.Length; i++)
+            foreach(Workflow workflow in m_ShouldUpdateWorkflows)
             {
-                if (m_Workflow[i] == WorkflowProgression.InProgress ||
-                    m_Workflow[i] == WorkflowProgression.Starting)
+                if (m_Workflow[(int)workflow] == WorkflowProgression.Starting ||
+                    m_Workflow[(int)workflow] == WorkflowProgression.InProgress)
                 {
-                    QLog.Debug($"{nameof(MoveItToolSystem)}.Methods | Should Update.");
                     return true;
                 }
             }
