@@ -58,6 +58,7 @@ namespace MoveIt.Tool
         AlignRotateAtCenter,
         AlignRotateInPlace,
         AlignTerrainHeight,
+        Manipulating,
     }
 
     public enum WorkflowProgression

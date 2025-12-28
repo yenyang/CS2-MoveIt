@@ -284,6 +284,11 @@ namespace MoveIt.Systems
                 GetOverlayTypeCount(),
                 GetOverlayCount(OverlayTypes.SelectionCentralPoint) + GetOverlayCount(OverlayTypes.Marquee),
                 GetOverlayCount(OverlayTypes.MVControlPoint), GetOverlayCount(OverlayTypes.MVManipControlPoint));
+
+            for (int i = 0; i < _MIT.m_Workflow.Length; i++)
+            {
+                sb.AppendLine($"{(Workflow)i}: {_MIT.m_Workflow[i]}");
+            }
             return sb.ToString();
         }
 

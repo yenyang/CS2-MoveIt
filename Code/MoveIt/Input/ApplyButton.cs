@@ -142,6 +142,11 @@ namespace MoveIt.Input
             }
             _MIT.m_Marquee?.Dispose();
             _MIT.m_Marquee = null;
+
+            if (_MIT.m_Workflow[(int)Workflow.SelectingIndividual] == WorkflowProgression.InProgress)
+            {
+                _MIT.CompeleteWorkflow(Workflow.SelectingIndividual);
+            }
         }
     }
 }

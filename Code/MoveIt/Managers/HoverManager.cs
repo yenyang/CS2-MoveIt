@@ -262,6 +262,7 @@ namespace MoveIt.Managers
 
             if (!holder.Definition.m_Entity.Equals(Entity.Null))
             {
+                _MIT.ResetWorkflow(Workflow.SelectingIndividual);
                 holder.Unset();
             }
 
@@ -269,6 +270,7 @@ namespace MoveIt.Managers
 
             if (_MIT.IsValid(to))
             {
+                _MIT.StartWorkflow(Workflow.SelectingIndividual);
                 holder.Set(to);
             }
         }

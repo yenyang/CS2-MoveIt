@@ -150,6 +150,7 @@ namespace MoveIt.Tool
         {
             applyMode = ApplyMode.Clear;
             inputDeps = DestroyDefinitions(m_DefinitionGroup, m_Barrier, inputDeps);
+
             return inputDeps;
         }
 
@@ -171,6 +172,12 @@ namespace MoveIt.Tool
 
             m_SelectionDirty = true;
             Selection.CalculateCenter();
+
+            for (int i = 0; i < m_Workflow.Length; i++)
+            {
+                ResetWorkflow((Workflow)i);
+            }
+
             return inputDeps;
         }
 

@@ -56,7 +56,7 @@ namespace MoveIt.Tool
                 .WithNone<Game.Tools.Temp, Game.Common.Overridden, Game.Common.Deleted, MIT_ControlPoint>()
                 .Build();
 
-            m_Workflow = new WorkflowProgression[(int)Workflow.AlignTerrainHeight];
+            m_Workflow = new WorkflowProgression[(int)Workflow.Manipulating];
 
             for (int i = 0; i < m_Workflow.Length; i++)
             {

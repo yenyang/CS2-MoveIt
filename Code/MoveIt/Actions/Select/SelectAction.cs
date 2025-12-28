@@ -68,6 +68,7 @@ namespace MoveIt.Actions.Select
         {
             if (_MIT.Hovered.IsManipulatable != _MIT.IsManipulating) return;
             _MIT.Selection.ProcessAdd(_MIT.Hovered.Definition, append);
+            _MIT.SetWorkflowInProgess(Tool.Workflow.SelectingIndividual);
         }
     }
 }
