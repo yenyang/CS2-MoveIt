@@ -74,6 +74,7 @@ namespace MoveIt.Actions.Select
             overlayQuery.Dispose();
 
             MoveItToolSystem.Log.Info($"DeselectAllAction - MVs:{countSel}, overlays:{countOlay}");
+            _MIT.m_Workflow[(int)Workflow.DeselectAll] = WorkflowProgression.InProgress;
         }
 
         private List<MVDefinition> GetModeSwitchList()

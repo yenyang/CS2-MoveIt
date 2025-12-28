@@ -79,6 +79,14 @@ namespace MoveIt.Input
         protected override void OnRelease()
         {
             m_Status = ButtonStatus.None;
+            if (_MIT.m_Workflow[(int)Workflow.DeselectAll] != WorkflowProgression.NotStarted)
+            {
+                _MIT.m_Workflow[(int)Workflow.DeselectAll] = WorkflowProgression.Complete;
+            }
+            if (_MIT.m_Workflow[(int)Workflow.Rotate] != WorkflowProgression.NotStarted)
+            {
+                _MIT.m_Workflow[(int)Workflow.Rotate] = WorkflowProgression.Complete;
+            }
             //MIT.Log.Debug($"SecondaryButton.OnRelease");
         }
     }

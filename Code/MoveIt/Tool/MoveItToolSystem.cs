@@ -99,7 +99,9 @@ namespace MoveIt.Tool
         internal Game.Common.RaycastSystem m_RaycastSystem;
 
         public static QLoggerCO Log => _Log;
+
         private static readonly QLoggerCO _Log = new(false, "", true, Mod.IS_BETA);
+
 
         private ToolBaseSystem _PreviousTool = null;
 

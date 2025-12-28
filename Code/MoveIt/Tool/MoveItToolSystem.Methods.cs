@@ -6,14 +6,15 @@ using MoveIt.Actions;
 using MoveIt.Actions.Select;
 using MoveIt.Actions.Transform;
 using MoveIt.Overlays;
+using MoveIt.Settings;
 using QCommonLib;
-using System.Reflection;
 using System;
+using System.Reflection;
+using Unity.Entities;
+using Unity.Entities.UniversalDelegates;
+using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
-using MoveIt.Settings;
-using Unity.Jobs;
-using Unity.Entities;
 
 namespace MoveIt.Tool
 {
@@ -224,6 +225,16 @@ namespace MoveIt.Tool
                 return true;
             }
 
+            // Complete workflows means that it should apply so workflow gets reset.
+            foreach (Workflow workflow in m_ShouldClearWorkflows)
+            {
+                if (m_Workflow[(int)workflow] == WorkflowProgression.Complete)
+                {
+                    return false;
+                }
+            }
+
+            // These workflows still use Quboid's setup and they do not need to go through Update process.
             foreach (Workflow workflow in m_ShouldClearWorkflows)
             {
                 if (m_Workflow[(int)workflow] != WorkflowProgression.NotStarted)
@@ -232,6 +243,7 @@ namespace MoveIt.Tool
                 }
             }
 
+            // These workflows use the new setup.
             foreach (Workflow workflow in m_ShouldUpdateWorkflows)
             {
                 if (m_Workflow[(int)workflow] != WorkflowProgression.NotStarted)
@@ -271,6 +283,7 @@ namespace MoveIt.Tool
                 if (m_Workflow[(int)workflow] == WorkflowProgression.Starting ||
                     m_Workflow[(int)workflow] == WorkflowProgression.InProgress)
                 {
+                    m_Workflow[(int)workflow] = WorkflowProgression.InProgress;
                     return true;
                 }
             }
