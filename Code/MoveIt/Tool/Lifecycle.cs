@@ -8,7 +8,9 @@ using Game;
 using Game.Tools;
 using MoveIt.Components;
 using MoveIt.Selection;
+using Newtonsoft.Json;
 using QCommonLib;
+using System;
 using Unity.Entities;
 
 namespace MoveIt.Tool
@@ -34,6 +36,8 @@ namespace MoveIt.Tool
             m_RaycastSystem = World.GetOrCreateSystemManaged<Game.Common.RaycastSystem>();
 
             QKeyboard.Init();
+
+            Filtering = new();
 
             m_TempQuery = SystemAPI.QueryBuilder()
                 .WithAll<Temp, Game.Objects.Transform>()
@@ -66,7 +70,6 @@ namespace MoveIt.Tool
             Moveables = new();
             Queue = new();
             ToolboxManager = new();
-            Filtering = new();
 
             MITState = MITStates.Default;
             Actions.Action.Phase = Actions.Phases.None;
