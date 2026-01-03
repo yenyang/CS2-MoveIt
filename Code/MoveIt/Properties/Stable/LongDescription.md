@@ -82,4 +82,4 @@ Icons from SVG Repo, and from WishForge.Games under CC Attribution License.
 
 Unified Icon Library icons by Chameleon TBN
 
-Translators: Pingwin_PL and karmel68 (Polish), elGendo87 (Spanish), ti4goc (Portuguese), Morgan, aidan taylor and prospr (French), nemoriees and 0belix (Portugese, Brazilian), ExpedientFalcon and allegretic (Japenese), Nullpinter and RilkeXS (Chinese Simplified), allegretic (Chinese Traditional), MyNameIsntRealHere and WISSAH (Dutch)
+Translators: Pingwin_PL and karmel68 (Polish), elGendo87 (Spanish), ti4goc (Portuguese), Morgan, aidan taylor and prospr (French), nemoriees and 0belix (Portugese, Brazilian), ExpedientFalcon and allegretic (Japenese), Nullpinter and RilkeXS (Chinese Simplified), allegretic (Chinese Traditional), MyNameIsntRealHere and WISSAH (Dutch), HSneon (Russian), acelion19 (Korean)

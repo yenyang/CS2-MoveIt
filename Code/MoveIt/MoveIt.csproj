@@ -62,10 +62,12 @@
 	  <None Remove="l10n\es-ES.json" />
 	  <None Remove="l10n\fr-FR.json" />
 	  <None Remove="l10n\ja-JP.json" />
+	  <None Remove="l10n\ko-KR.json" />
 	  <None Remove="l10n\nl-NL.json" />
 	  <None Remove="l10n\pl-PL.json" />
 	  <None Remove="l10n\pt-BR.json" />
 	  <None Remove="l10n\pt-PT.json" />
+	  <None Remove="l10n\ru-RU.json" />
 	  <None Remove="l10n\zh-HANS.json" />
 	  <None Remove="l10n\zh-HANT.json" />
 	</ItemGroup>
@@ -76,8 +78,14 @@
 	  <EmbeddedResource Include="l10n\es-ES.json" />
 	  <EmbeddedResource Include="l10n\fr-FR.json" />
 	  <EmbeddedResource Include="l10n\ja-JP.json" />
+	  <EmbeddedResource Include="l10n\ko-KR.json">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </EmbeddedResource>
 	  <EmbeddedResource Include="l10n\pl-PL.json" />
 	  <EmbeddedResource Include="l10n\pt-BR.json" />
+	  <EmbeddedResource Include="l10n\ru-RU.json">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </EmbeddedResource>
 	  <EmbeddedResource Include="l10n\zh-HANS.json" />
 	  <EmbeddedResource Include="l10n\zh-HANT.json" />
 	</ItemGroup>

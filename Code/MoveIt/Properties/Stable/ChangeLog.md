@@ -1,2 +1,4 @@
-﻿# Patch v0.5.12
-* Fix for using modifiers such as shift, alt, and ctrl keys while using other mouse and keyboard commands.
+﻿# Patch v0.5.13
+* Fix for Filtering breaking after reload or starting a new map.
+* Russian Translations by HSneon
+* Korean Translations by acelion19
