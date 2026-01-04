@@ -153,6 +153,11 @@ namespace MoveIt.Input
             {
                 _MIT.CompeleteWorkflow(Workflow.SelectingIndividual);
             }
+
+            if (_MIT.m_Workflow[(int)Workflow.Delete] == WorkflowProgression.InProgress)
+            {
+                _MIT.CompeleteWorkflow(Workflow.Delete);
+            }
         }
     }
 }

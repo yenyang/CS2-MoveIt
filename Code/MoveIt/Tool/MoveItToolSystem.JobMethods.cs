@@ -35,7 +35,7 @@ namespace MoveIt.Tool
                 m_EditorContainterLookup = SystemAPI.GetComponentLookup<Game.Tools.EditorContainer>(isReadOnly: true),
                 m_PseudoRandomSeedLookup = SystemAPI.GetComponentLookup<Game.Common.PseudoRandomSeed>(isReadOnly: true),
                 m_AttachedLookup = SystemAPI.GetComponentLookup<Game.Objects.Attached>(isReadOnly: true),
-                m_CreationFlags = m_CreationFlags,
+                m_CreationFlags = GetCreationFlags(),
                 m_EdgeLookup = SystemAPI.GetComponentLookup<Game.Net.Edge>(isReadOnly: true),
                 m_NetElevationLookup = SystemAPI.GetComponentLookup<Game.Net.Elevation>(isReadOnly: true),
                 m_StartPoint = new ControlPoint() { m_Position = m_ClickPositionAbs },
@@ -80,7 +80,6 @@ namespace MoveIt.Tool
                 if (InputManager.ProcessKeyMovement(out float3 direction, out _))
                 {
                     m_VerticalDisplacement += direction.y;
-                    QLog.Debug($"{nameof(MoveItToolSystem)}.{nameof(Update)} | m_VerticalDisplacement {m_VerticalDisplacement} direction.y {direction.y}.");
                 }
             }
             
@@ -134,6 +133,21 @@ namespace MoveIt.Tool
             }
 
             return new ControlPoint() { m_Position = m_ClickPositionAbs };
+        }
+
+        private CreationFlags GetCreationFlags()
+        {
+            if (Deleting)
+            {
+                return CreationFlags.Delete;
+            }
+
+            if (Copying)
+            {
+                return 0;
+            }
+
+            return CreationFlags.Relocate;
         }
 
     }

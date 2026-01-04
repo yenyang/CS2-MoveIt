@@ -89,8 +89,6 @@ namespace MoveIt.Tool
             m_IsManipulateMode = false;
             Selection ??= new SelectionNormal();
 
-            m_CreationFlags = CreationFlags.Relocate;
-
             m_OverlaySystem.DestroyAllEntities();
         }
 

@@ -231,9 +231,9 @@ namespace MoveIt.Tool
 
         internal bool ShouldClear()
         {
-            if (UIHasFocus)
+            if (UIHasFocus &&
+                !Deleting)
             {
-                QLog.Debug($"{nameof(MoveItToolSystem)}.Methods | UI Has focus.");
                 return true;
             }
 

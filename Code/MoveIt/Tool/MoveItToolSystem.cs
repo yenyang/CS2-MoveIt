@@ -224,15 +224,23 @@ namespace MoveIt.Tool
         /// </summary>
         internal bool m_FollowingTerrain;
 
-        private Game.Tools.CreationFlags m_CreationFlags;
-
         /// <summary>
         /// Gets or sets a value indicating whether MIT is copying.
         /// </summary>
         public bool Copying
         {
-            get { return m_CreationFlags == 0; }
-            set { m_CreationFlags = value ? 0 : CreationFlags.Relocate; }
+            get { return m_Workflow[(int)Workflow.Copy] != WorkflowProgression.NotStarted; }
+            set 
+            {
+                if (m_Workflow[(int)Workflow.Copy] == WorkflowProgression.NotStarted && value)
+                {
+                    StartWorkflow(Workflow.Copy);
+                }
+                else if (!value)
+                {
+                    ResetWorkflow(Workflow.Copy);
+                }
+            }
         }
 
         /// <summary>
@@ -248,35 +256,17 @@ namespace MoveIt.Tool
         /// </summary>
         public bool Deleting
         {
-            get { return m_CreationFlags == CreationFlags.Delete; }
-            set { m_CreationFlags = value ? CreationFlags.Delete : CreationFlags.Relocate; }
-        }
-
-        /// <summary>
-        /// Gets whether any movement key is pressed.
-        /// </summary>
-        public bool MovementKeyPressed
-        {
-            get
+            get { return m_Workflow[(int)Workflow.Delete] != WorkflowProgression.NotStarted; }
+            set
             {
-                return  m_InputSystem.GetBinding(Inputs.KEY_MOVEUP).m_Action.IsPressed() ||
-                        m_InputSystem.GetBinding(Inputs.KEY_MOVEDOWN).m_Action.IsPressed() ||
-                        m_InputSystem.GetBinding(Inputs.KEY_MOVEUP2).m_Action.IsPressed() ||
-                        m_InputSystem.GetBinding(Inputs.KEY_MOVEDOWN2).m_Action.IsPressed();      
-            }
-        }
-
-        /// <summary>
-        /// Gets whether any movemene was released this frame.
-        /// </summary>
-        public bool MovementKeyReleased
-        {
-            get
-            {
-                return   m_InputSystem.GetBinding(Inputs.KEY_MOVEUP).m_Action.WasReleasedThisFrame() ||
-                         m_InputSystem.GetBinding(Inputs.KEY_MOVEDOWN).m_Action.WasReleasedThisFrame() ||
-                         m_InputSystem.GetBinding(Inputs.KEY_MOVEUP2).m_Action.WasReleasedThisFrame() ||
-                         m_InputSystem.GetBinding(Inputs.KEY_MOVEDOWN2).m_Action.WasReleasedThisFrame();
+                if (m_Workflow[(int)Workflow.Delete] == WorkflowProgression.NotStarted && value)
+                {
+                    StartWorkflow(Workflow.Delete);
+                }
+                else if (!value)
+                {
+                    ResetWorkflow(Workflow.Delete);
+                }
             }
         }
     }
