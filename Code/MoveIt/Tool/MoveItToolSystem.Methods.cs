@@ -269,6 +269,28 @@ namespace MoveIt.Tool
 
         internal bool ShouldApply()
         {
+            if (Copying)
+            {
+                if (m_Workflow[(int)Workflow.Rotate] == WorkflowProgression.Complete)
+                {
+                    ResetWorkflow(Workflow.Rotate);
+                    return false;
+                }
+
+                if (m_Workflow[(int)Workflow.Elevate] == WorkflowProgression.Complete)
+                {
+                    ResetWorkflow(Workflow.Elevate);
+                    return false;
+                }
+                
+                if (m_Workflow[(int)Workflow.Lower] == WorkflowProgression.Complete)
+                {
+                    ResetWorkflow(Workflow.Lower);
+                    return false;
+                }
+            }
+               
+
             for (int i = 0; i < m_Workflow.Length; i++)
             {
                 if (m_Workflow[i] == WorkflowProgression.Complete)

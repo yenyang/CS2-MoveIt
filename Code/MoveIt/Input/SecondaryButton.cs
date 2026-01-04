@@ -45,6 +45,7 @@ namespace MoveIt.Input
             _MIT.Queue.Do(ref jobHandle, ref buffer);
 
             _MIT.StartWorkflow(Workflow.DeselectAll);
+            _MIT.Copying = false;
 
             Actions.Action.Phase = Actions.Phases.Cleanup;
 

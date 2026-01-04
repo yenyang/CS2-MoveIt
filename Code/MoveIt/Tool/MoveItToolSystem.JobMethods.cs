@@ -94,12 +94,27 @@ namespace MoveIt.Tool
             applyMode = ApplyMode.Clear;
             inputDeps = DestroyDefinitions(m_DefinitionGroup, m_Barrier, inputDeps);
 
+            if (Copying)
+            {
+                StartWorkflow(Workflow.Copy);
+            }
+
             return inputDeps;
         }
 
         private JobHandle Apply(JobHandle inputDeps)
         {
-            applyMode = ApplyMode.Apply;
+            ApplyMode newApplyMode = ApplyMode.Clear;
+            foreach (Workflow workflow in m_ShouldUpdateWorkflows)
+            {
+                if (m_Workflow[(int)workflow] == WorkflowProgression.Complete)
+                {
+                    newApplyMode = ApplyMode.Apply;
+                }
+            }
+
+            applyMode = newApplyMode;
+
             if (Deleting)
             {
                 Deleting = false;
@@ -118,7 +133,15 @@ namespace MoveIt.Tool
 
             for (int i = 0; i < m_Workflow.Length; i++)
             {
-                ResetWorkflow((Workflow)i);
+                if (i != (int)Workflow.Copy)
+                {
+                    ResetWorkflow((Workflow)i);
+                }
+                else if (Copying &&
+                         m_Workflow[(int)Workflow.Copy] == WorkflowProgression.Complete)
+                {
+                    StartWorkflow(Workflow.Copy);
+                }
             }
 
             return inputDeps;
