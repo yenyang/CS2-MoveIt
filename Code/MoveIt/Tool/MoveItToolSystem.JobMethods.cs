@@ -74,6 +74,17 @@ namespace MoveIt.Tool
                 }
             }
 
+            if (m_Workflow[(int)Workflow.Elevate] == WorkflowProgression.InProgress ||
+                m_Workflow[(int)Workflow.Lower] == WorkflowProgression.InProgress)
+            {
+                if (InputManager.ProcessKeyMovement(out float3 direction, out _))
+                {
+                    m_VerticalDisplacement += direction.y;
+                    QLog.Debug($"{nameof(MoveItToolSystem)}.{nameof(Update)} | m_VerticalDisplacement {m_VerticalDisplacement} direction.y {direction.y}.");
+                }
+            }
+            
+
             inputDeps = UpdateDefinitions(inputDeps);
             return inputDeps;       
         }

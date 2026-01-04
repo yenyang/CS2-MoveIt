@@ -195,26 +195,38 @@ namespace MoveIt.Tool
 
         internal void StartWorkflow(Workflow workflow)
         {
-            m_Workflow[(int)workflow] = WorkflowProgression.Starting;
-            QLog.Debug($"{nameof(MoveItToolSystem)}.Methods | Starting workflow: {workflow}");
+            if (m_Workflow[(int)workflow] != WorkflowProgression.Starting)
+            {
+                m_Workflow[(int)workflow] = WorkflowProgression.Starting;
+                QLog.Debug($"{nameof(MoveItToolSystem)}.Methods | Starting workflow: {workflow}");
+            }
         }
 
         internal void CompeleteWorkflow(Workflow workflow)
         {
-            m_Workflow[(int)workflow] = WorkflowProgression.Complete;
-            QLog.Debug($"{nameof(MoveItToolSystem)}.Methods | Workflow complete: {workflow}");
+            if (m_Workflow[(int)workflow] != WorkflowProgression.Complete)
+            {
+                m_Workflow[(int)workflow] = WorkflowProgression.Complete;
+                QLog.Debug($"{nameof(MoveItToolSystem)}.Methods | Workflow complete: {workflow}");
+            }
         }
 
         internal void SetWorkflowInProgess(Workflow workflow)
         {
-            m_Workflow[(int)workflow] = WorkflowProgression.InProgress;
-            QLog.Debug($"{nameof(MoveItToolSystem)}.Methods | Workflow In Progress: {workflow}");
+            if (m_Workflow[(int)workflow] != WorkflowProgression.InProgress)
+            {
+                m_Workflow[(int)workflow] = WorkflowProgression.InProgress;
+                QLog.Debug($"{nameof(MoveItToolSystem)}.Methods | Workflow In Progress: {workflow}");
+            }
         }
 
         internal void ResetWorkflow(Workflow workflow)
         {
-            m_Workflow[(int)workflow] = WorkflowProgression.NotStarted;
-            QLog.Debug($"{nameof(MoveItToolSystem)}.Methods | Workflow Reset: {workflow}");
+            if (m_Workflow[(int)workflow] != WorkflowProgression.NotStarted)
+            {
+                m_Workflow[(int)workflow] = WorkflowProgression.NotStarted;
+                QLog.Debug($"{nameof(MoveItToolSystem)}.Methods | Workflow Reset: {workflow}");
+            }
         }
 
         internal bool ShouldClear()

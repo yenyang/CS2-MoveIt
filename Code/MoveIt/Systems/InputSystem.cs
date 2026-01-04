@@ -78,29 +78,25 @@ namespace MoveIt.Systems
             RegisterBinding(new(
                 action: Mod.Settings.GetAction(Inputs.KEY_MOVEDOWN),
                 context: QInput_Contexts.ToolEnabled,
-                trigger: null,
-                isPassive: true
+                trigger: () => _MIT.StartWorkflow(Workflow.Lower)
             ));
 
             RegisterBinding(new(
                 action: Mod.Settings.GetAction(Inputs.KEY_MOVEUP),
                 context: QInput_Contexts.ToolEnabled,
-                trigger: null,
-                isPassive: true
+                trigger: () => _MIT.StartWorkflow(Workflow.Elevate)
             ));
 
             RegisterBinding(new(
                 action: Mod.Settings.GetAction(Inputs.KEY_MOVEDOWN2),
                 context: QInput_Contexts.ToolEnabled,
-                trigger: null,
-                isPassive: true
+                trigger: () => _MIT.StartWorkflow(Workflow.Lower)
             ));
 
             RegisterBinding(new(
                 action: Mod.Settings.GetAction(Inputs.KEY_MOVEUP2),
                 context: QInput_Contexts.ToolEnabled,
-                trigger: null,
-                isPassive: true
+                trigger: () => _MIT.StartWorkflow(Workflow.Elevate)
             ));
 
             // Toolbox

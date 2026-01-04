@@ -1,4 +1,5 @@
-﻿using MoveIt.Actions.Transform;
+﻿using Game.Simulation;
+using MoveIt.Actions.Transform;
 using MoveIt.Input;
 using MoveIt.Tool;
 using QCommonLib;
@@ -17,6 +18,70 @@ namespace MoveIt.Managers
         private readonly InputButton _SecondaryAction;
 
         private long _KeyTime;
+
+        /// <summary>
+        /// Interprets the key movement and outputs a vector.
+        /// </summary>
+        /// <param name="direction">float3 vector of direction to move.</param>
+        /// <param name="angle">Should always be 0 in current implementation.</param>
+        /// <returns></returns>
+        public bool ProcessKeyMovement(out float3 direction, out float angle)
+        {
+            direction = float3.zero;
+            angle = 0;
+            
+            float3 _FACTOR = new(0.25f, 0.015625f, 0.25f); // y = 1/64
+            var magnitude = 8f;
+            if (QKeyboard.Shift) magnitude *= QKeyboard.Alt ? 64f : 8f;
+            if (QKeyboard.Control) magnitude /= QKeyboard.Alt ? 64f : 8f;
+
+            if (_Key_MoveUp.IsPressed || _Key_MoveUp2.IsPressed)
+            {
+                direction.y += magnitude * _FACTOR.y;
+                _MIT.SetWorkflowInProgess(Workflow.Elevate);
+            }
+            else if (_Key_MoveDown.IsPressed || _Key_MoveDown2.IsPressed)
+            {
+                direction.y -= magnitude * _FACTOR.y;
+                _MIT.SetWorkflowInProgess(Workflow.Lower);
+            }
+
+            if (!direction.Equals(float3.zero) || angle != 0)
+            {
+                if (_KeyTime == 0)
+                {
+                    _KeyTime = Stopwatch.GetTimestamp();
+                    return true;
+                }
+               
+                if (QCommon.ElapsedMilliseconds(_KeyTime) < 333)
+                {
+                    direction = float3.zero;
+                }
+
+                return true;
+            }
+            else
+            {
+                _KeyTime = 0;
+            }
+
+            if (_MIT.m_Workflow[(int)Workflow.Lower] == WorkflowProgression.InProgress &&
+                !_Key_MoveDown.IsPressed &&
+                !_Key_MoveDown2.IsPressed)
+            {
+                _MIT.CompeleteWorkflow(Workflow.Lower);
+            }
+
+            if (_MIT.m_Workflow[(int)Workflow.Elevate] == WorkflowProgression.InProgress &&
+                !_Key_MoveUp.IsPressed &&
+                !_Key_MoveUp2.IsPressed)
+            {
+                _MIT.CompeleteWorkflow(Workflow.Elevate);
+            }
+
+            return false;
+        }
 
         public InputManager()
         {
@@ -49,7 +114,7 @@ namespace MoveIt.Managers
 
             _ApplyAction.Update();
             _SecondaryAction.Update();
-
+            /* Commented out to simplify multiple calls to ProcessKeyMovement.
             if (_MIT.MITState == MITStates.Default && _MIT.Selection.Any)
             {
                 if (ProcessKeyMovement(out float3 direction, out float _))
@@ -65,46 +130,9 @@ namespace MoveIt.Managers
 
                     return true;
                 }
-            }
+            }*/
             return false;
         }
 
-        private bool ProcessKeyMovement(out float3 direction, out float angle)
-        {
-            direction = float3.zero;
-            angle = 0;
-
-            var magnitude = 8f;
-            if (QKeyboard.Shift) magnitude *= QKeyboard.Alt ? 64f : 8f;
-            if (QKeyboard.Control) magnitude /= QKeyboard.Alt ? 64f : 8f;
-
-            if (_Key_MoveUp.IsPressed || _Key_MoveUp2.IsPressed)
-            {
-                direction.y += magnitude;
-            }
-            else if (_Key_MoveDown.IsPressed || _Key_MoveDown2.IsPressed)
-            {
-                direction.y -= magnitude;
-            }
-
-            if (!direction.Equals(float3.zero) || angle != 0)
-            {
-                if (_KeyTime == 0)
-                {
-                    _KeyTime = Stopwatch.GetTimestamp();
-                    return true;
-                }
-                else if (QCommon.ElapsedMilliseconds(_KeyTime) >= 333)
-                {
-                    return true;
-                }
-            }
-            else
-            {
-                _KeyTime = 0;
-            }
-
-            return false;
-        }
     }
 }
