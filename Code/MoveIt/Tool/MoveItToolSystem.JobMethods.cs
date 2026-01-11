@@ -62,8 +62,7 @@ namespace MoveIt.Tool
         }
 
         private JobHandle Update(JobHandle inputDeps)
-        {
-            applyMode = ApplyMode.Clear;
+        {            
             if (m_Workflow[(int)Workflow.Rotate] == WorkflowProgression.InProgress)
             {
                 float newRotation = (QCommon.MouseScreenPosition.x - m_MouseStartX) / (float)(Screen.height * 1.5f) * RotationDirection * 4f;
@@ -72,18 +71,35 @@ namespace MoveIt.Tool
                     m_RotationAboutCenter += newRotation - m_PreviousRotation;
                     m_PreviousRotation = newRotation;
                 }
-            }
-
-            if (m_Workflow[(int)Workflow.Elevate] == WorkflowProgression.InProgress ||
-                m_Workflow[(int)Workflow.Lower] == WorkflowProgression.InProgress)
-            {
-                if (InputManager.ProcessKeyMovement(out float3 direction, out _))
+                else
                 {
-                    m_VerticalDisplacement += direction.y;
+                    applyMode = ApplyMode.None;
+                    return inputDeps;
                 }
             }
-            
+            else if (InputManager.ProcessKeyMovement(out float3 direction, out _) && 
+               (m_Workflow[(int)Workflow.Elevate] == WorkflowProgression.InProgress ||
+                m_Workflow[(int)Workflow.Lower] == WorkflowProgression.InProgress))
+            {
+                m_VerticalDisplacement += direction.y;
+            }
+            else if (m_Workflow[(int)Workflow.Move] == WorkflowProgression.InProgress ||
+                     m_Workflow[(int)Workflow.Copy] == WorkflowProgression.InProgress)
+            {
+                if (Mathf.Approximately(m_LastRaycastPoint.x, m_PreviousRaycastPoint.x) &&
+                    Mathf.Approximately(m_LastRaycastPoint.y, m_PreviousRaycastPoint.y) &&
+                    Mathf.Approximately(m_LastRaycastPoint.z, m_PreviousRaycastPoint.z))
+                {
+                    applyMode = ApplyMode.None;
+                    return inputDeps;
+                }
+                else
+                {
+                    m_PreviousRaycastPoint = m_LastRaycastPoint;
+                }
+            }
 
+            applyMode = ApplyMode.Clear;
             inputDeps = UpdateDefinitions(inputDeps);
             return inputDeps;       
         }

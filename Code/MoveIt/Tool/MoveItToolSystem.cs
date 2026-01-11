@@ -88,9 +88,10 @@ namespace MoveIt.Tool
         internal Overlays.MIT_OverlaySystem m_OverlaySystem;
         internal Systems.MIT_ToolTipSystem m_ToolTipSystem;
         internal ToolOutputBarrier m_Barrier;
-        internal ControlPoint m_RotationStartPoint;
+        internal float3 m_LastRaycastPoint;
         internal float m_RotationAboutCenter;
         internal float m_PreviousRotation;
+        internal float3 m_PreviousRaycastPoint;
         internal float m_VerticalDisplacement;
         internal WorkflowProgression[] m_Workflow;
         internal List<Workflow> m_ShouldClearWorkflows = new List<Workflow>() { Workflow.DrawingMarquee, Workflow.Undo, Workflow.Redo , Workflow.DeselectAll, Workflow.AlignObjectHeight, Workflow.AlignRotateAtCenter, Workflow.AlignRotateAtCenter, Workflow.AlignTerrainHeight};

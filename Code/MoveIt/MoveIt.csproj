@@ -58,6 +58,7 @@
 
 	<ItemGroup>
 	  <None Remove="l10n\de-DE.json" />
+	  <None Remove="l10n\en-US.json" />
 	  <None Remove="l10n\es-ES.json" />
 	  <None Remove="l10n\fr-FR.json" />
 	  <None Remove="l10n\ja-JP.json" />
@@ -71,6 +72,7 @@
 
 	<ItemGroup>
 	  <EmbeddedResource Include="l10n\de-DE.json" />
+	  <EmbeddedResource Include="l10n\en-US.json" />
 	  <EmbeddedResource Include="l10n\es-ES.json" />
 	  <EmbeddedResource Include="l10n\fr-FR.json" />
 	  <EmbeddedResource Include="l10n\ja-JP.json" />
@@ -238,10 +240,6 @@
 	  <Reference Update="System.Xml.Linq">
 	    <Private>False</Private>
 	  </Reference>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="l10n\" />
 	</ItemGroup>
 
 	<ItemGroup>

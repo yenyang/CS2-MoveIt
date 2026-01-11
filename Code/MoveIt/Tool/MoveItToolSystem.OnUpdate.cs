@@ -33,6 +33,7 @@ namespace MoveIt.Tool
                 m_SelectionDirty = false;
             }
 
+            m_LastRaycastPoint = m_PointerPos;
             m_PointerPos = m_RaycastTerrain.HitPosition;
             Hover.Process(m_ToolRaycastSystem);
             InputManager.Process();
