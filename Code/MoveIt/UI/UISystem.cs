@@ -78,7 +78,6 @@ namespace MoveIt.Systems
             List<ProxyBinding> conflicts = GetActionKeyConflicts(Inputs.KEY_TOGGLETOOL);
             bool showMConflictPanel = !hasShownMConflictPanel && conflicts.Count > 0;
             
-            _ShowMConflict.Update(showMConflictPanel);
             if (showMConflictPanel)
             {
                 BindingConflicts bindingConflicts = new BindingConflicts() { conflicts = new List<BindingConflict>() };
@@ -87,7 +86,10 @@ namespace MoveIt.Systems
                     bindingConflicts.AddBindingConflict(binding);                    
                 }
                 _BindingConflictsBinding.Update(bindingConflicts);
+                _BindingConflictsBinding.TriggerUpdate();
             }
+            
+            _ShowMConflict.Update(showMConflictPanel);
         }
 
         /// <summary>

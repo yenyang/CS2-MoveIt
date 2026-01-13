@@ -10,7 +10,7 @@ export const MIT_ShowDebugPanel$        = bindValue<boolean>(mod.id,    'MIT_Sho
 export const MIT_DebugPanelContents$    = bindValue<string>(mod.id,     'MIT_DebugPanelContents', "Move It Debug Panel");
 export const MIT_HideMoveItIcon$        = bindValue<boolean>(mod.id,    'MIT_HideMoveItIcon', false);
 export const MIT_ShowRebindConfirm$     = bindValue<boolean>(mod.id,    'MIT_ShowRebindConfirm', false);
-export const MIT_BindingConflicts$     = bindValue<BindingConflicts>(mod.id,     'MIT_BindingConflicts');
+export const MIT_BindingConflicts$     = bindValue<BindingConflicts>(mod.id,     'MIT_BindingConflicts', {conflicts: []});
 
 
 export function ButtonPressed(section : string, id : string)
