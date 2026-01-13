@@ -57,6 +57,12 @@
 	</Target>
 
 	<ItemGroup>
+	  <Compile Remove="Extensions\**" />
+	  <EmbeddedResource Remove="Extensions\**" />
+	  <None Remove="Extensions\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <None Remove="l10n\de-DE.json" />
 	  <None Remove="l10n\en-US.json" />
 	  <None Remove="l10n\es-ES.json" />
@@ -74,7 +80,6 @@
 
 	<ItemGroup>
 	  <EmbeddedResource Include="l10n\de-DE.json" />
-	  <EmbeddedResource Include="l10n\en-US.json" />
 	  <EmbeddedResource Include="l10n\es-ES.json" />
 	  <EmbeddedResource Include="l10n\fr-FR.json" />
 	  <EmbeddedResource Include="l10n\ja-JP.json" />
