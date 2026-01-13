@@ -122,5 +122,5 @@ Translators: Pingwin_PL and karmel68 (Polish), elGendo87 (Spanish), ti4goc (Port
   <ExternalLink Type="crowdin" Url="https://crowdin.com/project/csl2-mod-move-it" />
   <ExternalLink Type="youtube" Url="https://www.youtube.com/watch?v=LnfPTtVr3p0" />
   <!-- Supported values Public, Private, Unlisted -->
-  <AccessLevel Value="Unlisted" />
+  <AccessLevel Value="Public" />
 </Publish>
