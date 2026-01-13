@@ -5,13 +5,8 @@
 
 using Colossal.UI.Binding;
 using Game.Input;
-using Game.Prefabs;
-using MoveIt.Extensions;
 using QCommonLib;
-using System;
 using System.Collections.Generic;
-using Unity.Mathematics;
-using UnityEngine;
 
 namespace MoveIt.UI
 {
@@ -39,7 +34,7 @@ namespace MoveIt.UI
                 mapNameFallback = proxyBinding.mapName,
                 mapNameLocaleKey = $"Options.INPUT_MAP[{proxyBinding.mapName}]",
                 actionNameFallback = proxyBinding.actionName,
-                actionNameLocaleKey = $"Options.OPTION[InputSettings.Gamepad.{proxyBinding.mapName}/{proxyBinding.actionName}/{InputManager.GetBindingName(proxyBinding.component)}]", // This is not capturing directional versions.                
+                actionNameLocaleKey = $"Options.OPTION[InputSettings.Gamepad.{proxyBinding.mapName}/{proxyBinding.actionName}/{InputManager.GetBindingName(proxyBinding.component)}]",           
             };
             
             if (!conflicts.Contains(conflict))
