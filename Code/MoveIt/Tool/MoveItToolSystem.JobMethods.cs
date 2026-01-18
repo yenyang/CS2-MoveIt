@@ -141,7 +141,7 @@ namespace MoveIt.Tool
             {
                 m_RotationAboutCenter = 0f;
                 m_PreviousRotation = 0f;
-                m_VerticalDisplacement = 0f;
+                // m_VerticalDisplacement = 0f;
             }
 
             m_SelectionDirty = true;
