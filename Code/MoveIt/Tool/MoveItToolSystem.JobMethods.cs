@@ -151,7 +151,7 @@ namespace MoveIt.Tool
             {
                 if (i != (int)Workflow.Copy)
                 {
-                    ResetWorkflow((Workflow)i);
+                    // ResetWorkflow((Workflow)i);
                 }
                 else if (Copying &&
                          m_Workflow[(int)Workflow.Copy] == WorkflowProgression.Complete)

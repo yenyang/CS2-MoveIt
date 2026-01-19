@@ -290,7 +290,7 @@ namespace MoveIt.Tool
                 }
             }
                
-
+            
             for (int i = 0; i < m_Workflow.Length; i++)
             {
                 if (m_Workflow[i] == WorkflowProgression.Complete)
