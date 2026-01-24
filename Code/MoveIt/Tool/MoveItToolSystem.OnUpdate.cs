@@ -85,6 +85,12 @@ namespace MoveIt.Tool
 
             bool Moving = m_Workflow[(int)Workflow.Move] == WorkflowProgression.Starting || m_Workflow[(int)Workflow.Move] == WorkflowProgression.InProgress;
 
+            if (m_ResetVerticalDisplacement)
+            {
+                m_VerticalDisplacement = 0;
+                m_ResetVerticalDisplacement = false;
+            }
+
             if (!ShouldClear())
             {
                 if (ShouldApply())

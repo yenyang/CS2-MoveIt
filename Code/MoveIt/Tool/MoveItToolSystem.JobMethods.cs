@@ -141,7 +141,7 @@ namespace MoveIt.Tool
             {
                 m_RotationAboutCenter = 0f;
                 m_PreviousRotation = 0f;
-                // m_VerticalDisplacement = 0f;
+                m_ResetVerticalDisplacement = true;
             }
 
             m_SelectionDirty = true;
@@ -151,7 +151,7 @@ namespace MoveIt.Tool
             {
                 if (i != (int)Workflow.Copy)
                 {
-                    // ResetWorkflow((Workflow)i);
+                    ResetWorkflow((Workflow)i);
                 }
                 else if (Copying &&
                          m_Workflow[(int)Workflow.Copy] == WorkflowProgression.Complete)

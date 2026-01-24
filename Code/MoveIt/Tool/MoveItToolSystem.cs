@@ -92,6 +92,7 @@ namespace MoveIt.Tool
         internal float m_RotationAboutCenter;
         internal float m_PreviousRotation;
         internal float3 m_PreviousRaycastPoint;
+        internal bool m_ResetVerticalDisplacement;
         internal float m_VerticalDisplacement;
         internal WorkflowProgression[] m_Workflow;
         internal List<Workflow> m_ShouldClearWorkflows = new List<Workflow>() { Workflow.DrawingMarquee, Workflow.Undo, Workflow.Redo , Workflow.DeselectAll, Workflow.AlignObjectHeight, Workflow.AlignRotateAtCenter, Workflow.AlignRotateAtCenter, Workflow.AlignTerrainHeight};

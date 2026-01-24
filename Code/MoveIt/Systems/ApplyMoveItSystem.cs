@@ -92,6 +92,7 @@ namespace MoveIt.Systems
                         buffer = m_Barrier.CreateCommandBuffer(),
                         m_NodeTypeHandle = SystemAPI.GetComponentTypeHandle<Game.Net.Node>(isReadOnly: true),
                         m_VerticalDisplacement = _MIT.m_VerticalDisplacement,
+                        m_EntityTypeHandle = SystemAPI.GetEntityTypeHandle(),
                     };
 
                     JobHandle jobHandle = changeOriginalNetNodesJob.Schedule(m_TempNodeQuery, Dependency);
@@ -109,6 +110,7 @@ namespace MoveIt.Systems
                         buffer = m_Barrier.CreateCommandBuffer(),
                         m_CurveType = SystemAPI.GetComponentTypeHandle<Game.Net.Curve>(isReadOnly: true),
                         m_VerticalDisplacement = _MIT.m_VerticalDisplacement,
+                        m_EntityTypeHandle = SystemAPI.GetEntityTypeHandle(),
                     };
 
                     JobHandle jobHandle = changeOriginalNetCurveJob.Schedule(m_TempCurveQuery, Dependency);
@@ -180,6 +182,7 @@ namespace MoveIt.Systems
             [ReadOnly]
             public float m_VerticalDisplacement;
             public EntityCommandBuffer buffer;
+            public EntityTypeHandle m_EntityTypeHandle;
 
             /// <summary>
             /// Executes job which will change Transform MIT Selected temp entities.
@@ -192,6 +195,7 @@ namespace MoveIt.Systems
             {
                 NativeArray<Temp> tempNativeArray = chunk.GetNativeArray(ref m_TempType);
                 NativeArray<Game.Net.Node> nodeNativeArray = chunk.GetNativeArray(ref m_NodeTypeHandle);
+                NativeArray<Entity> entities = chunk.GetNativeArray(m_EntityTypeHandle);
                 for (int i = 0; i < chunk.Count; i++)
                 {
 #if DEBUG
@@ -204,8 +208,9 @@ namespace MoveIt.Systems
 
                         QLog.Debug($"{nameof(ChangeOriginalNetNodesJob)} originalNode.m_Position.y = {originalNode.m_Position.y} ");
 #endif
-                        originalNode.m_Position.y += m_VerticalDisplacement;
-                        buffer.SetComponent(tempNativeArray[i].m_Original, nodeNativeArray[i]);
+                        Game.Net.Node tempNode = nodeNativeArray[i];
+                        tempNode.m_Position.y = originalNode.m_Position.y + m_VerticalDisplacement;
+                        buffer.SetComponent(tempNativeArray[i].m_Original, tempNode);
                     }
                 }
             }
@@ -227,6 +232,7 @@ namespace MoveIt.Systems
             [ReadOnly]
             public float m_VerticalDisplacement;
             public EntityCommandBuffer buffer;
+            public EntityTypeHandle m_EntityTypeHandle;
 
             /// <summary>
             /// Executes job which will change Transform MIT Selected temp entities.
@@ -239,6 +245,7 @@ namespace MoveIt.Systems
             {
                 NativeArray<Temp> tempNativeArray = chunk.GetNativeArray(ref m_TempType);
                 NativeArray<Game.Net.Curve> curveNativeArray = chunk.GetNativeArray(ref m_CurveType);
+                NativeArray<Entity> entities = chunk.GetNativeArray(m_EntityTypeHandle);
                 for (int i = 0; i < chunk.Count; i++)
                 {
 #if DEBUG
@@ -257,9 +264,11 @@ namespace MoveIt.Systems
                         QLog.Debug($"{nameof(ChangeOriginalNetCurveJob)} originalCurve.m_Bezier.c.y = {originalCurve.m_Bezier.c.y} ");
                         QLog.Debug($"{nameof(ChangeOriginalNetCurveJob)} originalCurve.m_Bezier.d.y = {originalCurve.m_Bezier.d.y} ");
 #endif
-                        originalCurve.m_Bezier.a.y += m_VerticalDisplacement;
-                        originalCurve.m_Bezier.d.y += m_VerticalDisplacement;
-                        buffer.SetComponent(tempNativeArray[i].m_Original, curveNativeArray[i]);
+                        Game.Net.Curve tempCurve = curveNativeArray[i];
+                        tempCurve.m_Bezier.a.y = originalCurve.m_Bezier.a.y + m_VerticalDisplacement;
+                        // Need to account for only one side selected.
+                        tempCurve.m_Bezier.d.y = originalCurve.m_Bezier.d.y + m_VerticalDisplacement;
+                        buffer.SetComponent(tempNativeArray[i].m_Original, tempCurve);
                     }
                 }
             }

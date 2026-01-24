@@ -86,9 +86,11 @@ namespace MoveIt.Systems
                     continue;
                 }
 
+                temp.m_Flags |= TempFlags.Modify | TempFlags.Essential;
+                buffer.SetComponent(entities[i], temp);
                 node.m_Position.y = originalNode.m_Position.y + _MIT.m_VerticalDisplacement;
                 buffer.SetComponent(entities[i], node);
-
+                /*
                 if (!EntityManager.TryGetBuffer(entities[i], isReadOnly: true, out DynamicBuffer<Game.Net.ConnectedEdge> connectedEdges))
                 {
                     continue;
@@ -117,7 +119,7 @@ namespace MoveIt.Systems
                     }
 
                     if (edge.m_Start != Entity.Null &&
-                        EntityManager.HasComponent<MIT_Selected>(edge.m_End))
+                        EntityManager.HasComponent<MIT_Selected>(edge.m_Start))
                     {
                         curve.m_Bezier.a.y = originalCurve.m_Bezier.a.y + _MIT.m_VerticalDisplacement;
                         setCurve = true;
@@ -129,10 +131,11 @@ namespace MoveIt.Systems
                     }
 
                     processedSegments.Add(connectedEdges[j].m_Edge);
-                }
+                }*/
             }
 
             buffer.Playback(EntityManager);
+            buffer.Dispose();
         }
     }
 }
