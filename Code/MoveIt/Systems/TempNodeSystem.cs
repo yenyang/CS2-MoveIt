@@ -90,7 +90,7 @@ namespace MoveIt.Systems
                 buffer.SetComponent(entities[i], temp);
                 node.m_Position.y = originalNode.m_Position.y + _MIT.m_VerticalDisplacement;
                 buffer.SetComponent(entities[i], node);
-                /*
+                
                 if (!EntityManager.TryGetBuffer(entities[i], isReadOnly: true, out DynamicBuffer<Game.Net.ConnectedEdge> connectedEdges))
                 {
                     continue;
@@ -104,7 +104,8 @@ namespace MoveIt.Systems
                         !EntityManager.TryGetComponent(connectedEdges[j].m_Edge, out Game.Net.Edge edge) ||
                         !EntityManager.TryGetComponent(connectedEdges[j].m_Edge, out Game.Tools.Temp connectedEdgeTemp) ||
                          connectedEdgeTemp.m_Original == Entity.Null ||
-                        !EntityManager.TryGetComponent(connectedEdgeTemp.m_Original, out Game.Net.Curve originalCurve))
+                        !EntityManager.TryGetComponent(connectedEdgeTemp.m_Original, out Game.Net.Curve originalCurve) ||
+                        !EntityManager.TryGetComponent(connectedEdgeTemp.m_Original, out Game.Net.Edge originalEdge))
                     {
                         continue;
                     }
@@ -112,16 +113,18 @@ namespace MoveIt.Systems
                     bool setCurve = false;
 
                     if (edge.m_End != Entity.Null &&
-                        EntityManager.HasComponent<MIT_Selected>(edge.m_End))
+                        EntityManager.HasComponent<MIT_Selected>(originalEdge.m_End))
                     {
                         curve.m_Bezier.d.y = originalCurve.m_Bezier.d.y + _MIT.m_VerticalDisplacement;
+                        curve.m_Bezier.c.y = originalCurve.m_Bezier.d.y + _MIT.m_VerticalDisplacement;
                         setCurve = true;
                     }
 
                     if (edge.m_Start != Entity.Null &&
-                        EntityManager.HasComponent<MIT_Selected>(edge.m_Start))
+                        EntityManager.HasComponent<MIT_Selected>(originalEdge.m_Start))
                     {
                         curve.m_Bezier.a.y = originalCurve.m_Bezier.a.y + _MIT.m_VerticalDisplacement;
+                        curve.m_Bezier.b.y = originalCurve.m_Bezier.a.y + _MIT.m_VerticalDisplacement;
                         setCurve = true;
                     }
 
@@ -131,7 +134,7 @@ namespace MoveIt.Systems
                     }
 
                     processedSegments.Add(connectedEdges[j].m_Edge);
-                }*/
+                }
             }
 
             buffer.Playback(EntityManager);

@@ -8,6 +8,7 @@
 using Game.Common;
 using Game.Rendering;
 using Game.Tools;
+using JetBrains.Annotations;
 using MoveIt.Components;
 using MoveIt.Systems;
 using MoveIt.Tool;
@@ -111,6 +112,8 @@ namespace MoveIt.Systems
                         m_CurveType = SystemAPI.GetComponentTypeHandle<Game.Net.Curve>(isReadOnly: true),
                         m_VerticalDisplacement = _MIT.m_VerticalDisplacement,
                         m_EntityTypeHandle = SystemAPI.GetEntityTypeHandle(),
+                        m_EdgeLookup = SystemAPI.GetComponentLookup<Game.Net.Edge>(isReadOnly: true),
+                        m_SelectedLookup = SystemAPI.GetComponentLookup<MIT_Selected>(isReadOnly: true),
                     };
 
                     JobHandle jobHandle = changeOriginalNetCurveJob.Schedule(m_TempCurveQuery, Dependency);
@@ -228,7 +231,11 @@ namespace MoveIt.Systems
             [ReadOnly]
             public ComponentLookup<Game.Net.Curve> m_CurveLookup;
             [ReadOnly]
+            public ComponentLookup<MIT_Selected> m_SelectedLookup;
+            [ReadOnly]
             public ComponentTypeHandle<Game.Net.Curve> m_CurveType;
+            [ReadOnly]
+            public ComponentLookup<Game.Net.Edge> m_EdgeLookup;
             [ReadOnly]
             public float m_VerticalDisplacement;
             public EntityCommandBuffer buffer;
@@ -255,7 +262,8 @@ namespace MoveIt.Systems
                     QLog.Debug($"{nameof(ChangeOriginalNetCurveJob)} curveNativeArray[{i}].m_Bezier.c.y = {curveNativeArray[i].m_Bezier.c.y} ");
                     QLog.Debug($"{nameof(ChangeOriginalNetCurveJob)} curveNativeArray[{i}].m_Bezier.d.y = {curveNativeArray[i].m_Bezier.d.y} ");
 #endif
-                    if (m_CurveLookup.TryGetComponent(tempNativeArray[i].m_Original, out Game.Net.Curve originalCurve))
+                    if (m_CurveLookup.TryGetComponent(tempNativeArray[i].m_Original, out Game.Net.Curve originalCurve) &&
+                        m_EdgeLookup.TryGetComponent(tempNativeArray[i].m_Original, out Game.Net.Edge originalEdge))
                     {
 #if DEBUG
 
@@ -265,10 +273,24 @@ namespace MoveIt.Systems
                         QLog.Debug($"{nameof(ChangeOriginalNetCurveJob)} originalCurve.m_Bezier.d.y = {originalCurve.m_Bezier.d.y} ");
 #endif
                         Game.Net.Curve tempCurve = curveNativeArray[i];
-                        tempCurve.m_Bezier.a.y = originalCurve.m_Bezier.a.y + m_VerticalDisplacement;
-                        // Need to account for only one side selected.
-                        tempCurve.m_Bezier.d.y = originalCurve.m_Bezier.d.y + m_VerticalDisplacement;
-                        buffer.SetComponent(tempNativeArray[i].m_Original, tempCurve);
+                        bool setCurve = false;
+                        
+                        if (m_SelectedLookup.HasComponent(originalEdge.m_Start))
+                        {
+                            tempCurve.m_Bezier.a.y = originalCurve.m_Bezier.a.y + m_VerticalDisplacement;
+                            setCurve = true;
+                        }
+
+                        if (m_SelectedLookup.HasComponent(originalEdge.m_End))
+                        { 
+                            tempCurve.m_Bezier.d.y = originalCurve.m_Bezier.d.y + m_VerticalDisplacement;
+                            setCurve = true;
+                        }
+
+                        if (setCurve)
+                        {
+                            buffer.SetComponent(tempNativeArray[i].m_Original, tempCurve);
+                        }
                     }
                 }
             }
