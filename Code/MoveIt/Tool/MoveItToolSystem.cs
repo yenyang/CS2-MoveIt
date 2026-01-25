@@ -97,6 +97,7 @@ namespace MoveIt.Tool
         internal WorkflowProgression[] m_Workflow;
         internal List<Workflow> m_ShouldClearWorkflows = new List<Workflow>() { Workflow.DrawingMarquee, Workflow.Undo, Workflow.Redo , Workflow.DeselectAll, Workflow.AlignObjectHeight, Workflow.AlignRotateAtCenter, Workflow.AlignRotateAtCenter, Workflow.AlignTerrainHeight};
         internal List<Workflow> m_ShouldUpdateWorkflows = new List<Workflow>() { Workflow.Move, Workflow.Rotate, Workflow.Elevate, Workflow.Lower, Workflow.Copy, Workflow.Delete };
+        private bool m_RegisteredWithAnarchy;
 
         internal Game.Common.RaycastSystem m_RaycastSystem;
 

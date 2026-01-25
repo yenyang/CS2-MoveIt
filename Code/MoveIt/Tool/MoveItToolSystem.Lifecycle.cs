@@ -3,6 +3,7 @@
 // Forked with permission from Quboid's CS2-MoveIt project.
 // </copyright>
 
+using Colossal.Logging;
 using Colossal.Serialization.Entities;
 using Game;
 using Game.Common;
@@ -11,6 +12,9 @@ using Game.Tools;
 using MoveIt.Components;
 using MoveIt.Selection;
 using QCommonLib;
+using System;
+using System.Linq;
+using System.Reflection;
 using Unity.Entities;
 
 namespace MoveIt.Tool
@@ -90,6 +94,57 @@ namespace MoveIt.Tool
             Selection ??= new SelectionNormal();
 
             m_OverlaySystem.DestroyAllEntities();
+        }
+
+        protected override void OnGameLoadingComplete(Purpose purpose, GameMode mode)
+        {
+            base.OnGameLoadingComplete(purpose, mode);
+
+            if (m_RegisteredWithAnarchy)
+            {
+                return;
+            }
+
+            Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+
+            foreach (Assembly assembly in assemblies)
+            {
+                if (!assembly.GetName().FullName.Contains("Anarchy,"))
+                {
+                    continue;
+                }
+
+
+                QLog.Info($"{nameof(MoveItToolSystem)}.Lifecycle.{nameof(OnGameLoadingComplete)} Found Anarchy Assembly: {assembly.FullName}.");
+                Type[] types = assembly.GetTypes();
+
+                Type anarchyBridge = assembly.GetTypes().FirstOrDefault(x => x.FullName.Contains("Anarchy.Bridge.AnarchyBridge"));
+                if (anarchyBridge is null)
+                {
+                    QLog.Info($"{nameof(MoveItToolSystem)}.Lifecycle.{nameof(OnGameLoadingComplete)} Couldn't locate Anarchy Bridge.");
+                    continue;
+                }
+
+                QLog.Debug($"{nameof(MoveItToolSystem)}.Lifecycle.{nameof(OnGameLoadingComplete)} Located Anarchy Bridge.");
+                
+                MethodInfo addToolMethod = anarchyBridge.GetMethod("TryAddToolSystem", BindingFlags.Public | BindingFlags.Static);
+                if (addToolMethod is null)
+                {
+                    QLog.Info($"{nameof(MoveItToolSystem)}.Lifecycle.{nameof(OnGameLoadingComplete)} Could not find method to add tool.");
+                    break;
+                }
+
+                var results = addToolMethod.Invoke(null, new object[] { this });
+                if (results is Boolean &&
+                    (bool)results == true)
+                {
+                    m_RegisteredWithAnarchy = true;
+                    QLog.Info($"{nameof(MoveItToolSystem)}.Lifecycle.{nameof(OnGameLoadingComplete)} Successfully registered with Anarchy!");
+                } else
+                { 
+                    QLog.Info($"{nameof(MoveItToolSystem)}.Lifecycle.{nameof(OnGameLoadingComplete)} Failed to register with Anarchy.");
+                }
+            }
         }
 
         protected override void OnStartRunning()
