@@ -55,18 +55,12 @@ namespace MoveIt.Systems
 
         protected override void OnUpdate()
         {
-            QLog.Debug($"{nameof(TempNodeSystem)}.{nameof(OnUpdate)}");
-            QLog.Debug($"{nameof(TempNodeSystem)}.{nameof(OnUpdate)} m_ToolSystem.activeTool != _MIT: {m_ToolSystem.activeTool != _MIT}");
-            QLog.Debug($"{nameof(TempNodeSystem)}.{nameof(OnUpdate)} _MIT.Copying {_MIT.Copying}");
-            QLog.Debug($"{nameof(TempNodeSystem)}.{nameof(OnUpdate)} _MIT.Deleting {_MIT.Deleting}");
-            QLog.Debug($"{nameof(TempNodeSystem)}.{nameof(OnUpdate)} _MIT.m_Workflow[(int)Workflow.Elevate] {_MIT.m_Workflow[(int)Workflow.Elevate]}");
-            QLog.Debug($"{nameof(TempNodeSystem)}.{nameof(OnUpdate)} _MIT.m_Workflow[(int)Workflow.Lower] {_MIT.m_Workflow[(int)Workflow.Lower]}");
-
             if (m_ToolSystem.activeTool != _MIT ||
                 _MIT.Copying ||
-                _MIT.Deleting /*||
+                _MIT.Deleting ||
                (_MIT.m_Workflow[(int)Workflow.Elevate] == WorkflowProgression.NotStarted &&
-                _MIT.m_Workflow[(int)Workflow.Lower] == WorkflowProgression.NotStarted)*/)
+                _MIT.m_Workflow[(int)Workflow.Lower] == WorkflowProgression.NotStarted &&
+               !_MIT.m_FollowingTerrain))
             {
                 return;
             }

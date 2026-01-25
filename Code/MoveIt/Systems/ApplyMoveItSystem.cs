@@ -3,7 +3,7 @@
 // Forked with permission from Quboid's CS2-MoveIt project.
 // </copyright>
 
-// #define BURST
+#define BURST
 
 using Game.Common;
 using Game.Rendering;
@@ -85,7 +85,6 @@ namespace MoveIt.Systems
             {
                 if (!m_TempNodeQuery.IsEmptyIgnoreFilter)
                 {
-                    QLog.Debug($"{nameof(ApplyMoveItSystem)}.{nameof(OnUpdate)} Scheduling ChangeOriginalNetNodesJob.");
                     ChangeOriginalNetNodesJob changeOriginalNetNodesJob = new ChangeOriginalNetNodesJob()
                     {
                         m_TempType = SystemAPI.GetComponentTypeHandle<Temp>(),
@@ -103,7 +102,6 @@ namespace MoveIt.Systems
 
                 if (!m_TempCurveQuery.IsEmptyIgnoreFilter)
                 {
-                    QLog.Debug($"{nameof(ApplyMoveItSystem)}.{nameof(OnUpdate)} Scheduling ChangeOriginalNetCurveJob.");
                     ChangeOriginalNetCurveJob changeOriginalNetCurveJob = new ChangeOriginalNetCurveJob()
                     {
                         m_TempType = SystemAPI.GetComponentTypeHandle<Temp>(),
@@ -201,16 +199,8 @@ namespace MoveIt.Systems
                 NativeArray<Entity> entities = chunk.GetNativeArray(m_EntityTypeHandle);
                 for (int i = 0; i < chunk.Count; i++)
                 {
-#if DEBUG
-
-                    QLog.Debug($"{nameof(ChangeOriginalNetNodesJob)} nodeNativeArray[{i}].m_Position.y = {nodeNativeArray[i].m_Position.y} ");
-#endif
                     if (m_NodeLookup.TryGetComponent(tempNativeArray[i].m_Original, out Game.Net.Node originalNode))
                     {
-#if DEBUG
-
-                        QLog.Debug($"{nameof(ChangeOriginalNetNodesJob)} originalNode.m_Position.y = {originalNode.m_Position.y} ");
-#endif
                         Game.Net.Node tempNode = nodeNativeArray[i];
                         tempNode.m_Position.y = originalNode.m_Position.y + m_VerticalDisplacement;
                         buffer.SetComponent(tempNativeArray[i].m_Original, tempNode);
@@ -255,23 +245,9 @@ namespace MoveIt.Systems
                 NativeArray<Entity> entities = chunk.GetNativeArray(m_EntityTypeHandle);
                 for (int i = 0; i < chunk.Count; i++)
                 {
-#if DEBUG
-
-                    QLog.Debug($"{nameof(ChangeOriginalNetCurveJob)} curveNativeArray[{i}].m_Bezier.a.y = {curveNativeArray[i].m_Bezier.a.y} ");
-                    QLog.Debug($"{nameof(ChangeOriginalNetCurveJob)} curveNativeArray[{i}].m_Bezier.b.y = {curveNativeArray[i].m_Bezier.b.y} ");
-                    QLog.Debug($"{nameof(ChangeOriginalNetCurveJob)} curveNativeArray[{i}].m_Bezier.c.y = {curveNativeArray[i].m_Bezier.c.y} ");
-                    QLog.Debug($"{nameof(ChangeOriginalNetCurveJob)} curveNativeArray[{i}].m_Bezier.d.y = {curveNativeArray[i].m_Bezier.d.y} ");
-#endif
                     if (m_CurveLookup.TryGetComponent(tempNativeArray[i].m_Original, out Game.Net.Curve originalCurve) &&
                         m_EdgeLookup.TryGetComponent(tempNativeArray[i].m_Original, out Game.Net.Edge originalEdge))
                     {
-#if DEBUG
-
-                        QLog.Debug($"{nameof(ChangeOriginalNetCurveJob)} originalCurve.m_Bezier.a.y = {originalCurve.m_Bezier.a.y} ");
-                        QLog.Debug($"{nameof(ChangeOriginalNetCurveJob)} originalCurve.m_Bezier.b.y = {originalCurve.m_Bezier.b.y} ");
-                        QLog.Debug($"{nameof(ChangeOriginalNetCurveJob)} originalCurve.m_Bezier.c.y = {originalCurve.m_Bezier.c.y} ");
-                        QLog.Debug($"{nameof(ChangeOriginalNetCurveJob)} originalCurve.m_Bezier.d.y = {originalCurve.m_Bezier.d.y} ");
-#endif
                         Game.Net.Curve tempCurve = curveNativeArray[i];
                         bool setCurve = false;
                         

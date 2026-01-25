@@ -149,7 +149,9 @@ namespace MoveIt.Tool
 
             for (int i = 0; i < m_Workflow.Length; i++)
             {
-                if (i != (int)Workflow.Copy)
+                if (i != (int)Workflow.Copy &&
+                    i != (int)Workflow.Elevate &&
+                    i != (int)Workflow.Lower)
                 {
                     ResetWorkflow((Workflow)i);
                 }

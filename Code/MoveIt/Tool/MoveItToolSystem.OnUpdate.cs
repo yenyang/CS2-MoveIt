@@ -88,6 +88,8 @@ namespace MoveIt.Tool
             if (m_ResetVerticalDisplacement)
             {
                 m_VerticalDisplacement = 0;
+                ResetWorkflow(Workflow.Elevate);
+                ResetWorkflow(Workflow.Lower);
                 m_ResetVerticalDisplacement = false;
             }
 
