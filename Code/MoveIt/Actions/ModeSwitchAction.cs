@@ -1,6 +1,7 @@
 ﻿using MoveIt.Moveables;
 using MoveIt.Selection;
 using MoveIt.Tool;
+using QCommonLib;
 using System.Collections.Generic;
 using Unity.Entities;
 using Unity.Jobs;
@@ -33,7 +34,7 @@ namespace MoveIt.Actions
             ModeSwitchAction prev = _MIT.Queue.GetPrevious<ModeSwitchAction>();// GetPrecedingModeSwitchActionFromQueue(false);
             List<MVDefinition> toSelection = prev is null ? new() : prev.GetInitialSelectionStates();
             ToggleMode(fromSelection, toSelection, !m_IsManipulationMode);
-            //MIT.Log.Debug($"MSA.Do is:{_MIT.m_IsManipulateMode} |{prev}| from:{fromSelection.Count}, to:{toSelection.Count}");
+            // QLog.Debug($"MSA.Do is:{_MIT.m_IsManipulateMode} |{prev}| from:{fromSelection.Count}, to:{toSelection.Count}");
 
             Phase = Phases.Complete;
         }

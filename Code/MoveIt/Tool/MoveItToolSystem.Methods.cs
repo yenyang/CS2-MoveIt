@@ -93,11 +93,14 @@ namespace MoveIt.Tool
             if (m_IsManipulateMode == toManipulate) return;
 
             Queue.Push(new ModeSwitchAction());
-            EntityCommandBuffer buffer = m_Barrier.CreateCommandBuffer();
+            EntityCommandBuffer buffer = new EntityCommandBuffer();
             Queue.Do(ref m_InputDeps, ref buffer);
+            buffer.Playback(EntityManager);
+            buffer.Dispose();
         }
 
-        
+
+
         internal void MoveStart()
         {
             //QLog.Debug($"MOVESTART OnPress:{Hover.TopPressed.E()}-Null:{Hover.TopPressed.IsNull} :: {Hover.Normal.OnPress.E()}/{Hover.Child.OnPress.E()} (sel:{Selection.Has(Hover.TopPressed)})\n{QCommon.GetStackTrace(3)}");
