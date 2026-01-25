@@ -5,12 +5,14 @@
 
 using Colossal.Entities;
 using Game.Common;
+using Game.Simulation;
 using Game.Tools;
 using MoveIt.Components;
 using MoveIt.Tool;
 using QCommonLib;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
 
 namespace MoveIt.Systems
 {
@@ -19,12 +21,14 @@ namespace MoveIt.Systems
     {
         private EntityQuery m_TempNodeQuery;
         private ToolSystem m_ToolSystem; 
+        private TerrainSystem m_TerrainSystem;
 
         protected override void OnCreate()
         {
             base.OnCreate();
 
             m_ToolSystem = World.GetOrCreateSystemManaged<ToolSystem>();
+            m_TerrainSystem = World.GetOrCreateSystemManaged<TerrainSystem>();
 
             m_ToolSystem.EventToolChanged += OnToolChanged;
 
@@ -83,6 +87,11 @@ namespace MoveIt.Systems
                 temp.m_Flags |= TempFlags.Modify;
                 buffer.SetComponent(entities[i], temp);
                 node.m_Position.y = originalNode.m_Position.y + _MIT.m_VerticalDisplacement;
+                if (_MIT.m_FollowingTerrain)
+                {
+                    node.m_Position = FollowTerrain(node.m_Position, originalNode.m_Position);
+                }
+
                 buffer.SetComponent(entities[i], node);
                 
                 if (!EntityManager.TryGetBuffer(entities[i], isReadOnly: true, out DynamicBuffer<Game.Net.ConnectedEdge> connectedEdges))
@@ -111,6 +120,12 @@ namespace MoveIt.Systems
                     {
                         curve.m_Bezier.d.y = originalCurve.m_Bezier.d.y + _MIT.m_VerticalDisplacement;
                         curve.m_Bezier.c.y = originalCurve.m_Bezier.d.y + _MIT.m_VerticalDisplacement;
+
+                        if (_MIT.m_FollowingTerrain)
+                        {
+                            curve.m_Bezier.d = FollowTerrain(curve.m_Bezier.d, originalCurve.m_Bezier.d);
+                            curve.m_Bezier.c = FollowTerrain(curve.m_Bezier.c, originalCurve.m_Bezier.c);
+                        }
                         setCurve = true;
                     }
 
@@ -119,6 +134,12 @@ namespace MoveIt.Systems
                     {
                         curve.m_Bezier.a.y = originalCurve.m_Bezier.a.y + _MIT.m_VerticalDisplacement;
                         curve.m_Bezier.b.y = originalCurve.m_Bezier.a.y + _MIT.m_VerticalDisplacement;
+
+                        if (_MIT.m_FollowingTerrain)
+                        {
+                            curve.m_Bezier.a = FollowTerrain(curve.m_Bezier.a, originalCurve.m_Bezier.a);
+                            curve.m_Bezier.b = FollowTerrain(curve.m_Bezier.b, originalCurve.m_Bezier.b);
+                        }
                         setCurve = true;
                     }
 
@@ -133,6 +154,13 @@ namespace MoveIt.Systems
 
             buffer.Playback(EntityManager);
             buffer.Dispose();
+        }
+
+        private float3 FollowTerrain(float3 newPosition, float3 originalPosition)
+        {
+            TerrainHeightData terrainHeightData = m_TerrainSystem.GetHeightData(waitForPending: false);
+            newPosition.y += TerrainUtils.SampleHeight(ref terrainHeightData, newPosition) - TerrainUtils.SampleHeight(ref terrainHeightData, originalPosition);
+            return newPosition;
         }
     }
 }
