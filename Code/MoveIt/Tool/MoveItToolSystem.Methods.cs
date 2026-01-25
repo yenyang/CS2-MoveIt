@@ -93,7 +93,8 @@ namespace MoveIt.Tool
             if (m_IsManipulateMode == toManipulate) return;
 
             Queue.Push(new ModeSwitchAction());
-            // Queue.Do();
+            EntityCommandBuffer buffer = m_Barrier.CreateCommandBuffer();
+            Queue.Do(ref m_InputDeps, ref buffer);
         }
 
         
