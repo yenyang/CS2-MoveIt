@@ -4,9 +4,7 @@
 // </copyright>
 
 using Colossal.Entities;
-using Game;
 using Game.Common;
-using Game.Rendering;
 using Game.Tools;
 using MoveIt.Components;
 using MoveIt.Tool;
@@ -16,6 +14,7 @@ using Unity.Entities;
 
 namespace MoveIt.Systems
 {
+    // Vanilla GenerateEdges/Nodes Systems do not handle modifications to node elevations. This system fixes that.
     internal partial class TempNodeSystem : MIT_System
     {
         private EntityQuery m_TempNodeQuery;
@@ -80,7 +79,8 @@ namespace MoveIt.Systems
                     continue;
                 }
 
-                temp.m_Flags |= TempFlags.Modify | TempFlags.Essential;
+                // This flag is important.
+                temp.m_Flags |= TempFlags.Modify;
                 buffer.SetComponent(entities[i], temp);
                 node.m_Position.y = originalNode.m_Position.y + _MIT.m_VerticalDisplacement;
                 buffer.SetComponent(entities[i], node);

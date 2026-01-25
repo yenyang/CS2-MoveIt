@@ -6,12 +6,7 @@
 #define BURST
 
 using Game.Common;
-using Game.Rendering;
 using Game.Tools;
-using JetBrains.Annotations;
-using MoveIt.Components;
-using MoveIt.Systems;
-using MoveIt.Tool;
 using QCommonLib;
 using Unity.Burst;
 using Unity.Burst.Intrinsics;
@@ -27,8 +22,6 @@ namespace MoveIt.Systems
     internal partial class ApplyMoveItSystem : MIT_System
     {
         private EntityQuery m_TempObjectQuery;
-        private EntityQuery m_TempNodeQuery;
-        private EntityQuery m_TempCurveQuery;
         private ToolOutputBarrier m_Barrier;
         private ToolSystem m_ToolSystem;
 
@@ -46,17 +39,7 @@ namespace MoveIt.Systems
                .WithNone<Deleted, Game.Common.Overridden>()
                .Build();
 
-            m_TempNodeQuery = SystemAPI.QueryBuilder()
-               .WithAll<Temp, Game.Net.Node>()
-               .WithNone<Deleted, Game.Common.Overridden>()
-               .Build();
-
-            m_TempCurveQuery = SystemAPI.QueryBuilder()
-               .WithAll<Temp, Game.Net.Curve>()
-               .WithNone<Deleted, Game.Common.Overridden>()
-               .Build();
-
-            RequireAnyForUpdate(new EntityQuery[] { m_TempNodeQuery, m_TempObjectQuery, m_TempCurveQuery });
+            RequireForUpdate(m_TempObjectQuery);
 
             QLog.Info($"{nameof(ApplyMoveItSystem)}.{nameof(OnCreate)}");
             Enabled = false;
@@ -77,47 +60,6 @@ namespace MoveIt.Systems
                 JobHandle jobHandle = changeOriginalObjectTransformsJob.ScheduleParallel(m_TempObjectQuery, Dependency);
                 m_Barrier.AddJobHandleForProducer(jobHandle);
                 Dependency = jobHandle;
-            }
-
-            if (m_ToolSystem.activeTool == _MIT &&
-                !_MIT.Copying &&
-                !_MIT.Deleting)
-            {
-                if (!m_TempNodeQuery.IsEmptyIgnoreFilter)
-                {
-                    ChangeOriginalNetNodesJob changeOriginalNetNodesJob = new ChangeOriginalNetNodesJob()
-                    {
-                        m_TempType = SystemAPI.GetComponentTypeHandle<Temp>(),
-                        m_NodeLookup = SystemAPI.GetComponentLookup<Game.Net.Node>(isReadOnly: true),
-                        buffer = m_Barrier.CreateCommandBuffer(),
-                        m_NodeTypeHandle = SystemAPI.GetComponentTypeHandle<Game.Net.Node>(isReadOnly: true),
-                        m_VerticalDisplacement = _MIT.m_VerticalDisplacement,
-                        m_EntityTypeHandle = SystemAPI.GetEntityTypeHandle(),
-                    };
-
-                    JobHandle jobHandle = changeOriginalNetNodesJob.Schedule(m_TempNodeQuery, Dependency);
-                    m_Barrier.AddJobHandleForProducer(jobHandle);
-                    Dependency = jobHandle;
-                }
-
-                if (!m_TempCurveQuery.IsEmptyIgnoreFilter)
-                {
-                    ChangeOriginalNetCurveJob changeOriginalNetCurveJob = new ChangeOriginalNetCurveJob()
-                    {
-                        m_TempType = SystemAPI.GetComponentTypeHandle<Temp>(),
-                        m_CurveLookup = SystemAPI.GetComponentLookup<Game.Net.Curve>(isReadOnly: true),
-                        buffer = m_Barrier.CreateCommandBuffer(),
-                        m_CurveType = SystemAPI.GetComponentTypeHandle<Game.Net.Curve>(isReadOnly: true),
-                        m_VerticalDisplacement = _MIT.m_VerticalDisplacement,
-                        m_EntityTypeHandle = SystemAPI.GetEntityTypeHandle(),
-                        m_EdgeLookup = SystemAPI.GetComponentLookup<Game.Net.Edge>(isReadOnly: true),
-                        m_SelectedLookup = SystemAPI.GetComponentLookup<MIT_Selected>(isReadOnly: true),
-                    };
-
-                    JobHandle jobHandle = changeOriginalNetCurveJob.Schedule(m_TempCurveQuery, Dependency);
-                    m_Barrier.AddJobHandleForProducer(jobHandle);
-                    Dependency = jobHandle;
-                }
             }
         }
 
@@ -162,111 +104,6 @@ namespace MoveIt.Systems
                     if (m_TransformLookup.TryGetComponent(tempNativeArray[i].m_Original, out Game.Objects.Transform originalTransform))
                     {
                         buffer.SetComponent(unfilteredChunkIndex, tempNativeArray[i].m_Original, transformNativeArray[i]);
-                    }
-                }
-            }
-        }
-
-
-
-#if BURST
-        [BurstCompile]
-#endif
-        private struct ChangeOriginalNetNodesJob : IJobChunk
-        {
-            [ReadOnly]
-            public ComponentTypeHandle<Temp> m_TempType;
-            [ReadOnly]
-            public ComponentLookup<Game.Net.Node> m_NodeLookup;
-            [ReadOnly]
-            public ComponentTypeHandle<Game.Net.Node> m_NodeTypeHandle;
-            [ReadOnly]
-            public float m_VerticalDisplacement;
-            public EntityCommandBuffer buffer;
-            public EntityTypeHandle m_EntityTypeHandle;
-
-            /// <summary>
-            /// Executes job which will change Transform MIT Selected temp entities.
-            /// </summary>
-            /// <param name="chunk">ArchteypeChunk of IJobChunk.</param>
-            /// <param name="unfilteredChunkIndex">Use for EntityCommandBuffer.ParralelWriter.</param>
-            /// <param name="useEnabledMask">Part of IJobChunk. Unsure what it does.</param>
-            /// <param name="chunkEnabledMask">Part of IJobChunk. Not sure what it does.</param>
-            public void Execute(in ArchetypeChunk chunk, int unfilteredChunkIndex, bool useEnabledMask, in v128 chunkEnabledMask)
-            {
-                NativeArray<Temp> tempNativeArray = chunk.GetNativeArray(ref m_TempType);
-                NativeArray<Game.Net.Node> nodeNativeArray = chunk.GetNativeArray(ref m_NodeTypeHandle);
-                NativeArray<Entity> entities = chunk.GetNativeArray(m_EntityTypeHandle);
-                for (int i = 0; i < chunk.Count; i++)
-                {
-                    if (m_NodeLookup.TryGetComponent(tempNativeArray[i].m_Original, out Game.Net.Node originalNode))
-                    {
-                        Game.Net.Node tempNode = nodeNativeArray[i];
-                        tempNode.m_Position.y = originalNode.m_Position.y + m_VerticalDisplacement;
-                        buffer.SetComponent(tempNativeArray[i].m_Original, tempNode);
-                    }
-                }
-            }
-        }
-
-
-
-#if BURST
-        [BurstCompile]
-#endif
-        private struct ChangeOriginalNetCurveJob : IJobChunk
-        {
-            [ReadOnly]
-            public ComponentTypeHandle<Temp> m_TempType;
-            [ReadOnly]
-            public ComponentLookup<Game.Net.Curve> m_CurveLookup;
-            [ReadOnly]
-            public ComponentLookup<MIT_Selected> m_SelectedLookup;
-            [ReadOnly]
-            public ComponentTypeHandle<Game.Net.Curve> m_CurveType;
-            [ReadOnly]
-            public ComponentLookup<Game.Net.Edge> m_EdgeLookup;
-            [ReadOnly]
-            public float m_VerticalDisplacement;
-            public EntityCommandBuffer buffer;
-            public EntityTypeHandle m_EntityTypeHandle;
-
-            /// <summary>
-            /// Executes job which will change Transform MIT Selected temp entities.
-            /// </summary>
-            /// <param name="chunk">ArchteypeChunk of IJobChunk.</param>
-            /// <param name="unfilteredChunkIndex">Use for EntityCommandBuffer.ParralelWriter.</param>
-            /// <param name="useEnabledMask">Part of IJobChunk. Unsure what it does.</param>
-            /// <param name="chunkEnabledMask">Part of IJobChunk. Not sure what it does.</param>
-            public void Execute(in ArchetypeChunk chunk, int unfilteredChunkIndex, bool useEnabledMask, in v128 chunkEnabledMask)
-            {
-                NativeArray<Temp> tempNativeArray = chunk.GetNativeArray(ref m_TempType);
-                NativeArray<Game.Net.Curve> curveNativeArray = chunk.GetNativeArray(ref m_CurveType);
-                NativeArray<Entity> entities = chunk.GetNativeArray(m_EntityTypeHandle);
-                for (int i = 0; i < chunk.Count; i++)
-                {
-                    if (m_CurveLookup.TryGetComponent(tempNativeArray[i].m_Original, out Game.Net.Curve originalCurve) &&
-                        m_EdgeLookup.TryGetComponent(tempNativeArray[i].m_Original, out Game.Net.Edge originalEdge))
-                    {
-                        Game.Net.Curve tempCurve = curveNativeArray[i];
-                        bool setCurve = false;
-                        
-                        if (m_SelectedLookup.HasComponent(originalEdge.m_Start))
-                        {
-                            tempCurve.m_Bezier.a.y = originalCurve.m_Bezier.a.y + m_VerticalDisplacement;
-                            setCurve = true;
-                        }
-
-                        if (m_SelectedLookup.HasComponent(originalEdge.m_End))
-                        { 
-                            tempCurve.m_Bezier.d.y = originalCurve.m_Bezier.d.y + m_VerticalDisplacement;
-                            setCurve = true;
-                        }
-
-                        if (setCurve)
-                        {
-                            buffer.SetComponent(tempNativeArray[i].m_Original, tempCurve);
-                        }
                     }
                 }
             }
