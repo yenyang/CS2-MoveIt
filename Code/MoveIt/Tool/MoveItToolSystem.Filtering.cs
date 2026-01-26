@@ -61,7 +61,7 @@ namespace MoveIt.Tool
             if (!Manager.HasComponent<Game.Prefabs.PrefabRef>(e)) return false;
             if (Manager.HasComponent<Temp>(e)) return false;
             if (Manager.HasComponent<Terrain>(e)) return false;
-            if (Manager.HasComponent<Hidden>(e)) return false;
+            // if (Manager.HasComponent<Hidden>(e)) return false; Commented out due to new setup that actually uses Hidden.
             if (Manager.HasComponent<Deleted>(e)) return false;
             if (Manager.HasComponent<Overridden>(e)) return false;
             if (Manager.HasComponent<Owner>(e)) return false;

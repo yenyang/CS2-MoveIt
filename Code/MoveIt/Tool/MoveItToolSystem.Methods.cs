@@ -107,10 +107,12 @@ namespace MoveIt.Tool
             if (MITState == MITStates.SecondaryButtonHeld) return;
             if (Selection.Has(Hover.TopPressed))
             {
+                QLog.Debug($"{nameof(MoveStart)} Selection.Has(Hover.TopPressed)");
                 StartWorkflow(Workflow.Move);
             }
             else
             {
+                QLog.Debug($"{nameof(MoveStart)} Queue.Push(new SelectAction()");
                 // Requires OnHold to have fired, causing a 250ms delay
                 Queue.Push(new SelectAction());
                 JobHandle jobHandle = Dependency;

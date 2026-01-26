@@ -1,5 +1,6 @@
 ﻿using MoveIt.Moveables;
 using MoveIt.Selection;
+using MoveIt.Tool;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Entities;
@@ -53,11 +54,13 @@ namespace MoveIt.Actions.Select
                     _MIT.Selection.Remove(toRemove, false);
                     Deselect(toRemove);
                 }
-                else
+                else if (_MIT.m_Workflow[(int)Workflow.DeselectAll] != WorkflowProgression.NotStarted ||
+                        (_MIT.m_Workflow[(int)Workflow.SelectingIndividual] != WorkflowProgression.NotStarted &&                         
+                        !_MIT.Hovered.IsSelected))
                 {
                     // New selection, wipe everything
-                    _MIT.Selection.Clear();
-                    _MIT.Moveables.Refresh();
+                    _MIT.Selection.Clear(); // I think was causing problem with moving single selection if conditional wasn't added.  
+                    _MIT.Moveables.Refresh();                 
                 }
             }
 

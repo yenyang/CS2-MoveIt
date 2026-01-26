@@ -139,6 +139,12 @@ namespace MoveIt.Managers
             if (_MIT.Hover.Is(mvd))             return true;
             if (_MIT.Selection.Has(mvd))        return true;
             if (_MIT.Queue.Current.Uses(mvd))   return true;
+            // The following were added to prevent removing moveables while doing an action using the new setup.
+            if (_MIT.m_Workflow[(int)Workflow.Move] != WorkflowProgression.NotStarted) return true;
+            if (_MIT.m_Workflow[(int)Workflow.Copy] != WorkflowProgression.NotStarted) return true;
+            if (_MIT.m_Workflow[(int)Workflow.Delete] != WorkflowProgression.NotStarted) return true;
+            if (_MIT.m_Workflow[(int)Workflow.Elevate] != WorkflowProgression.NotStarted) return true;
+            if (_MIT.m_Workflow[(int)Workflow.Lower] != WorkflowProgression.NotStarted) return true;
             return false;
         }
 
