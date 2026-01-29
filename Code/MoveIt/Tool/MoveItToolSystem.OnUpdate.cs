@@ -82,9 +82,6 @@ namespace MoveIt.Tool
 
             Queue.FireAction(ref inputDeps, ref buffer);
 
-
-            bool Moving = m_Workflow[(int)Workflow.Move] == WorkflowProgression.Starting || m_Workflow[(int)Workflow.Move] == WorkflowProgression.InProgress;
-
             if (m_ResetVerticalDisplacement)
             {
                 m_VerticalDisplacement = 0;

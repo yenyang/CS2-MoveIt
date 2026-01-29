@@ -10,6 +10,7 @@ using MoveIt.Components;
 using MoveIt.Input;
 using MoveIt.Managers;
 using QCommonLib;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
@@ -23,6 +24,7 @@ namespace MoveIt.Tool
         {
             JobHandle jobHandle = DestroyDefinitions(m_DefinitionGroup, m_Barrier, inputDeps);
             EntityCommandBuffer buffer = m_Barrier.CreateCommandBuffer();
+            NativeArray<Entity> selectedControlPoints = m_MIT_SelectedControlPointQuery.ToEntityArray(Allocator.TempJob);
 
             CreateDefinitionJob createDefinitionJob = new CreateDefinitionJob()
             {
@@ -52,8 +54,12 @@ namespace MoveIt.Tool
                 m_SelectedLookup = SystemAPI.GetComponentLookup<MIT_Selected>(isReadOnly: true),
                 m_NodeLookup = SystemAPI.GetComponentLookup<Game.Net.Node>(isReadOnly: true),
                 m_VerticalDisplacement = m_VerticalDisplacement,
+                m_ControlPointLookup = SystemAPI.GetComponentLookup<MIT_ControlPoint>(isReadOnly: true),
+                m_SelectedControlPoints = selectedControlPoints,
             };
-            inputDeps = createDefinitionJob.Schedule(m_MIT_SelectedQuery, inputDeps);
+
+            inputDeps = createDefinitionJob.Schedule(IsManipulating? m_MIT_SelectedControlPointQuery : m_MIT_SelectedQuery, inputDeps);
+            selectedControlPoints.Dispose(inputDeps);
             
             m_TerrainSystem.AddCPUHeightReader(inputDeps);
             m_Barrier.AddJobHandleForProducer(inputDeps);

@@ -83,6 +83,14 @@ namespace MoveIt.Actions
             _MIT.Moveables.UpdateAllControlPoints();
             _MIT.Moveables.UpdateAllOverlays();
             _MIT.Selection.CalculateCenter();
+
+            if (_MIT.m_IsManipulateMode)
+            {
+                _MIT.StartWorkflow(Workflow.Manipulating);
+            } else
+            {
+                _MIT.ResetWorkflow(Workflow.Manipulating);
+            }
         }
 
         private void ProcessModeSelectionChange(List<MVDefinition> fromSelection, List<MVDefinition> toSelection)

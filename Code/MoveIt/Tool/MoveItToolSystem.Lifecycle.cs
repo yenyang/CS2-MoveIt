@@ -60,7 +60,12 @@ namespace MoveIt.Tool
                 .WithNone<Game.Tools.Temp, Game.Common.Overridden, Game.Common.Deleted, MIT_ControlPoint>()
                 .Build();
 
-            m_Workflow = new WorkflowProgression[(int)Workflow.Manipulating];
+            m_MIT_SelectedControlPointQuery = SystemAPI.QueryBuilder()
+                .WithAll<MIT_Selected, MIT_ControlPoint>()
+                .WithNone<Game.Tools.Temp, Game.Common.Overridden, Game.Common.Deleted>()
+                .Build();
+
+            m_Workflow = new WorkflowProgression[(int)Workflow.Manipulating+1];
 
             for (int i = 0; i < m_Workflow.Length; i++)
             {

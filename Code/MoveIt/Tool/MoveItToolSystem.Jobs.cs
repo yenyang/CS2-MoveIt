@@ -13,6 +13,7 @@ using Game.Prefabs;
 using Game.Simulation;
 using Game.Tools;
 using MoveIt.Components;
+using System.Security.Cryptography;
 using Unity.Burst;
 using Unity.Burst.Intrinsics;
 using Unity.Collections;
@@ -79,6 +80,10 @@ namespace MoveIt.Tool
             public BufferLookup<Game.Net.ConnectedEdge> m_ConnectedEdgeLookup;
             [ReadOnly]
             public ComponentLookup<MIT_Selected> m_SelectedLookup;
+            [ReadOnly]
+            public ComponentLookup<MIT_ControlPoint> m_ControlPointLookup;
+            [ReadOnly]
+            public NativeArray<Entity> m_SelectedControlPoints;
 
             private NativeList<Entity> m_NetworksProcessed;
 
@@ -108,6 +113,23 @@ namespace MoveIt.Tool
                     } else if (m_CurveLookup.HasComponent(entityNativeArray[i]) &&
                                m_NetworksProcessed.Contains(entityNativeArray[i]))
                     {
+                        continue;
+                    }
+
+                    if (m_ControlPointLookup.TryGetComponent(entityNativeArray[i], out MIT_ControlPoint controlPoint) &&
+                        controlPoint.m_IsManipulatable)
+                    {
+                        if (controlPoint.m_Parent == Entity.Null ||
+                            m_NetworksProcessed.Contains(controlPoint.m_Parent) || 
+                           !m_CurveLookup.TryGetComponent(controlPoint.m_Parent, out Game.Net.Curve parentCurve))
+                        {
+                            continue;
+                        }
+
+                        Entity parentDefinition = buffer.CreateEntity();
+                        ProcessCreationDefinition(controlPoint.m_Parent, parentDefinition);
+                        ManipulateCurve(controlPoint.m_Parent, parentDefinition, parentCurve);
+
                         continue;
                     }
 
@@ -297,9 +319,62 @@ namespace MoveIt.Tool
                 }
             }
 
-            private void ProcessCurve(Entity originalInstance, Entity definitionEntity, Game.Net.Curve curve)
+            private void ManipulateCurve(Entity originalInstance, Entity definitionEntity, Game.Net.Curve curve)
             {
-                NetCourse netCourse = new NetCourse()
+                NetCourse netCourse = GetDefaultNetCourse(curve);
+                if (m_EdgeLookup.TryGetComponent(originalInstance, out Game.Net.Edge edge))
+                {
+                    netCourse.m_StartPosition.m_Entity = edge.m_Start;
+                    netCourse.m_EndPosition.m_Entity = edge.m_End;
+                }
+
+                for (int i = 0; i < m_SelectedControlPoints.Length; i++)
+                {
+                    if (m_SelectedControlPoints[i] != Entity.Null &&
+                        m_ControlPointLookup.TryGetComponent(m_SelectedControlPoints[i], out MIT_ControlPoint controlPoint) &&
+                        controlPoint.m_Parent != Entity.Null &&
+                        controlPoint.m_Parent == originalInstance)
+                    {
+                        switch (controlPoint.m_ParentKey)
+                        {
+                            case 0:
+                                ManipulateControlPoint(ref netCourse.m_Curve.a, curve.m_Bezier.a);
+                                break;
+                            case 1:
+                                ManipulateControlPoint(ref netCourse.m_Curve.b, curve.m_Bezier.b);
+                                break;
+                            case 2:
+                                ManipulateControlPoint(ref netCourse.m_Curve.c, curve.m_Bezier.c);
+                                break;
+                            case 3:
+                                ManipulateControlPoint(ref netCourse.m_Curve.d, curve.m_Bezier.d);
+                                break;
+                        }
+                    }
+                }
+
+                buffer.AddComponent(definitionEntity, netCourse);
+                m_NetworksProcessed.Add(originalInstance);
+            }
+
+            private void ManipulateControlPoint(ref float3 bezierControlPoint, float3 originalPosition)
+            {
+                if (m_RotationAboutCenter != 0)
+                {
+                    bezierControlPoint = GetRotatedPosition(new Game.Objects.Transform() { m_Position = bezierControlPoint, m_Rotation = quaternion.identity }).m_Position;
+                }
+
+                bezierControlPoint = GetTranslatedXZPositionAndVerticallyDisplace(bezierControlPoint);
+
+                if (m_FollowTerrain)
+                {
+                    bezierControlPoint = FollowTerrain(bezierControlPoint, originalPosition);
+                }
+            }
+
+            private NetCourse GetDefaultNetCourse(Game.Net.Curve curve)
+            {
+                return new NetCourse()
                 {
                     m_Curve = curve.m_Bezier,
                     m_Elevation = default,
@@ -327,9 +402,14 @@ namespace MoveIt.Tool
                         m_Rotation = NetUtils.GetNodeRotation(MathUtils.StartTangent(curve.m_Bezier)),
                         m_CourseDelta = 0,
                     },
-                    
+
                 };
-                
+            }
+
+            private void ProcessCurve(Entity originalInstance, Entity definitionEntity, Game.Net.Curve curve)
+            {
+                NetCourse netCourse = GetDefaultNetCourse(curve);
+
                 bool ownerSelected = m_OwnerLookup.TryGetComponent(originalInstance, out Owner owner) &&
                                      m_SelectedLookup.HasComponent(owner.m_Owner);
 

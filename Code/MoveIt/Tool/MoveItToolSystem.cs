@@ -121,6 +121,7 @@ namespace MoveIt.Tool
         internal EntityQuery m_ControlPointQuery;
         internal EntityQuery m_SurfacesQuery;
         internal EntityQuery m_MIT_SelectedQuery;
+        internal EntityQuery m_MIT_SelectedControlPointQuery;
         private EntityQuery m_DefinitionGroup;
 
         // Options
