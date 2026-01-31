@@ -22,6 +22,7 @@ namespace MoveIt.Systems
         private EntityQuery m_TempNodeQuery;
         private ToolSystem m_ToolSystem; 
         private TerrainSystem m_TerrainSystem;
+        private EntityQuery m_SelectedMITControlPointQuery;
 
         protected override void OnCreate()
         {
@@ -36,6 +37,11 @@ namespace MoveIt.Systems
                 .WithAllRW<Game.Net.Node>()
                 .WithAll<Game.Tools.Temp, Game.Net.ConnectedEdge, Game.Common.Updated>()
                 .WithNone<Deleted, Owner>()
+                .Build();
+
+            m_SelectedMITControlPointQuery = SystemAPI.QueryBuilder()
+                .WithAll<MIT_Selected, MIT_ControlPoint>()
+                .WithNone<Deleted, Temp>()
                 .Build();
 
             RequireForUpdate(m_TempNodeQuery);
@@ -71,13 +77,35 @@ namespace MoveIt.Systems
             NativeArray<Entity> entities = m_TempNodeQuery.ToEntityArray(Allocator.Temp);
             NativeList<Entity> processedSegments = new NativeList<Entity>(Allocator.Temp);
 
+            // This runs through selected Move it control points to see if any of them are attached to Nodes and should move those as well. 
+            NativeList<Entity> selectedControlPointNodes = new NativeList<Entity>(m_SelectedMITControlPointQuery.CalculateEntityCount(), Allocator.Temp);
+            if (_MIT.IsManipulating &&
+               !m_SelectedMITControlPointQuery.IsEmptyIgnoreFilter)
+            {
+                NativeArray<Entity> selectedControlPointEntities = m_SelectedMITControlPointQuery.ToEntityArray(Allocator.Temp);
+                for (int i = 0; i < selectedControlPointEntities.Length; i++)
+                {
+                    if (selectedControlPointEntities[i] != Entity.Null &&
+                        EntityManager.TryGetComponent(selectedControlPointEntities[i], out MIT_ControlPoint controlPoint) &&
+                        controlPoint.m_Parent != Entity.Null &&
+                        controlPoint.m_Node != Entity.Null &&
+                       (controlPoint.m_ParentKey == 0 ||
+                        controlPoint.m_ParentKey == 3) &&
+                       !selectedControlPointNodes.Contains(controlPoint.m_Node))
+                    {
+                        selectedControlPointNodes.Add(controlPoint.m_Node);
+                    }
+                }
+            }
+
             for (int i = 0; i < entities.Length; i++)
             {
                 if (entities[i] == Entity.Null ||
                    !EntityManager.TryGetComponent(entities[i], out Game.Net.Node node) ||
                    !EntityManager.TryGetComponent(entities[i], out Game.Tools.Temp temp) ||
                     temp.m_Original == Entity.Null ||
-                   !EntityManager.HasComponent<MIT_Selected>(temp.m_Original) ||
+                  (!EntityManager.HasComponent<MIT_Selected>(temp.m_Original) &&
+                   !selectedControlPointNodes.Contains(temp.m_Original)) ||
                    !EntityManager.TryGetComponent(temp.m_Original, out Game.Net.Node originalNode))
                 {
                     continue;
@@ -116,7 +144,7 @@ namespace MoveIt.Systems
                     bool setCurve = false;
 
                     if (edge.m_End != Entity.Null &&
-                        EntityManager.HasComponent<MIT_Selected>(originalEdge.m_End))
+                       EntityManager.HasComponent<MIT_Selected>(originalEdge.m_End))
                     {
                         curve.m_Bezier.d.y = originalCurve.m_Bezier.d.y + _MIT.m_VerticalDisplacement;
                         curve.m_Bezier.c.y = originalCurve.m_Bezier.d.y + _MIT.m_VerticalDisplacement;
@@ -125,6 +153,16 @@ namespace MoveIt.Systems
                         {
                             curve.m_Bezier.d = FollowTerrain(curve.m_Bezier.d, originalCurve.m_Bezier.d);
                             curve.m_Bezier.c = FollowTerrain(curve.m_Bezier.c, originalCurve.m_Bezier.c);
+                        }
+                        setCurve = true;
+                    } else if (edge.m_End != Entity.Null &&
+                               selectedControlPointNodes.Contains(originalEdge.m_End))
+                    {
+                        curve.m_Bezier.d.y = originalCurve.m_Bezier.d.y + _MIT.m_VerticalDisplacement;
+
+                        if (_MIT.m_FollowingTerrain)
+                        {
+                            curve.m_Bezier.d = FollowTerrain(curve.m_Bezier.d, originalCurve.m_Bezier.d);
                         }
                         setCurve = true;
                     }
@@ -139,6 +177,17 @@ namespace MoveIt.Systems
                         {
                             curve.m_Bezier.a = FollowTerrain(curve.m_Bezier.a, originalCurve.m_Bezier.a);
                             curve.m_Bezier.b = FollowTerrain(curve.m_Bezier.b, originalCurve.m_Bezier.b);
+                        }
+                        setCurve = true;
+                    }
+                    else if (edge.m_Start != Entity.Null &&
+                             selectedControlPointNodes.Contains(originalEdge.m_Start)) 
+                    {
+                        curve.m_Bezier.a.y = originalCurve.m_Bezier.a.y + _MIT.m_VerticalDisplacement;
+
+                        if (_MIT.m_FollowingTerrain)
+                        {
+                            curve.m_Bezier.a = FollowTerrain(curve.m_Bezier.a, originalCurve.m_Bezier.a);
                         }
                         setCurve = true;
                     }

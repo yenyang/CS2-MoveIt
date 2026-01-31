@@ -153,8 +153,7 @@ namespace MoveIt.Moveables
             DisposeIfUnused();
             if (m_Entity != Entity.Null)
             {
-                EntityCommandBuffer buffer = _MIT.m_Barrier.CreateCommandBuffer();
-                buffer.RemoveComponent<MIT_Selected>(m_Entity);
+                _MIT.EntityManager.RemoveComponent<MIT_Selected>(m_Entity);
             }
         }
 
