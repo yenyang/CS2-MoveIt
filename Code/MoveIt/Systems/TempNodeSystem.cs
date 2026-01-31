@@ -46,6 +46,7 @@ namespace MoveIt.Systems
 
             RequireForUpdate(m_TempNodeQuery);
 
+            Enabled = false;
             QLog.Info($"{nameof(TempNodeSystem)}.{nameof(OnCreate)}");
         }
 

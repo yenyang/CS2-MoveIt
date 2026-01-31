@@ -91,6 +91,7 @@ namespace MoveIt
             updateSystem.UpdateAfter<ApplyMoveItSystem, ApplyNetSystem>(SystemUpdatePhase.ApplyTool);
             updateSystem.UpdateBefore<RemoveSaveInstanceSystem, ApplyPrefabsSystem>(SystemUpdatePhase.ModificationEnd);
             updateSystem.UpdateBefore<TempNodeSystem, CompositionSelectSystem>(SystemUpdatePhase.Modification3);
+            updateSystem.UpdateBefore<FindOriginalSystem, TempNodeSystem>(SystemUpdatePhase.Modification3);
         }
 
         public void OnDispose()
