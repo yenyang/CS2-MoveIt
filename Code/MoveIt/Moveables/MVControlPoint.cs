@@ -151,6 +151,11 @@ namespace MoveIt.Moveables
             MoveItToolSystem.Log.Debug($"OnDeselect {ToString()}");
             m_Overlay.RemoveFlag(InteractionFlags.Selected);
             DisposeIfUnused();
+            if (m_Entity != Entity.Null)
+            {
+                EntityCommandBuffer buffer = _MIT.m_Barrier.CreateCommandBuffer();
+                buffer.RemoveComponent<MIT_Selected>(m_Entity);
+            }
         }
 
         internal virtual void DisposeIfUnused()

@@ -122,6 +122,12 @@ namespace MoveIt.Tool
                 StartWorkflow(Workflow.Move);
             }
             MITState = MITStates.ApplyButtonHeld;
+
+            if (IsManipulating)
+            {
+                StartWorkflow(Workflow.Manipulating);
+            }
+
             TransformStart();
         }
 
@@ -138,13 +144,17 @@ namespace MoveIt.Tool
 
         internal void EndMove()
         {
-            CompeleteWorkflow(Workflow.Move);
+            CompleteWorkflow(Workflow.Move);
+            if (IsManipulating)
+            {
+                CompleteWorkflow(Workflow.Manipulating);
+            }
             TransformEnd();
         }
 
         internal void RotationEnd()
         {
-            CompeleteWorkflow(Workflow.Rotate);
+            CompleteWorkflow(Workflow.Rotate);
             TransformEnd();
         }
 
@@ -208,7 +218,7 @@ namespace MoveIt.Tool
             }
         }
 
-        internal void CompeleteWorkflow(Workflow workflow)
+        internal void CompleteWorkflow(Workflow workflow)
         {
             if (m_Workflow[(int)workflow] != WorkflowProgression.Complete)
             {
@@ -315,17 +325,19 @@ namespace MoveIt.Tool
                 return false;
             }
 
+            bool shouldUpdate = false;
+
             foreach(Workflow workflow in m_ShouldUpdateWorkflows)
             {
                 if (m_Workflow[(int)workflow] == WorkflowProgression.Starting ||
                     m_Workflow[(int)workflow] == WorkflowProgression.InProgress)
                 {
                     SetWorkflowInProgess(workflow);
-                    return true;
+                    shouldUpdate = true;
                 }
             }
 
-            return false;
+            return shouldUpdate;
         }
 
         public override string toolID => "MoveItTool";

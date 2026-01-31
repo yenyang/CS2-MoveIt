@@ -44,7 +44,10 @@ namespace MoveIt.Actions.Select
 
             _MIT.Selection = m_IsManipulating ? new SelectionManip(_MIT.Selection) : new SelectionNormal(_MIT.Selection);
 
-            if (!_IsAppend)
+            if (!_IsAppend &&
+               (_MIT.m_Workflow[(int)Workflow.DeselectAll] != WorkflowProgression.NotStarted ||
+               (_MIT.m_Workflow[(int)Workflow.SelectingIndividual] != WorkflowProgression.NotStarted &&
+                !_MIT.Hovered.IsSelected)))
             {
                 if (m_IsManipulating && _IsForChild)
                 {
@@ -54,9 +57,7 @@ namespace MoveIt.Actions.Select
                     _MIT.Selection.Remove(toRemove, false);
                     Deselect(toRemove);
                 }
-                else if (_MIT.m_Workflow[(int)Workflow.DeselectAll] != WorkflowProgression.NotStarted ||
-                        (_MIT.m_Workflow[(int)Workflow.SelectingIndividual] != WorkflowProgression.NotStarted &&                         
-                        !_MIT.Hovered.IsSelected))
+                else
                 {
                     // New selection, wipe everything
                     _MIT.Selection.Clear(); // I think was causing problem with moving single selection if conditional wasn't added.  

@@ -70,14 +70,14 @@ namespace MoveIt.Managers
                 !_Key_MoveDown.IsPressed &&
                 !_Key_MoveDown2.IsPressed)
             {
-                _MIT.CompeleteWorkflow(Workflow.Lower);
+                _MIT.CompleteWorkflow(Workflow.Lower);
             }
 
             if (_MIT.m_Workflow[(int)Workflow.Elevate] == WorkflowProgression.InProgress &&
                 !_Key_MoveUp.IsPressed &&
                 !_Key_MoveUp2.IsPressed)
             {
-                _MIT.CompeleteWorkflow(Workflow.Elevate);
+                _MIT.CompleteWorkflow(Workflow.Elevate);
             }
 
             return false;

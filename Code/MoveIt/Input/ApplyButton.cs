@@ -143,7 +143,7 @@ namespace MoveIt.Input
 
                 if (_MIT.m_Workflow[(int)Workflow.DrawingMarquee] == WorkflowProgression.InProgress)
                 {
-                    _MIT.CompeleteWorkflow(Workflow.DrawingMarquee);
+                    _MIT.CompleteWorkflow(Workflow.DrawingMarquee);
                 }
             }
             _MIT.m_Marquee?.Dispose();
@@ -151,19 +151,19 @@ namespace MoveIt.Input
 
             if (_MIT.m_Workflow[(int)Workflow.SelectingIndividual] == WorkflowProgression.InProgress)
             {
-                _MIT.CompeleteWorkflow(Workflow.SelectingIndividual);
+                _MIT.CompleteWorkflow(Workflow.SelectingIndividual);
             }
 
             if (!_MIT.m_TempQuery.IsEmptyIgnoreFilter &&
                 _MIT.m_Workflow[(int)Workflow.Delete] == WorkflowProgression.InProgress)
             {
-                _MIT.CompeleteWorkflow(Workflow.Delete);
+                _MIT.CompleteWorkflow(Workflow.Delete);
             }
 
             if (!_MIT.m_TempQuery.IsEmptyIgnoreFilter &&
                 _MIT.m_Workflow[(int)Workflow.Copy] == WorkflowProgression.InProgress)
             {
-                _MIT.CompeleteWorkflow(Workflow.Copy);
+                _MIT.CompleteWorkflow(Workflow.Copy);
             }
         }
     }

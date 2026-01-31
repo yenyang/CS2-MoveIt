@@ -82,7 +82,7 @@ namespace MoveIt.Input
             m_Status = ButtonStatus.None;
             if (_MIT.m_Workflow[(int)Workflow.DeselectAll] != WorkflowProgression.NotStarted)
             {
-                _MIT.CompeleteWorkflow(Workflow.DeselectAll);
+                _MIT.CompleteWorkflow(Workflow.DeselectAll);
             }
             //MIT.Log.Debug($"SecondaryButton.OnRelease");
         }
