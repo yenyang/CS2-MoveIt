@@ -5,6 +5,7 @@
 
 using Colossal.Entities;
 using Game.Common;
+using Game.Net;
 using Game.Objects;
 using Game.Prefabs;
 using Game.Simulation;
@@ -28,8 +29,8 @@ namespace MoveIt.Systems
         private EntityQuery m_SelectedObjectsQuery;
         private EntityQuery m_TempNodeQuery;
         private EntityQuery m_SelectedNodeQuery;
-        private EntityQuery m_TempCurveQuery;
-        private EntityQuery m_SelectedCurveQuery;
+        private EntityQuery m_TempEdgeQuery;
+        private EntityQuery m_SelectedEdgeQuery;
 
         protected override void OnCreate()
         {
@@ -51,27 +52,26 @@ namespace MoveIt.Systems
                 .Build();
 
             m_TempNodeQuery = SystemAPI.QueryBuilder()
-                .WithAll<Game.Tools.Temp, Game.Objects.Transform, PrefabRef>()
+                .WithAll<Game.Tools.Temp, Game.Net.Node, PrefabRef>()
                 .WithNone<Deleted, Owner, MIT_Original>()
                 .Build();
 
             m_SelectedNodeQuery = SystemAPI.QueryBuilder()
-                .WithAll<MIT_Selected, Game.Objects.Transform, PrefabRef>()
+                .WithAll<MIT_Selected, Game.Net.Node, PrefabRef>()
                 .WithNone<Deleted, Owner, Temp, MIT_ControlPoint>()
                 .Build();
 
-            m_TempCurveQuery = SystemAPI.QueryBuilder()
-                .WithAll<Game.Tools.Temp, Game.Objects.Transform, PrefabRef>()
+            m_TempEdgeQuery = SystemAPI.QueryBuilder()
+                .WithAll<Game.Tools.Temp, Game.Net.Curve, Game.Net.Edge, PrefabRef>()
                 .WithNone<Deleted, Owner, MIT_Original>()
                 .Build();
 
-            m_SelectedCurveQuery = SystemAPI.QueryBuilder()
-                .WithAll<MIT_Selected, Game.Objects.Transform, PrefabRef>()
+            m_SelectedEdgeQuery = SystemAPI.QueryBuilder()
+                .WithAll<MIT_Selected, Game.Net.Curve, Game.Net.Edge, PrefabRef>()
                 .WithNone<Deleted, Owner, Temp, MIT_ControlPoint>()
                 .Build();
 
-            RequireAnyForUpdate(new EntityQuery[] { m_TempTransformQuery, m_TempNodeQuery, m_TempCurveQuery });
-            RequireAnyForUpdate(new EntityQuery[] { m_SelectedObjectsQuery, m_SelectedCurveQuery, m_SelectedCurveQuery });
+            RequireAnyForUpdate(new EntityQuery[] { m_TempTransformQuery, m_TempNodeQuery, m_TempEdgeQuery });
 
             Enabled = false;
 
@@ -101,7 +101,7 @@ namespace MoveIt.Systems
 
             EntityCommandBuffer buffer = new EntityCommandBuffer(Unity.Collections.Allocator.Temp);
 
-
+            // Find original objects.
             NativeArray<Entity> tempObjects = m_TempTransformQuery.ToEntityArray(Allocator.Temp);
             NativeList<Entity> selectedObjects = m_SelectedObjectsQuery.ToEntityListAsync(Allocator.Temp, Dependency, out JobHandle jobHandle);
             jobHandle.Complete();
@@ -120,15 +120,82 @@ namespace MoveIt.Systems
                             EntityManager.TryGetComponent(selectedObjects[j], out Game.Objects.Transform selectedTransform) &&
                             EntityManager.TryGetComponent(selectedObjects[j], out Game.Prefabs.PrefabRef selectedPrefabRef) &&
                             selectedPrefabRef.m_Prefab == tempPrefabRef.m_Prefab &&
-                            MatchesOriginal(tempTransform.m_Position, selectedTransform.m_Position))
+                            MatchesOriginal(tempTransform, selectedTransform))
                         {
                             buffer.AddComponent(tempObjects[i], new MIT_Original() { m_Original = selectedObjects[j] });
-                            matched = j-1;
+                            matched = j;
                             break;
                         }
                     }
 
                     selectedObjects.RemoveAt(matched);
+                }
+            }
+
+            // Find original nodes.
+            NativeArray<Entity> tempNodes = m_TempNodeQuery.ToEntityArray(Allocator.Temp);
+            NativeList<Entity> selectedNodes = m_SelectedNodeQuery.ToEntityListAsync(Allocator.Temp, Dependency, out JobHandle jobHandle2);
+            NativeList<Entity> selectedEdges = m_SelectedEdgeQuery.ToEntityListAsync(Allocator.Temp, Dependency, out JobHandle jobHandle3);
+            jobHandle2.Complete();
+            jobHandle3.Complete();
+
+            for (int i = 0; i < selectedNodes.Length; i++)
+            {
+                if (EntityManager.TryGetBuffer(selectedNodes[i], isReadOnly: true, out DynamicBuffer<ConnectedEdge> connectedEdges))
+                {
+                    for (int j = 0; j < connectedEdges.Length; j++)
+                    {
+                        if (connectedEdges[j].m_Edge != Entity.Null &&
+                            !selectedEdges.Contains(connectedEdges[j].m_Edge))
+                        {
+                            selectedEdges.Add(connectedEdges[j].m_Edge);
+                        }
+
+                        if (connectedEdges[j].m_Edge != Entity.Null &&
+                            EntityManager.TryGetComponent(connectedEdges[j].m_Edge, out Game.Net.Edge edge))
+                        {
+                            if  (edge.m_End != Entity.Null &&
+                                !selectedNodes.Contains(edge.m_End))
+                            {
+                                selectedNodes.Add(edge.m_End);
+                            }
+
+                            if (edge.m_Start != Entity.Null &&
+                               !selectedNodes.Contains(edge.m_Start))
+                            {
+                                selectedNodes.Add(edge.m_Start);
+                            }
+                        }
+
+                    }
+                }
+
+            }
+
+            for (int i = 0; i < tempNodes.Length; i++)
+            {
+                if (tempNodes[i] != Entity.Null &&
+                    EntityManager.TryGetComponent(tempNodes[i], out Game.Net.Node tempNode) &&
+                    EntityManager.TryGetComponent(tempNodes[i], out Game.Prefabs.PrefabRef tempPrefabRef) &&
+                    tempPrefabRef.m_Prefab != Entity.Null)
+                {
+                    int matched = 0;
+                    for (int j = 0; j < selectedNodes.Length; j++)
+                    {
+                        if (selectedNodes[j] != Entity.Null &&
+                            EntityManager.TryGetComponent(selectedNodes[j], out Game.Net.Node selectedNode) &&
+                            EntityManager.TryGetComponent(selectedNodes[j], out Game.Prefabs.PrefabRef selectedPrefabRef) &&
+                            selectedPrefabRef.m_Prefab == tempPrefabRef.m_Prefab &&
+                            MatchesOriginal(tempNode.m_Position, selectedNode.m_Position))
+                        {
+                            buffer.AddComponent(tempNodes[i], new MIT_Original() { m_Original = selectedNodes[j] });
+                            matched = j;
+                            
+                            break;
+                        }
+                    }
+
+                    selectedNodes.RemoveAt(matched);
                 }
             }
 
@@ -178,7 +245,35 @@ namespace MoveIt.Systems
                 referencePoint = FollowTerrain(referencePoint, originalPosition);
             }
 
-            if (Vector3.Distance(tempPosition, referencePoint) < 0.01f)
+            if (Vector3.Distance(tempPosition, referencePoint) < 0.1f)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+
+        private bool MatchesOriginal(Game.Objects.Transform tempTransform, Game.Objects.Transform originalTransform)
+        {
+            Game.Objects.Transform referenceTransform = originalTransform;
+            if (_MIT.m_RotationAboutCenter != 0)
+            {
+                referenceTransform = GetRotatedPosition(originalTransform);
+            }
+
+            referenceTransform.m_Position = GetTranslatedXZPositionAndVerticallyDisplace(referenceTransform.m_Position);
+
+            if (_MIT.m_FollowingTerrain)
+            {
+                referenceTransform.m_Position = FollowTerrain(referenceTransform.m_Position, originalTransform.m_Position);
+            }
+
+            if (Vector3.Distance(tempTransform.m_Position, referenceTransform.m_Position) < 0.001f &&
+                Mathf.Approximately(tempTransform.m_Rotation.value.x, referenceTransform.m_Rotation.value.x) &&
+                Mathf.Approximately(tempTransform.m_Rotation.value.y, referenceTransform.m_Rotation.value.y) &&
+                Mathf.Approximately(tempTransform.m_Rotation.value.z, referenceTransform.m_Rotation.value.z) &&
+                Mathf.Approximately(tempTransform.m_Rotation.value.w, referenceTransform.m_Rotation.value.w))
             {
                 return true;
             }
