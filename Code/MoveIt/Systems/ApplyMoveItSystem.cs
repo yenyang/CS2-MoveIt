@@ -75,7 +75,8 @@ namespace MoveIt.Systems
             }
 
             _MIT.UpdateTerrain();
-            
+            _MIT.Selection.Refresh();
+            _MIT.Moveables.UpdateAllOverlays();
         }
 
         private void OnToolChanged(ToolBaseSystem tool)
