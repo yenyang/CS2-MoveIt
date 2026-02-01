@@ -23,18 +23,5 @@ namespace MoveIt.Tool
 
             return Entity.Null;
         }
-
-        public static EntityQuery GetMIT_OriginalQueryWith(ComponentType[] all, ComponentType[] any, ComponentType[] none)
-        {
-            ComponentType[] allPlusMITOriginal = new ComponentType[all.Length + 2];
-            for (int i = 0; i < all.Length; i++)
-            {
-                allPlusMITOriginal[i] = all[i];
-            }
-            allPlusMITOriginal[all.Length] = ComponentType.ReadOnly<MIT_Original>();
-            allPlusMITOriginal[all.Length+1] = ComponentType.ReadOnly<Game.Tools.Temp>();
-
-            return m_Instance.GetEntityQuery(new EntityQueryDesc[] { new EntityQueryDesc { All = allPlusMITOriginal, Any = any, None = none } });
-        }
     }
 }
