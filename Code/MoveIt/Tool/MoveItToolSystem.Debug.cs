@@ -1,4 +1,9 @@
-﻿using Colossal.Entities;
+﻿// <copyright>
+// Copyright (c) Yenyang. MIT License See LICENSE.txt
+// Forked with permission from Quboid's CS2-MoveIt project.
+// </copyright>
+
+using Colossal.Entities;
 using Game.Objects;
 using Game.Tools;
 using MoveIt.Moveables;

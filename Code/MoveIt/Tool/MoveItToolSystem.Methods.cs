@@ -1,17 +1,19 @@
-﻿using Colossal.Mathematics;
+﻿// <copyright>
+// Copyright (c) Yenyang. MIT License See LICENSE.txt
+// Forked with permission from Quboid's CS2-MoveIt project.
+// </copyright>
+
+using Colossal.Mathematics;
 using Game.Common;
 using Game.Net;
 using Game.Tools;
 using MoveIt.Actions;
 using MoveIt.Actions.Select;
-using MoveIt.Actions.Transform;
 using MoveIt.Overlays;
-using MoveIt.Settings;
 using QCommonLib;
 using System;
 using System.Reflection;
 using Unity.Entities;
-using Unity.Entities.UniversalDelegates;
 using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
@@ -155,6 +157,7 @@ namespace MoveIt.Tool
         internal void RotationEnd()
         {
             CompleteWorkflow(Workflow.Rotate);
+            m_PreviousRotation = 0;
             TransformEnd();
         }
 
