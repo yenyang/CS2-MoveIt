@@ -17,6 +17,7 @@ using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Assertions.Must;
 
 namespace MoveIt.Systems
 {
@@ -113,7 +114,8 @@ namespace MoveIt.Systems
                     EntityManager.TryGetComponent(tempObjects[i], out Game.Prefabs.PrefabRef tempPrefabRef) &&
                     tempPrefabRef.m_Prefab != Entity.Null)
                 {
-                    int matched = 0;
+                    bool matched = false;
+                    int index = 0;
                     for (int j = 0; j < selectedObjects.Length; j++)
                     {
                         if (selectedObjects[j] != Entity.Null &&
@@ -123,17 +125,20 @@ namespace MoveIt.Systems
                             MatchesOriginal(tempTransform, selectedTransform))
                         {
                             buffer.AddComponent(tempObjects[i], new MIT_Original() { m_Original = selectedObjects[j] });
-                            matched = j;
+                            matched = true;
+                            index = j;
                             break;
                         }
                     }
 
-                    selectedObjects.RemoveAt(matched);
+                    if (matched)
+                    {
+                        selectedObjects.RemoveAt(index);
+                    }
                 }
             }
 
-            // Find original nodes.
-            NativeArray<Entity> tempNodes = m_TempNodeQuery.ToEntityArray(Allocator.Temp);
+            // Determine all nodes and edges that are being copied. It is often more than the amount selected.
             NativeList<Entity> selectedNodes = m_SelectedNodeQuery.ToEntityListAsync(Allocator.Temp, Dependency, out JobHandle jobHandle2);
             NativeList<Entity> selectedEdges = m_SelectedEdgeQuery.ToEntityListAsync(Allocator.Temp, Dependency, out JobHandle jobHandle3);
             jobHandle2.Complete();
@@ -169,33 +174,100 @@ namespace MoveIt.Systems
 
                     }
                 }
+            }
+
+            for (int i = 0; i < selectedEdges.Length; i++)
+            {
+                if (EntityManager.TryGetComponent(selectedEdges[i], out Edge edge))
+                {
+                    if (edge.m_End != Entity.Null &&
+                        !selectedNodes.Contains(edge.m_End))
+                    {
+                        selectedNodes.Add(edge.m_End);
+                    }
+
+                    if (edge.m_Start != Entity.Null &&
+                       !selectedNodes.Contains(edge.m_Start))
+                    {
+                        selectedNodes.Add(edge.m_Start);
+                    }
+                }
 
             }
 
+            // Find original nodes.
+            NativeArray<Entity> tempNodes = m_TempNodeQuery.ToEntityArray(Allocator.Temp);
             for (int i = 0; i < tempNodes.Length; i++)
             {
                 if (tempNodes[i] != Entity.Null &&
-                    EntityManager.TryGetComponent(tempNodes[i], out Game.Net.Node tempNode) &&
-                    EntityManager.TryGetComponent(tempNodes[i], out Game.Prefabs.PrefabRef tempPrefabRef) &&
-                    tempPrefabRef.m_Prefab != Entity.Null)
+                    EntityManager.TryGetComponent(tempNodes[i], out Game.Net.Node tempNode))
                 {
-                    int matched = 0;
+                    bool matched = false;
+                    int index = 0;
                     for (int j = 0; j < selectedNodes.Length; j++)
                     {
                         if (selectedNodes[j] != Entity.Null &&
                             EntityManager.TryGetComponent(selectedNodes[j], out Game.Net.Node selectedNode) &&
-                            EntityManager.TryGetComponent(selectedNodes[j], out Game.Prefabs.PrefabRef selectedPrefabRef) &&
-                            selectedPrefabRef.m_Prefab == tempPrefabRef.m_Prefab &&
                             MatchesOriginal(tempNode.m_Position, selectedNode.m_Position))
                         {
                             buffer.AddComponent(tempNodes[i], new MIT_Original() { m_Original = selectedNodes[j] });
-                            matched = j;
-                            
+                            index = j;
+                            matched = true;
                             break;
                         }
                     }
 
-                    selectedNodes.RemoveAt(matched);
+                    if (matched)
+                    {
+                        selectedNodes.RemoveAt(index);
+                    }
+                }
+            }
+
+            // Find original edges
+            NativeArray<Entity> tempEdges = m_TempEdgeQuery.ToEntityArray(Allocator.Temp);
+            for (int i = 0; i < tempEdges.Length; i++)
+            {
+                if (tempEdges[i] != Entity.Null &&
+                    EntityManager.TryGetComponent(tempEdges[i], out Game.Net.Curve tempCurve) &&
+                    EntityManager.TryGetComponent(tempEdges[i], out Game.Prefabs.PrefabRef tempPrefabRef) &&
+                    EntityManager.TryGetComponent(tempEdges[i], out Game.Net.Edge tempEdge) &&
+                    tempEdge.m_Start != Entity.Null &&
+                    tempEdge.m_End != Entity.Null &&
+                    EntityManager.TryGetComponent(tempEdge.m_Start, out Game.Net.Node tempStartNode) &&
+                    EntityManager.TryGetComponent(tempEdge.m_End, out Game.Net.Node tempEndNode) &&
+                    tempPrefabRef.m_Prefab != Entity.Null)
+                {
+                    bool matched = false;
+                    int index = 0;
+                    for (int j = 0; j < selectedEdges.Length; j++)
+                    {
+                        if (selectedEdges[j] != Entity.Null &&
+                            EntityManager.TryGetComponent(selectedEdges[j], out Game.Prefabs.PrefabRef selectedPrefabRef) &&
+                            selectedPrefabRef.m_Prefab == tempPrefabRef.m_Prefab &&
+                            EntityManager.TryGetComponent(selectedEdges[j], out Game.Net.Curve selectedCurve) &&
+                            EntityManager.TryGetComponent(selectedEdges[j], out Game.Net.Edge selectedEdge) &&
+                            selectedEdge.m_Start != Entity.Null &&
+                            selectedEdge.m_End != Entity.Null &&
+                            EntityManager.TryGetComponent(selectedEdge.m_Start, out Game.Net.Node selectedStartNode) &&
+                            EntityManager.TryGetComponent(selectedEdge.m_End, out Game.Net.Node selectedEndNode) &&
+                          ((MatchesOriginal(tempStartNode.m_Position, selectedStartNode.m_Position) &&
+                            MatchesOriginal(tempEndNode.m_Position, selectedEndNode.m_Position)) ||
+                           (MatchesOriginal(tempEndNode.m_Position, selectedStartNode.m_Position) &&
+                            MatchesOriginal(tempStartNode.m_Position, selectedEndNode.m_Position))))
+                        {
+                            buffer.AddComponent(tempEdges[i], new MIT_Original() { m_Original = selectedEdges[j] });
+                            index = j;
+                            matched = true;
+
+                            break;
+                        }
+                    }
+
+                    if (matched)
+                    {
+                        selectedEdges.RemoveAt(index);
+                    }
                 }
             }
 
@@ -232,7 +304,7 @@ namespace MoveIt.Systems
 
         private bool MatchesOriginal(float3 tempPosition, float3 originalPosition)
         {
-            float3 referencePoint = originalPosition;
+            float3 referencePoint = new float3(originalPosition.x, originalPosition.y, originalPosition.z);
             if (_MIT.m_RotationAboutCenter != 0)
             {
                 referencePoint = GetRotatedPosition(new Game.Objects.Transform() { m_Position = referencePoint, m_Rotation = quaternion.identity }).m_Position;
@@ -245,7 +317,7 @@ namespace MoveIt.Systems
                 referencePoint = FollowTerrain(referencePoint, originalPosition);
             }
 
-            if (Vector3.Distance(tempPosition, referencePoint) < 0.1f)
+            if (Vector3.Distance(tempPosition, referencePoint) < 0.5f)
             {
                 return true;
             }

@@ -7,6 +7,7 @@
 
 using Game.Common;
 using Game.Tools;
+using MoveIt.Components;
 using QCommonLib;
 using Unity.Burst;
 using Unity.Burst.Intrinsics;
@@ -17,13 +18,14 @@ using Unity.Jobs;
 namespace MoveIt.Systems
 {
     /// <summary>
-    /// A system to apply move it transformations to originals from temps. Only sometimes necessary such as object movement, node elevation/lowering.
+    /// A system to apply move it transformations to originals from temps. Only sometimes necessary such as object movement.
     /// </summary>
     internal partial class ApplyMoveItSystem : MIT_System
     {
         private EntityQuery m_TempObjectQuery;
         private ToolOutputBarrier m_Barrier;
         private ToolSystem m_ToolSystem;
+        private EntityQuery m_MIT_OriginalQuery;
 
         protected override void OnCreate()
         {
@@ -39,7 +41,12 @@ namespace MoveIt.Systems
                .WithNone<Deleted, Game.Common.Overridden>()
                .Build();
 
-            RequireForUpdate(m_TempObjectQuery);
+            m_MIT_OriginalQuery = SystemAPI.QueryBuilder()
+                .WithAllRW<MIT_Original>()
+                .WithNone<Deleted>()
+                .Build();
+
+            RequireAnyForUpdate(m_TempObjectQuery, m_MIT_OriginalQuery);
 
             QLog.Info($"{nameof(ApplyMoveItSystem)}.{nameof(OnCreate)}");
             Enabled = false;
@@ -61,6 +68,14 @@ namespace MoveIt.Systems
                 m_Barrier.AddJobHandleForProducer(jobHandle);
                 Dependency = jobHandle;
             }
+
+            if (!m_MIT_OriginalQuery.IsEmptyIgnoreFilter)
+            {
+                NativeArray<Entity> entities = m_MIT_OriginalQuery.ToEntityArray(Allocator.Temp);
+                EntityCommandBuffer buffer = m_Barrier.CreateCommandBuffer();
+                buffer.RemoveComponent<MIT_Original>(entities);
+            }
+            
         }
 
         private void OnToolChanged(ToolBaseSystem tool)

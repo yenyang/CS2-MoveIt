@@ -88,7 +88,7 @@ namespace MoveIt
             updateSystem.UpdateAt<Overlays.MIT_OverlaySystem>(SystemUpdatePhase.Rendering);
             updateSystem.UpdateAt<MIT_UISystem>(SystemUpdatePhase.UIUpdate);
             updateSystem.UpdateAt<MIT_ToolTipSystem>(SystemUpdatePhase.UITooltip);
-            updateSystem.UpdateAfter<ApplyMoveItSystem, ApplyNetSystem>(SystemUpdatePhase.ApplyTool);
+            updateSystem.UpdateBefore<ApplyMoveItSystem, ApplyNetSystem>(SystemUpdatePhase.ApplyTool);
             updateSystem.UpdateBefore<RemoveSaveInstanceSystem, ApplyPrefabsSystem>(SystemUpdatePhase.ModificationEnd);
             updateSystem.UpdateBefore<TempNodeSystem, CompositionSelectSystem>(SystemUpdatePhase.Modification3);
             updateSystem.UpdateBefore<FindOriginalSystem, TempNodeSystem>(SystemUpdatePhase.Modification3);
