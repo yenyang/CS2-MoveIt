@@ -18,7 +18,7 @@ using Unity.Jobs;
 namespace MoveIt.Systems
 {
     /// <summary>
-    /// A system to apply move it transformations to originals from temps. Only sometimes necessary such as object movement.
+    /// A system to apply move it transformations to originals from temps. Only sometimes necessary such as object movement. Also handles update terrain after moving terrain altering things.
     /// </summary>
     internal partial class ApplyMoveItSystem : MIT_System
     {
@@ -45,8 +45,6 @@ namespace MoveIt.Systems
                 .WithAllRW<MIT_Original>()
                 .WithNone<Deleted>()
                 .Build();
-
-            RequireAnyForUpdate(m_TempObjectQuery, m_MIT_OriginalQuery);
 
             QLog.Info($"{nameof(ApplyMoveItSystem)}.{nameof(OnCreate)}");
             Enabled = false;
@@ -75,6 +73,8 @@ namespace MoveIt.Systems
                 EntityCommandBuffer buffer = m_Barrier.CreateCommandBuffer();
                 buffer.RemoveComponent<MIT_Original>(entities);
             }
+
+            _MIT.UpdateTerrain();
             
         }
 

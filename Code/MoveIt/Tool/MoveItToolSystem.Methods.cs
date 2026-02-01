@@ -346,5 +346,24 @@ namespace MoveIt.Tool
         public override string toolID => "MoveItTool";
         public override Game.Prefabs.PrefabBase GetPrefab() => null;
         public override bool TrySetPrefab(Game.Prefabs.PrefabBase prefab) => false;
+
+        internal void UpdateTerrain(Bounds3 area = default)
+        {
+            Bounds3 bounds = Selection.GetTotalBounds();
+            if (area.Equals(default))
+            {
+                area.min = bounds.min - MoveItToolSystem.TERRAIN_UPDATE_MARGIN;
+                area.max = bounds.max + MoveItToolSystem.TERRAIN_UPDATE_MARGIN;
+            }
+            else
+            {
+                area.min = math.min(area.min, bounds.min - MoveItToolSystem.TERRAIN_UPDATE_MARGIN);
+                area.max = math.max(area.max, bounds.max + MoveItToolSystem.TERRAIN_UPDATE_MARGIN);
+            }
+
+            //Overlays.DebugBounds.Factory(area, Overlays.Overlay.DEBUG_TTL, new(0.1f, 0.1f, 0.8f, 0.6f));
+
+            SetUpdateAreaField(area);
+        }
     }
 }

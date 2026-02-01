@@ -3,6 +3,7 @@
 // Forked with permission from Quboid's CS2-MoveIt project.
 // </copyright>
 
+using Colossal.Mathematics;
 using Game.Common;
 using Game.Prefabs;
 using Game.Tools;
@@ -166,6 +167,8 @@ namespace MoveIt.Tool
                     StartWorkflow(Workflow.Copy);
                 }
             }
+
+           
 
             return inputDeps;
         }
