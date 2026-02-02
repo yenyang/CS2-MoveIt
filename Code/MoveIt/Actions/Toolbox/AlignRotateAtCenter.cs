@@ -28,8 +28,7 @@ namespace MoveIt.Actions.Toolbox
             MoveDelta = new(0f, 0f, 0f);
             AngleDelta = angle - m_Old.m_States[seniorIdx].m_InitialRotation.Y();
 
-            // Commented Out to Prevent Quboid's setup from moving things.
-            // DoFromDeltas();
+            DoFromDeltas();
 
             m_UpdateMove = true;
             m_UpdateRotate = true;
