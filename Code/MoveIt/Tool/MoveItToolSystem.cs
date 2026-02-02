@@ -255,7 +255,7 @@ namespace MoveIt.Tool
         /// </summary>
         public bool CanCopyOrDelete
         {
-            get { return !m_MIT_SelectedQuery.IsEmptyIgnoreFilter; }
+            get { return !m_MIT_SelectedQuery.IsEmptyIgnoreFilter && !IsManipulating; }
         }
 
         /// <summary>

@@ -147,6 +147,7 @@ namespace MoveIt.Systems
 
                 case "manipulation":
                     _MIT.SetManipulationMode(true);
+                    _MIT.Copying = false;
                     break;
 
                 case "FollowTerrain":
