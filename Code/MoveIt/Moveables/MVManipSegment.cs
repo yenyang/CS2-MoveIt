@@ -1,4 +1,5 @@
 ﻿using MoveIt.Actions.Transform;
+using MoveIt.Components;
 using MoveIt.Overlays.Children;
 using MoveIt.Tool;
 using QCommonLib;
@@ -29,6 +30,17 @@ namespace MoveIt.Moveables
         internal override void MoveIt(TransformBase action, State state, bool move, bool rotate)
         {
             MoveItToolSystem.Log.Error($"Attempted to move ManipulateSegment {m_Entity.D()}");
+        }
+
+
+        public override void OnSelect()
+        {
+            //MIT.Log.Debug($"{m_Entity.D()} {Name} OnSelect");
+            m_Overlay.AddFlag(InteractionFlags.Selected);
+            foreach (Moveable mv in GetChildMoveablesForOverlays<Moveable>())
+            {
+                mv.m_Overlay.AddFlag(IsManipulatable ? InteractionFlags.ParentManipulating : InteractionFlags.ParentSelected);
+            }
         }
     }
 }

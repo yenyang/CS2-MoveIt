@@ -186,6 +186,11 @@ namespace MoveIt.Moveables
             {
                 mv.m_Overlay.AddFlag(IsManipulatable ? InteractionFlags.ParentManipulating : InteractionFlags.ParentSelected);
             }
+
+            if (m_Entity != Entity.Null)
+            {
+                _MIT.EntityManager.AddComponent<MIT_Selected>(m_Entity);
+            }
         }
 
         /// <summary>

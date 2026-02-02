@@ -144,7 +144,6 @@ namespace MoveIt.Selection
             _Buffer.Add(mvd);
             mv.OnSelect();
 
-            _MIT.EntityManager.AddComponent<MIT_Selected>(mvd.m_Entity);
             return true;
         }
 
