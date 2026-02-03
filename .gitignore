@@ -397,3 +397,5 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 /Code/MoveIt/Library
+/Code/MoveIt/Properties/affinity/ThumbnailAlpha.af
+/Code/MoveIt/Properties/affinity/ThumbnailBeta.af
