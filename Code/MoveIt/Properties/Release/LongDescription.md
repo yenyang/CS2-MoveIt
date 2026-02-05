@@ -5,7 +5,7 @@ You can move, copy/paste, and delete trees, props, decals, buildings, nodes, and
 Press **M** or click on the Move It icon at the bottom right to enable the tool.
 
 ## Important Update on Development:
-I am continuing the development of Move It with permission from Quboid. This is the ALPHA version of what I have been working on. There are big changes and this is still work-in-progress. Expect bugs. Some things don't work (i.e. Undo/Redo). Use with caution, probably not on your favorite save file you haven't backed up. Patience is appreciated. This will take time to develop.
+I am continuing the development of Move It with permission from Quboid. This is the ALPHA version of what I have been working on. There are big changes and this is still work-in-progress. Expect bugs. Some things don't work (i.e. Undo/Redo). Use with caution. Do not use on your favorite save file. Patience is appreciated. This will take time to develop.
 
 ## Dependencies
 Unified Icon Library

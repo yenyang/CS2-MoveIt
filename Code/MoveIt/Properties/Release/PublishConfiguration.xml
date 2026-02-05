@@ -14,7 +14,7 @@ You can move, copy/paste, and delete trees, props, decals, buildings, nodes, and
 Press **M** or click on the Move It icon at the bottom right to enable the tool.
 
 ## Important Update on Development:
-I am continuing the development of Move It with permission from Quboid. This is the ALPHA version of what I have been working on. There are big changes and this is still work-in-progress. Expect bugs. Some things don't work (i.e. Undo/Redo). Use with caution, probably not on your favorite save file you haven't backed up. Patience is appreciated. This will take time to develop.
+I am continuing the development of Move It with permission from Quboid. This is the ALPHA version of what I have been working on. There are big changes and this is still work-in-progress. Expect bugs. Some things don't work (i.e. Undo/Redo). Use with caution. Do not use on your favorite save file. Patience is appreciated. This will take time to develop.
 
 ## Dependencies
 Unified Icon Library
@@ -127,8 +127,8 @@ Translators: Pingwin_PL and karmel68 (Polish), elGendo87 (Spanish), ti4goc (Port
   <!--Dependency for the mod, can be set multiple-->
   <Dependency Id="74417" DisplayName="Unified Icon Library" Version="1.0.13" />
   <!--Change log for new version. Single line or multi line. Supports minimal markdown subset-->
-  <ChangeLog>
-  </ChangeLog>
+  <ChangeLog># Patch v0.6.1.1
+* Fixed Deleting Buildings with subnets leaves orphaned nodes.</ChangeLog>
   <!--External link. supported types are discord, github, youtube, twitch, x, paypal, patreon-->
   <ExternalLink Type="discord" Url="https://discord.gg/nURB9MQ" />
   <ExternalLink Type="paypal" Url="https://www.paypal.com/paypalme/YenyangsMods" />
