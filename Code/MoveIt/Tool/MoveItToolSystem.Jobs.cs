@@ -204,8 +204,7 @@ namespace MoveIt.Tool
                     
                     // SubAreas require their own CreationDefinition entity. The originals don't get hidden the way I would want them too. . .
                     if (m_SubAreaLookup.TryGetBuffer(entityNativeArray[i], out DynamicBuffer<Game.Areas.SubArea> subAreas) &&
-                        subAreas.Length > 0 &&
-                        m_CreationFlags != CreationFlags.Delete)
+                        subAreas.Length > 0)
                     {
                         for (int j = 0; j < subAreas.Length; j++)
                         {
@@ -270,8 +269,7 @@ namespace MoveIt.Tool
                     
                     // SubNets require their own CreationDefinition entity.
                     if (m_SubNetLookup.TryGetBuffer(entityNativeArray[i], out DynamicBuffer<Game.Net.SubNet> subNets) &&
-                        subNets.Length > 0 &&
-                        m_CreationFlags != CreationFlags.Delete)
+                        subNets.Length > 0)
                     {
 
                         for (int j = 0; j < subNets.Length; j++)
