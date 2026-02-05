@@ -202,6 +202,12 @@ namespace MoveIt.Tool
                         ProcessCurve(entityNativeArray[i], e, curve);
                     }
                     
+                    if (m_AreasNodeLookup.TryGetBuffer(entityNativeArray[i], out DynamicBuffer<Game.Areas.Node> areaNodes))
+                    {
+                        ProcessCreationDefinition(entityNativeArray[i], e);
+                        ProcessArea(entityNativeArray[i], e);
+                    }
+                    
                     // SubAreas require their own CreationDefinition entity. The originals don't get hidden the way I would want them too. . .
                     if (m_SubAreaLookup.TryGetBuffer(entityNativeArray[i], out DynamicBuffer<Game.Areas.SubArea> subAreas) &&
                         subAreas.Length > 0)
@@ -214,56 +220,9 @@ namespace MoveIt.Tool
                             }
 
                             Entity subAreaDefinition = buffer.CreateEntity();
-                            CreationDefinition subAreaCreationDefinition = new()
-                            {
-                                m_Flags = CreationFlags.Hidden,
-                            };
-
-                            if ((m_CreationFlags & CreationFlags.Relocate) == CreationFlags.Relocate ||
-                                (m_CreationFlags & CreationFlags.Delete) == CreationFlags.Delete)
-                            {
-                                subAreaCreationDefinition.m_Original = subAreas[j].m_Area;
-                            }
-
-                            if (m_PrefabRefLookup.HasComponent(subAreas[j].m_Area))
-                            {
-                                subAreaCreationDefinition.m_Prefab = m_PrefabRefLookup[subAreas[j].m_Area];
-                            }
-                            
-                            if (m_PrefabRefLookup.HasComponent(entityNativeArray[i]) &&
-                                m_TransformLookup.HasComponent(entityNativeArray[i]))
-                            {
-                                OwnerDefinition ownerDefinition = new OwnerDefinition()
-                                {
-                                    m_Prefab = m_PrefabRefLookup[entityNativeArray[i]],
-                                    m_Position = transform.m_Position,
-                                    m_Rotation = transform.m_Rotation,
-                                };
-                                buffer.AddComponent(subAreaDefinition, ownerDefinition);
-                            }
-
-                            if (m_AreasNodeLookup.TryGetBuffer(subAreas[j].m_Area, out DynamicBuffer<Game.Areas.Node> nodes) &&
-                                nodes.Length > 0)
-                            {
-                                DynamicBuffer<Game.Areas.Node> newNodeBuffer = buffer.AddBuffer<Game.Areas.Node>(subAreaDefinition);
-                                for (int k=0; k<nodes.Length; k++)
-                                {
-                                    Game.Areas.Node node = new Game.Areas.Node() { m_Position= nodes[k].m_Position, m_Elevation = nodes[k].m_Elevation };
-                                    node.m_Position = GetRotatedPosition(new Game.Objects.Transform(node.m_Position, quaternion.identity)).m_Position;
-                                    node.m_Position = GetTranslatedXZPositionAndVerticallyDisplace(node.m_Position);
-
-                                    newNodeBuffer.Add(node);
-                                }
-
-                                // Creating new subarea requires additional node to show that it's a closed figure.
-                                if (m_CreationFlags == 0)
-                                {
-                                    newNodeBuffer.Add(new Game.Areas.Node() { m_Position = newNodeBuffer[0].m_Position, m_Elevation = newNodeBuffer[0].m_Elevation });
-                                }
-                            }
-
-                            buffer.AddComponent(subAreaDefinition, subAreaCreationDefinition);
-                            buffer.AddComponent<Updated>(subAreaDefinition);
+                            ProcessCreationDefinition(subAreas[j].m_Area, subAreaDefinition);
+                            ProcessOwnerDefinition(entityNativeArray[i], subAreaDefinition, transform);
+                            ProcessArea(subAreas[j].m_Area, subAreaDefinition);
                         }
                     }
                     
@@ -572,6 +531,11 @@ namespace MoveIt.Tool
                     }
                 }
 
+                if (m_AreasNodeLookup.HasBuffer(originalInstance))
+                {
+                    creationDefinition.m_Flags |= CreationFlags.Hidden;
+                }
+
                 if (m_PrefabRefLookup.HasComponent(originalInstance))
                 {
                     if (m_OwnerLookup.TryGetComponent(originalInstance, out Owner owner) &&
@@ -602,6 +566,29 @@ namespace MoveIt.Tool
 
                 buffer.AddComponent(definitionEntity, creationDefinition);
                 buffer.AddComponent<Game.Common.Updated>(definitionEntity);
+            }
+
+            private void ProcessArea(Entity originalArea, Entity areaCreationDefinitionEntity)
+            {
+                if (m_AreasNodeLookup.TryGetBuffer(originalArea, out DynamicBuffer<Game.Areas.Node> nodes) &&
+                    nodes.Length > 0)
+                {
+                    DynamicBuffer<Game.Areas.Node> newNodeBuffer = buffer.AddBuffer<Game.Areas.Node>(areaCreationDefinitionEntity);
+                    for (int k = 0; k < nodes.Length; k++)
+                    {
+                        Game.Areas.Node node = new Game.Areas.Node() { m_Position = nodes[k].m_Position, m_Elevation = nodes[k].m_Elevation };
+                        node.m_Position = GetRotatedPosition(new Game.Objects.Transform(node.m_Position, quaternion.identity)).m_Position;
+                        node.m_Position = GetTranslatedXZPositionAndVerticallyDisplace(node.m_Position);
+
+                        newNodeBuffer.Add(node);
+                    }
+
+                    // Creating new subarea requires additional node to show that it's a closed figure.
+                    if (m_CreationFlags == 0)
+                    {
+                        newNodeBuffer.Add(new Game.Areas.Node() { m_Position = newNodeBuffer[0].m_Position, m_Elevation = newNodeBuffer[0].m_Elevation });
+                    }
+                }
             }
 
             private Game.Objects.Transform GetRotatedPosition(Game.Objects.Transform originalTransform)
