@@ -9,7 +9,7 @@
   <!--Change name in long description-->
   <LongDescription># Move It Alpha for Cities Skylines 2.
 
-You can move, copy/paste, and delete trees, props, decals, buildings, nodes, and segment curves. Standalone Surfaces may not work currently.
+You can move, copy/paste, and delete trees, props, decals, buildings, nodes, surfaces and segment curves.
 
 Press **M** or click on the Move It icon at the bottom right to enable the tool.
 
@@ -45,7 +45,7 @@ Left-Click drag to move selection, right-click drag to rotate selection. Snappin
 
 Hold Control while moving for more precision by switching to low sensitivity and hiding selection overlays.
 
-This version of Move It supports Previews and you can abort by pressing Escape although this will exit Move It tool currently. Error checks will be shown but currently do not prevent you from doing anything. With Compatible version of Anarchy use the keyboard shortcut to not check for Errors.
+This version of Move It supports Previews (except surfaces) and you can abort by pressing Escape although this will exit Move It tool currently. Error checks will be shown but currently do not prevent you from doing anything. With Compatible version of Anarchy use the keyboard shortcut to not check for Errors.
 
 ## Copying
 Make a selection. Press Copy. Move the copy around with the mouse. Right click drag to rotate the copies. Page Up/Down etc. to raise and lower. Left click to apply a copy. 
@@ -128,7 +128,8 @@ Translators: Pingwin_PL and karmel68 (Polish), elGendo87 (Spanish), ti4goc (Port
   <Dependency Id="74417" DisplayName="Unified Icon Library" Version="1.0.13" />
   <!--Change log for new version. Single line or multi line. Supports minimal markdown subset-->
   <ChangeLog># Patch v0.6.1.1
-* Fixed Deleting Buildings with subnets leaves orphaned nodes.</ChangeLog>
+* Fixed Deleting Buildings with subnets leaves orphaned nodes.
+* Addded support for moving standalone surfaces. They do not support previews at the moment.</ChangeLog>
   <!--External link. supported types are discord, github, youtube, twitch, x, paypal, patreon-->
   <ExternalLink Type="discord" Url="https://discord.gg/nURB9MQ" />
   <ExternalLink Type="paypal" Url="https://www.paypal.com/paypalme/YenyangsMods" />

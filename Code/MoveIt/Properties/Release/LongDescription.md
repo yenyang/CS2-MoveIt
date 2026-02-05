@@ -1,6 +1,6 @@
 ﻿# Move It Alpha for Cities Skylines 2.
 
-You can move, copy/paste, and delete trees, props, decals, buildings, nodes, and segment curves. Standalone Surfaces may not work currently.
+You can move, copy/paste, and delete trees, props, decals, buildings, nodes, surfaces and segment curves.
 
 Press **M** or click on the Move It icon at the bottom right to enable the tool.
 
@@ -36,7 +36,7 @@ Left-Click drag to move selection, right-click drag to rotate selection. Snappin
 
 Hold Control while moving for more precision by switching to low sensitivity and hiding selection overlays.
 
-This version of Move It supports Previews and you can abort by pressing Escape although this will exit Move It tool currently. Error checks will be shown but currently do not prevent you from doing anything. With Compatible version of Anarchy use the keyboard shortcut to not check for Errors.
+This version of Move It supports Previews (except surfaces) and you can abort by pressing Escape although this will exit Move It tool currently. Error checks will be shown but currently do not prevent you from doing anything. With Compatible version of Anarchy use the keyboard shortcut to not check for Errors.
 
 ## Copying
 Make a selection. Press Copy. Move the copy around with the mouse. Right click drag to rotate the copies. Page Up/Down etc. to raise and lower. Left click to apply a copy. 
