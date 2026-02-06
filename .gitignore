@@ -184,8 +184,14 @@ publish/
 *.azurePubxml
 # Note: Comment the next line if you want to checkin your web deploy settings,
 # but database connection strings (with potential passwords) will be unencrypted
-*.pubxml
+// *.pubxml
 *.publishproj
+
+# Track publish profiles (override any broader ignore)
+!Properties/PublishProfiles/*.pubxml
+
+# Ignore machine-specific publish profile user files
+*.pubxml.user
 
 # Microsoft Azure Web App publish settings. Comment the next line if you want to
 # checkin your Azure Web App publish settings, but sensitive information contained
