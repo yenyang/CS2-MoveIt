@@ -30,10 +30,10 @@
 		<NpmCmd Condition="'$(NpmCmd)'==''">npm</NpmCmd>
 
 		<!-- UI build control:
-		     - Debug default: true (handy: set false to avoid slow/hanging builds during code iteration)
+		     - Debug default: true (recommend: set false to avoid slow/hanging builds during code testing)
 		     - Release/Stable default: true (ensure publish builds include UI) -->
 		<RunMoveItUIBuild Condition="'$(RunMoveItUIBuild)'=='' AND '$(Configuration)'=='Debug'">true</RunMoveItUIBuild>
-		<RunMoveItUIBuild Condition="'$(RunMoveItUIBuild)'=='' AND '$(Configuration)'!='Debug'">true</RunMoveItUIBuild>
+		<RunMoveItUIBuild Condition="'$(RunMoveItUIBuild)'=='' AND ( '$(Configuration)'=='Release' OR '$(Configuration)'=='Stable' )">true</RunMoveItUIBuild>
 
 		<!-- Move It UI project location (relative to this .csproj) -->
 		<MoveItUiDir>..\..\UI</MoveItUiDir>
@@ -44,7 +44,7 @@
 		<MoveItNpmCiStamp>$(MoveItUiFullDir)\node_modules\.stamp</MoveItNpmCiStamp>
 		<MoveItNpmBuildStamp>$(MSBuildProjectDirectory)\bin\UI\.ui.stamp</MoveItNpmBuildStamp>
 
-		<!-- Optional timeouts (ms). Exec default is infinite; these prevent “looks frozen forever” scenarios. -->
+		<!-- Optional timeouts (ms). Exec default is infinite; these prevent “looks stuck forever”. -->
 		<MoveItNpmCiTimeoutMs Condition="'$(MoveItNpmCiTimeoutMs)'==''">900000</MoveItNpmCiTimeoutMs>
 		<MoveItNpmBuildTimeoutMs Condition="'$(MoveItNpmBuildTimeoutMs)'==''">900000</MoveItNpmBuildTimeoutMs>
 	</PropertyGroup>
@@ -55,7 +55,7 @@
 	<Import Project="$([System.Environment]::GetEnvironmentVariable('CSII_TOOLPATH', 'EnvironmentVariableTarget.User'))\Mod.targets" />
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<!-- RELEASE is a custom define (not MSBuild).
+		<!-- RELEASE is custom define (not MSBuild).
        Mod.cs uses it to format Mod.Version as a 4-part string.
        Stable keeps the original 3-part version (ToString(3)). -->
 		<DefineConstants>$(DefineConstants);USE_BURST;RELEASE</DefineConstants>
@@ -72,7 +72,7 @@
 		<WarningLevel>4</WarningLevel>
 	</PropertyGroup>
 
-	<!-- Debug helper: print toolchain-provided MSCORLIBPath -->
+	<!-- Optional Debug helper: print toolchain-provided MSCORLIBPath -->
 	<Target Name="ShowMscorlibPath" BeforeTargets="Build" Condition="'$(Configuration)'=='Debug'">
 		<Message Importance="High" Text="MSCORLIBPath=$(MSCORLIBPath)" />
 	</Target>
@@ -87,75 +87,57 @@
 		<MoveItUiInputs Include="$(MoveItUiFullDir)\webpack.config.js" Condition="Exists('$(MoveItUiFullDir)\webpack.config.js')" />
 	</ItemGroup>
 
-	<!-- npm ci only when lockfile changes (tracked via .stamp) -->
+	<!-- npm ci Only when lockfile changes (tracked via .stamp) -->
 	<Target Name="MoveItNpmInstallIfNeeded"
-	        Condition="'$(RunMoveItUIBuild)'=='true' AND Exists('$(MoveItUiFullDir)\package.json') AND Exists('$(MoveItUiFullDir)\package-lock.json')"
-	        Inputs="$(MoveItUiFullDir)\package-lock.json"
-	        Outputs="$(MoveItNpmCiStamp)">
+			Condition="'$(RunMoveItUIBuild)'=='true' AND Exists('$(MoveItUiFullDir)\package.json') AND Exists('$(MoveItUiFullDir)\package-lock.json')"
+			Inputs="$(MoveItUiFullDir)\package-lock.json"
+			Outputs="$(MoveItNpmCiStamp)">
 		<Message Text="MOVE IT UI: npm ci (lockfile changed or first-time)..." Importance="high" />
 
-		<Exec Command="$(NpmCmd) ci"
-		      WorkingDirectory="$(MoveItUiFullDir)"
-		      IgnoreExitCode="true"
-		      Timeout="$(MoveItNpmCiTimeoutMs)">
+		<Exec Command="$(NpmCmd) ci" WorkingDirectory="$(MoveItUiFullDir)" IgnoreExitCode="true" Timeout="$(MoveItNpmCiTimeoutMs)">
 			<Output TaskParameter="ExitCode" PropertyName="MoveItNpmCiExit" />
 		</Exec>
 
 		<!-- Non-Debug configs: fail hard -->
-		<Error Condition="'$(Configuration)'!='Debug' AND '$(MoveItNpmCiExit)'!='0'"
-		       Text="MOVE IT UI: 'npm ci' failed (exit $(MoveItNpmCiExit)). Build aborted." />
+		<Error Condition="'$(Configuration)'!='Debug' AND '$(MoveItNpmCiExit)'!='0'" Text="MOVE IT UI: 'npm ci' failed (exit $(MoveItNpmCiExit)). Build aborted." />
 
 		<!-- Debug: warn -->
-		<Warning Condition="'$(Configuration)'=='Debug' AND '$(MoveItNpmCiExit)'!='0'"
-		         Text="MOVE IT UI: 'npm ci' failed (exit $(MoveItNpmCiExit)). Continuing (Debug)." />
+		<Warning Condition="'$(Configuration)'=='Debug' AND '$(MoveItNpmCiExit)'!='0'" Text="MOVE IT UI: 'npm ci' failed (exit $(MoveItNpmCiExit)). Continuing (Debug)." />
 
-		<WriteLinesToFile Condition="'$(MoveItNpmCiExit)'=='0'"
-		                  File="$(MoveItNpmCiStamp)"
-		                  Lines="ok"
-		                  Overwrite="true" />
+		<WriteLinesToFile Condition="'$(MoveItNpmCiExit)'=='0'" File="$(MoveItNpmCiStamp)" Lines="ok" Overwrite="true" />
 	</Target>
 
 	<!-- npm run build only when UI inputs changed (tracked via .ui.stamp) -->
 	<Target Name="MoveItUIBuild"
-	        DependsOnTargets="MoveItNpmInstallIfNeeded"
-	        Condition="'$(RunMoveItUIBuild)'=='true' AND Exists('$(MoveItUiFullDir)\package.json')"
-	        Inputs="@(MoveItUiInputs)"
-	        Outputs="$(MoveItNpmBuildStamp)">
+			DependsOnTargets="MoveItNpmInstallIfNeeded"
+			Condition="'$(RunMoveItUIBuild)'=='true' AND Exists('$(MoveItUiFullDir)\package.json')"
+			Inputs="@(MoveItUiInputs)"
+			Outputs="$(MoveItNpmBuildStamp)">
 		<Message Text="MOVE IT UI: npm run build ($(Configuration))..." Importance="high" />
 
-		<Exec Command="$(NpmCmd) run build"
-		      WorkingDirectory="$(MoveItUiFullDir)"
-		      IgnoreExitCode="true"
-		      Timeout="$(MoveItNpmBuildTimeoutMs)">
+		<Exec Command="$(NpmCmd) run build" WorkingDirectory="$(MoveItUiFullDir)" IgnoreExitCode="true" Timeout="$(MoveItNpmBuildTimeoutMs)">
 			<Output TaskParameter="ExitCode" PropertyName="MoveItNpmBuildExit" />
 		</Exec>
 
 		<!-- Non-Debug configs: fail hard -->
-		<Error Condition="'$(Configuration)'!='Debug' AND '$(MoveItNpmBuildExit)'!='0'"
-		       Text="MOVE IT UI: 'npm run build' failed (exit $(MoveItNpmBuildExit)). Build aborted." />
+		<Error Condition="'$(Configuration)'!='Debug' AND '$(MoveItNpmBuildExit)'!='0'" Text="MOVE IT UI: 'npm run build' failed (exit $(MoveItNpmBuildExit)). Build aborted." />
 
 		<!-- Debug: warn -->
-		<Warning Condition="'$(Configuration)'=='Debug' AND '$(MoveItNpmBuildExit)'!='0'"
-		         Text="MOVE IT UI: 'npm run build' failed (exit $(MoveItNpmBuildExit)). Continuing (Debug)." />
+		<Warning Condition="'$(Configuration)'=='Debug' AND '$(MoveItNpmBuildExit)'!='0'" Text="MOVE IT UI: 'npm run build' failed (exit $(MoveItNpmBuildExit)). Continuing (Debug)." />
 
-		<WriteLinesToFile Condition="'$(MoveItNpmBuildExit)'=='0'"
-		                  File="$(MoveItNpmBuildStamp)"
-		                  Lines="ok"
-		                  Overwrite="true" />
+		<WriteLinesToFile Condition="'$(MoveItNpmBuildExit)'=='0'" File="$(MoveItNpmBuildStamp)" Lines="ok" Overwrite="true" />
 	</Target>
 
-	<!-- Copy built UI into the deployed mod folder after toolchain deploy -->
+	<!-- Copy built UI into the deployed mod folder After toolchain deploy -->
 	<Target Name="CopyMoveItUIToDeploy"
-	        AfterTargets="DeployWIP"
-	        DependsOnTargets="MoveItUIBuild"
-	        Condition="Exists('$(MSBuildProjectDirectory)\bin\UI')">
+			AfterTargets="DeployWIP"
+			DependsOnTargets="MoveItUIBuild"
+			Condition="Exists('$(MSBuildProjectDirectory)\bin\UI')">
 		<ItemGroup>
 			<UIFiles Include="bin\UI\**\*.*" />
 		</ItemGroup>
 
-		<Copy SourceFiles="@(UIFiles)"
-		      DestinationFiles="@(UIFiles->'$(DeployDir)\%(RecursiveDir)%(Filename)%(Extension)')"
-		      SkipUnchangedFiles="true" />
+		<Copy SourceFiles="@(UIFiles)" DestinationFiles="@(UIFiles->'$(DeployDir)\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
 	</Target>
 
 	<Target Name="SetupAttributes" BeforeTargets="BeforeBuild" Condition="'$(Configuration)' != 'Debug'">
