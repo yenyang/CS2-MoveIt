@@ -531,7 +531,8 @@ namespace MoveIt.Tool
                     }
                 }
 
-                if (m_AreasNodeLookup.HasBuffer(originalInstance))
+                if (m_AreasNodeLookup.HasBuffer(originalInstance) &&
+                    m_OwnerLookup.HasComponent(originalInstance))
                 {
                     creationDefinition.m_Flags |= CreationFlags.Hidden;
                 }
@@ -577,8 +578,11 @@ namespace MoveIt.Tool
                     for (int k = 0; k < nodes.Length; k++)
                     {
                         Game.Areas.Node node = new Game.Areas.Node() { m_Position = nodes[k].m_Position, m_Elevation = nodes[k].m_Elevation };
-                        node.m_Position = GetRotatedPosition(new Game.Objects.Transform(node.m_Position, quaternion.identity)).m_Position;
-                        node.m_Position = GetTranslatedXZPositionAndVerticallyDisplace(node.m_Position);
+                        if (m_CreationFlags != CreationFlags.Delete)
+                        {
+                            node.m_Position = GetRotatedPosition(new Game.Objects.Transform(node.m_Position, quaternion.identity)).m_Position;
+                            node.m_Position = GetTranslatedXZPositionAndVerticallyDisplace(node.m_Position);
+                        }
 
                         newNodeBuffer.Add(node);
                     }
