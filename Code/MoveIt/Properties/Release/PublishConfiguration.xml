@@ -45,7 +45,7 @@ Left-Click drag to move selection, right-click drag to rotate selection. Snappin
 
 Hold Control while moving for more precision by switching to low sensitivity and hiding selection overlays.
 
-This version of Move It supports Previews (except surfaces) and you can abort by pressing Escape although this will exit Move It tool currently. Error checks will be shown but currently do not prevent you from doing anything. With Compatible version of Anarchy use the keyboard shortcut to not check for Errors.
+This version of Move It supports Previews and you can abort by pressing Escape although this will exit Move It tool currently. Error checks will be shown but currently do not prevent you from doing anything. With Compatible version of Anarchy use the keyboard shortcut to not check for Errors.
 
 ## Copying
 Make a selection. Press Copy. Move the copy around with the mouse. Right click drag to rotate the copies. Page Up/Down etc. to raise and lower. Left click to apply a copy. 
@@ -60,7 +60,7 @@ Make a selection. Press Delete. Immediately deletes all selected entities. This 
 Selecting network nodes will also select all connected segments.
 
 ## Follow Terrain Toggle
-When Moving, Copying, or using Manipulation Mode. Whatever is being displaced will move up and down based on the height of the terrain from the start point to the end point for each thing that is moving. Tress on the ground stay on the ground wherever you move them.
+When Moving, Copying, or using Manipulation Mode. Whatever is being displaced will move up and down based on the height of the terrain from the start point to the end point for each thing that is moving. Trees on the ground stay on the ground wherever you move them.
 
 ## Manipulation:
 
@@ -121,14 +121,14 @@ Translators: Pingwin_PL and karmel68 (Polish), elGendo87 (Spanish), ti4goc (Port
   <!--Link to the forum post where the mod can be discussed-->
   <ForumLink Value="" />
   <!--Version of the mod-->
-  <ModVersion Value="0.6.1.2" />
+  <ModVersion Value="0.6.1.3" />
   <!--Recommended version of the base game to use the mod-->
   <GameVersion Value="1.5.*" />
   <!--Dependency for the mod, can be set multiple-->
   <Dependency Id="74417" DisplayName="Unified Icon Library" Version="1.0.13" />
   <!--Change log for new version. Single line or multi line. Supports minimal markdown subset-->
-  <ChangeLog># Patch v0.6.1.2
-* Version bump to fix pdx mods page.</ChangeLog>
+  <ChangeLog># Patch v0.6.1.3
+* Stand-a-lone surfaces now support previews.</ChangeLog>
   <!--External link. supported types are discord, github, youtube, twitch, x, paypal, patreon-->
   <ExternalLink Type="discord" Url="https://discord.gg/nURB9MQ" />
   <ExternalLink Type="paypal" Url="https://www.paypal.com/paypalme/YenyangsMods" />
