@@ -1,4 +1,4 @@
-﻿// <copyright>
+// <copyright>
 // Copyright (c) Yenyang. MIT License See LICENSE.txt
 // Forked with permission from Quboid's CS2-MoveIt project.
 // </copyright>
@@ -17,6 +17,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using Unity.Entities;
+using Unity.Jobs;
 
 namespace MoveIt.Tool
 {
@@ -183,8 +184,8 @@ namespace MoveIt.Tool
             m_InputSystem.OnToolDisable();
             m_ToolTipSystem.Enabled = false;
             Copying = false;
+            Deleting = false;
             // secondaryApplyAction.enabled = false;
-
             QLog.FlushBundle();
         }
 

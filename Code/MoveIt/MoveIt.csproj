@@ -129,15 +129,14 @@
 	</Target>
 
 	<!-- Copy built UI into the deployed mod folder After toolchain deploy -->
-	<Target Name="CopyMoveItUIToDeploy"
-			AfterTargets="DeployWIP"
-			DependsOnTargets="MoveItUIBuild"
-			Condition="Exists('$(MSBuildProjectDirectory)\bin\UI')">
+	<Target Name="CopyFiles" AfterTargets="DeployWIP">
 		<ItemGroup>
 			<UIFiles Include="bin\UI\**\*.*" />
 		</ItemGroup>
 
-		<Copy SourceFiles="@(UIFiles)" DestinationFiles="@(UIFiles->'$(DeployDir)\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+		<Exec Command="npm run build --prefix ..\..\UI" />
+
+		<Copy SourceFiles="@(UIFiles)" DestinationFiles="@(UIFiles->'$(DeployDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
 	</Target>
 
 	<Target Name="SetupAttributes" BeforeTargets="BeforeBuild" Condition="'$(Configuration)' != 'Debug'">

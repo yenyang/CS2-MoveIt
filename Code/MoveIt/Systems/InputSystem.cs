@@ -1,4 +1,4 @@
-﻿using MoveIt.Actions;
+using MoveIt.Actions;
 using MoveIt.Actions.Select;
 using MoveIt.Actions.Toolbox;
 using MoveIt.Input;
@@ -97,6 +97,24 @@ namespace MoveIt.Systems
                 action: Mod.Settings.GetAction(Inputs.KEY_MOVEUP2),
                 context: QInput_Contexts.ToolEnabled,
                 trigger: () => _MIT.StartWorkflow(Workflow.Elevate)
+            ));
+
+            RegisterBinding(new(
+                action: Mod.Settings.GetAction(Inputs.KEY_COPY),
+                context: QInput_Contexts.ToolEnabled,
+                trigger: () =>
+                {
+                    if (_MIT.CanCopyOrDelete) _MIT.Copying = true;
+                }
+            ));
+
+            RegisterBinding(new(
+                action: Mod.Settings.GetAction(Inputs.KEY_DELETE),
+                context: QInput_Contexts.ToolEnabled,
+                trigger: () =>
+                {
+                    if (_MIT.CanCopyOrDelete) _MIT.Deleting = true;
+                }
             ));
 
             // Toolbox

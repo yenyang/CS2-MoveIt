@@ -1,4 +1,4 @@
-﻿namespace MoveIt.Input
+namespace MoveIt.Input
 {
     internal static class Inputs
     {
@@ -26,5 +26,8 @@
         public const string KEY_MOVEUP              = "Key_MoveUp";
         public const string KEY_MOVEDOWN2           = "Key_MoveDown2";
         public const string KEY_MOVEUP2             = "Key_MoveUp2";
+
+        public const string KEY_COPY                =  "Key_Copy";
+        public const string KEY_DELETE              =  "Key_Delete";
     }
 }

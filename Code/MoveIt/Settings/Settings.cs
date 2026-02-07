@@ -1,4 +1,4 @@
-﻿using Colossal.IO.AssetDatabase;
+using Colossal.IO.AssetDatabase;
 using Game.Input;
 using Game.Modding;
 using Game.Settings;
@@ -30,6 +30,8 @@ namespace MoveIt.Settings
     [SettingsUIKeyboardActionAttribute(Inputs.KEY_TB_OBJECTHEIGHT, ActionType.Button, rebindOptions: RebindOptions.All, modifierOptions: ModifierOptions.Allow, true, false, Mode.DigitalNormalized, new string[] { "MoveIt_Input" })]
     [SettingsUIKeyboardActionAttribute(Inputs.KEY_TB_OBJANGLEINDIV, ActionType.Button, rebindOptions: RebindOptions.All, modifierOptions: ModifierOptions.Allow, true, false, Mode.DigitalNormalized, new string[] { "MoveIt_Input" })]
     [SettingsUIKeyboardActionAttribute(Inputs.KEY_TB_OBJANGLEGROUP, ActionType.Button, rebindOptions: RebindOptions.All, modifierOptions: ModifierOptions.Allow, true, false, Mode.DigitalNormalized, new string[] { "MoveIt_Input" })]
+    [SettingsUIKeyboardActionAttribute(Inputs.KEY_COPY, ActionType.Button, rebindOptions: RebindOptions.All, modifierOptions: ModifierOptions.Allow, true, false, Mode.DigitalNormalized, new string[] { "MoveIt_Input" })]
+    [SettingsUIKeyboardActionAttribute(Inputs.KEY_DELETE, ActionType.Button, rebindOptions: RebindOptions.All, modifierOptions: ModifierOptions.Allow, true, false, Mode.DigitalNormalized, new string[] { "MoveIt_Input" })]
     public class Settings : ModSetting
     {
         public const string tabMain = "tabMain";
@@ -125,6 +127,14 @@ namespace MoveIt.Settings
         [SettingsUIKeyboardBinding(BindingKeyboard.Z, Inputs.KEY_REDO, ctrl: true, shift: true)]
         [SettingsUISection(tabKeys, groupHotkeys)]
         public ProxyBinding Key_Redo { get; set; }
+
+        [SettingsUIKeyboardBinding(BindingKeyboard.C, Inputs.KEY_COPY, ctrl: true)]
+        [SettingsUISection(tabKeys, groupHotkeys)]
+        public ProxyBinding Key_Copy { get; set; }
+
+        [SettingsUIKeyboardBinding(BindingKeyboard.Delete, Inputs.KEY_DELETE)]
+        [SettingsUISection(tabKeys, groupHotkeys)]
+        public ProxyBinding Key_Delete { get; set; }
 
         [SettingsUIKeyboardBinding(BindingKeyboard.D, Inputs.KEY_DESELECTALL, alt: true)]
         [SettingsUISection(tabKeys, groupHotkeys)]
