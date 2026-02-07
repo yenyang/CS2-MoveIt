@@ -32,6 +32,7 @@ namespace MoveIt.Settings
     [SettingsUIKeyboardActionAttribute(Inputs.KEY_TB_OBJANGLEGROUP, ActionType.Button, rebindOptions: RebindOptions.All, modifierOptions: ModifierOptions.Allow, true, false, Mode.DigitalNormalized, new string[] { "MoveIt_Input" })]
     [SettingsUIKeyboardActionAttribute(Inputs.KEY_COPY, ActionType.Button, rebindOptions: RebindOptions.All, modifierOptions: ModifierOptions.Allow, true, false, Mode.DigitalNormalized, new string[] { "MoveIt_Input" })]
     [SettingsUIKeyboardActionAttribute(Inputs.KEY_DELETE, ActionType.Button, rebindOptions: RebindOptions.All, modifierOptions: ModifierOptions.Allow, true, false, Mode.DigitalNormalized, new string[] { "MoveIt_Input" })]
+    [SettingsUIKeyboardActionAttribute(Inputs.KEY_FOLLOWTERRAIN, ActionType.Button, rebindOptions: RebindOptions.All, modifierOptions: ModifierOptions.Allow, true, false, Mode.DigitalNormalized, new string[] { "MoveIt_Input" })]
     public class Settings : ModSetting
     {
         public const string tabMain = "tabMain";
@@ -143,6 +144,10 @@ namespace MoveIt.Settings
         [SettingsUIKeyboardBinding(BindingKeyboard.F, Inputs.KEY_FILTERSTOGGLE, alt: true)]
         [SettingsUISection(tabKeys, groupHotkeys)]
         public ProxyBinding Key_FiltersToggle { get; set; }
+
+        [SettingsUIKeyboardBinding(BindingKeyboard.T, Inputs.KEY_FOLLOWTERRAIN, alt: true)]
+        [SettingsUISection(tabKeys, groupHotkeys)]
+        public ProxyBinding Key_FollowTerrain { get; set; }
         #endregion
 
         #region groupMovement

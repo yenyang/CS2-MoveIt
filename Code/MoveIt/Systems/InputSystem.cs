@@ -117,6 +117,12 @@ namespace MoveIt.Systems
                 }
             ));
 
+            RegisterBinding(new(
+               action: Mod.Settings.GetAction(Inputs.KEY_FOLLOWTERRAIN),
+               context: QInput_Contexts.ToolEnabled,
+               trigger: () => _MIT.m_FollowingTerrain = !_MIT.m_FollowingTerrain
+            ));
+
             // Toolbox
 
             foreach (ToolBoxTool tool in Managers.ToolboxManager.ToolList)

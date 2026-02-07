@@ -29,5 +29,7 @@ namespace MoveIt.Input
 
         public const string KEY_COPY                =  "Key_Copy";
         public const string KEY_DELETE              =  "Key_Delete";
+
+        public const string KEY_FOLLOWTERRAIN       =   "Follow_Terrain";
     }
 }

@@ -7,8 +7,7 @@ Supported (current):
 - Trees, props, decals
 - Network nodes
 - Network segment curves
-
-> Note: **Standalone Surfaces may not work currently.**
+- Standalone Surfaces
 
 ---
 

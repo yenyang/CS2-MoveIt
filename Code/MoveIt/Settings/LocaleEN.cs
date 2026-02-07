@@ -92,6 +92,10 @@ namespace MoveIt.Settings
                 { m_Settings.GetOptionDescLocaleID(nameof(Settings.Key_Delete)), "Immediately deletes all selected entities." },
                 { m_Settings.GetBindingKeyLocaleID(nameof(Settings.Key_Delete)), "\"Delete\"" },
 
+                { m_Settings.GetOptionLabelLocaleID(nameof(Settings.Key_FollowTerrain)), "Toggle Follow Terrain" },
+                { m_Settings.GetOptionDescLocaleID(nameof(Settings.Key_FollowTerrain)), "Toggles whether the tool is Following Terrain or not. When active, objects moved and copied will be placed relative to terrain height. When inactive, objects moved and copied will stay in a horizontal plane from their original location." },
+                { m_Settings.GetBindingKeyLocaleID(nameof(Settings.Key_FollowTerrain)), "\"Toggle Follow Terrain\"" },
+
                 { m_Settings.GetOptionGroupLocaleID(Settings.groupMovement), $"Movement" },
 
                 { m_Settings.GetOptionLabelLocaleID(nameof(Settings.Key_MoveDown)), "Move Objects Down" },
