@@ -1,0 +1,105 @@
+root = true
+
+[*.cs]
+charset = utf-8
+end_of_line = crlf
+insert_final_newline = true
+indent_style = space
+indent_size = 4
+
+# ---- General style ----
+dotnet_style_qualification_for_field = false:suggestion
+dotnet_style_qualification_for_property = false:suggestion
+dotnet_style_qualification_for_method = false:suggestion
+dotnet_style_qualification_for_event = false:suggestion
+
+# Prefer 'var' where it's obvious; otherwise prefer explicit type
+csharp_style_var_for_built_in_types = true:suggestion
+csharp_style_var_when_type_is_apparent = true:suggestion
+csharp_style_var_elsewhere = false:suggestion
+
+# Style analyzers
+dotnet_diagnostic.RCS1146.severity = suggestion   # Use conditional access (keep on)
+dotnet_diagnostic.RCS1226.severity = none         # Doc-paragraph nit = off
+dotnet_diagnostic.IDE0031.severity = silent       # Allow explicit null checks without Messages
+
+# Keep flat namespace; don't require folder-matching
+dotnet_style_namespace_match_folder = false:silent
+dotnet_diagnostic.IDE0130.severity = none         # Namespace vs folder
+
+# Our k/m/s scheme conflicts with IDE1006; quiet it
+dotnet_diagnostic.IDE1006.severity = none
+
+# =========================
+# Naming symbols (targets)
+# =========================
+dotnet_naming_symbols.interfaces.applicable_kinds = interface
+dotnet_naming_symbols.interfaces.applicable_accessibilities = *
+
+dotnet_naming_symbols.types_and_members.applicable_kinds = class, struct, enum, property, method, event
+dotnet_naming_symbols.types_and_members.applicable_accessibilities = *
+
+dotnet_naming_symbols.private_instance_fields.applicable_kinds = field
+dotnet_naming_symbols.private_instance_fields.applicable_accessibilities = private
+
+dotnet_naming_symbols.private_static_fields.applicable_kinds = field
+dotnet_naming_symbols.private_static_fields.applicable_accessibilities = private
+
+# All const fields, any accessibility
+dotnet_naming_symbols.const_fields.applicable_kinds = field
+dotnet_naming_symbols.const_fields.required_modifiers = const
+dotnet_naming_symbols.const_fields.applicable_accessibilities = *
+
+# Explicitly include private/internal consts too (defensive)
+dotnet_naming_symbols.private_internal_const_fields.applicable_kinds = field
+dotnet_naming_symbols.private_internal_const_fields.required_modifiers = const
+dotnet_naming_symbols.private_internal_const_fields.applicable_accessibilities = private, internal, protected_internal, private_protected
+
+# =========================
+# Naming styles (how)
+# =========================
+dotnet_naming_style.pascal.required_capitalization = pascal_case
+dotnet_naming_style.interface_i.required_prefix = I
+dotnet_naming_style.m_prefix.required_prefix = m_
+dotnet_naming_style.s_prefix.required_prefix = s_
+dotnet_naming_style.k_prefix_pascal.required_prefix = k
+dotnet_naming_style.k_prefix_pascal.required_capitalization = pascal_case
+dotnet_naming_style.camel.required_capitalization = camel_case
+
+# =========================
+# Rules (symbols × styles)
+# =========================
+# Interfaces: IName
+dotnet_naming_rule.interfaces_must_start_with_i.symbols = interfaces
+dotnet_naming_rule.interfaces_must_start_with_i.style = interface_i
+dotnet_naming_rule.interfaces_must_start_with_i.severity = suggestion
+
+# Types & non-field members: PascalCase
+dotnet_naming_rule.types_and_members_pascal.symbols = types_and_members
+dotnet_naming_rule.types_and_members_pascal.style = pascal
+dotnet_naming_rule.types_and_members_pascal.severity = suggestion
+
+# Private instance fields: m_name
+dotnet_naming_rule.private_instance_fields_m_prefix.symbols = private_instance_fields
+dotnet_naming_rule.private_instance_fields_m_prefix.style = m_prefix
+dotnet_naming_rule.private_instance_fields_m_prefix.severity = suggestion
+
+# Private static fields: s_name
+dotnet_naming_rule.private_static_fields_s_prefix.symbols = private_static_fields
+dotnet_naming_rule.private_static_fields_s_prefix.style = s_prefix
+dotnet_naming_rule.private_static_fields_s_prefix.severity = suggestion
+
+# Const fields: kName (all accessibilities)
+dotnet_naming_rule.const_fields_k_prefix.symbols = const_fields
+dotnet_naming_rule.const_fields_k_prefix.style = k_prefix_pascal
+dotnet_naming_rule.const_fields_k_prefix.severity = suggestion
+
+# Private/Internal const fields: kName (defensive duplicate)
+dotnet_naming_rule.private_internal_const_fields_k_prefix.symbols = private_internal_const_fields
+dotnet_naming_rule.private_internal_const_fields_k_prefix.style = k_prefix_pascal
+dotnet_naming_rule.private_internal_const_fields_k_prefix.severity = suggestion
+
+# Turn off CA1822 for False positives for Settings.cs because the game’s Options UI binds to instance
+# properties via reflection + attributes. If we make them static, they’ll stop showing/working in the UI.
+[Settings/Settings.cs]
+dotnet_diagnostic.CA1822.severity = none

@@ -1,53 +1,143 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+	<!-- File: MoveIt.csproj -->
+	<!-- Purpose: Build configuration for Move It mod using the CSII toolchain.
+	     Notes: TargetFramework net48 is set by toolchain Mod.props. -->
 
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
 		<LangVersion>9</LangVersion>
 		<Configurations>Debug;Release;Stable</Configurations>
 		<Deterministic>False</Deterministic>
-		
-		<!--The folder where Game.dll is located. Set it only if the game is not installed in the default location, otherwise keep it empty-->
+
+		<!-- The folder where Game.dll is located. Set it only if the game is not installed in the default location, otherwise keep it empty -->
 		<CustomManagedPath></CustomManagedPath>
-		
-		<!--The file where mod information which is required for publishing mod on PDX mods are stored-->
+
+		<!-- The file where mod information required for publishing on PDX Mods is stored -->
 		<PublishConfigurationPath>Properties\$(Configuration)\PublishConfiguration.xml</PublishConfigurationPath>
-    <Version>0.6.1.3</Version>
-    <AssemblyVersion>$(AssemblyVersion)</AssemblyVersion>
-    <FileVersion>$(AssemblyVersion)</FileVersion>
+
+		<!-- Single source of truth for version:
+		     - Used by PDX publishing (SetupAttributes target)
+		     - Used by Mod.Version via Assembly.GetName().Version -->
+		<Version>0.6.1.1</Version>
+		<AssemblyVersion>$(Version)</AssemblyVersion>
+		<FileVersion>$(Version)</FileVersion>
+
+		<!-- Explicit for clarity -->
+		<AssemblyName>MoveIt</AssemblyName>
+		<RootNamespace>MoveIt</RootNamespace>
+
+		<!-- NPM runner -->
+		<NpmCmd Condition="'$(NpmCmd)'==''">npm</NpmCmd>
+
+		<!-- UI build control:
+		     - Debug default: true (recommend: set false to avoid slow/hanging builds during code testing)
+		     - Release/Stable default: true (ensure publish builds include UI) -->
+		<RunMoveItUIBuild Condition="'$(RunMoveItUIBuild)'=='' AND '$(Configuration)'=='Debug'">true</RunMoveItUIBuild>
+		<RunMoveItUIBuild Condition="'$(RunMoveItUIBuild)'=='' AND ( '$(Configuration)'=='Release' OR '$(Configuration)'=='Stable' )">true</RunMoveItUIBuild>
+
+		<!-- Move It UI project location (relative to this .csproj) -->
+		<MoveItUiDir>..\..\UI</MoveItUiDir>
+		<MoveItUiFullDir>$(MSBuildProjectDirectory)\$(MoveItUiDir)</MoveItUiFullDir>
+
+		<!-- Stamp files: tiny marker used by MSBuild incremental build.
+     If inputs haven't changed since the stamp was written, MSBuild skips rerunning npm. -->
+		<MoveItNpmCiStamp>$(MoveItUiFullDir)\node_modules\.stamp</MoveItNpmCiStamp>
+		<MoveItNpmBuildStamp>$(MSBuildProjectDirectory)\bin\UI\.ui.stamp</MoveItNpmBuildStamp>
+
+		<!-- Optional timeouts (ms). Exec default is infinite; these prevent “looks stuck forever”. -->
+		<MoveItNpmCiTimeoutMs Condition="'$(MoveItNpmCiTimeoutMs)'==''">900000</MoveItNpmCiTimeoutMs>
+		<MoveItNpmBuildTimeoutMs Condition="'$(MoveItNpmBuildTimeoutMs)'==''">900000</MoveItNpmBuildTimeoutMs>
 	</PropertyGroup>
-	
+
 	<!--Imports must be after PropertyGroup block-->
 	<Import Project="$([System.Environment]::GetEnvironmentVariable('CSII_TOOLPATH', 'EnvironmentVariableTarget.User'))\Mod.props" />
 	<Import Project="..\..\..\QCommon2\Code\QCommon\QCommon\Shared\QCommonShared.projitems" Label="Shared" />
 	<Import Project="$([System.Environment]::GetEnvironmentVariable('CSII_TOOLPATH', 'EnvironmentVariableTarget.User'))\Mod.targets" />
-	<PropertyGroup>
-		<TargetFramework>net472</TargetFramework>
-	</PropertyGroup>
-	
+
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-	  <DefineConstants>$(DefineConstants);USE_BURST</DefineConstants>
-	  <WarningLevel>4</WarningLevel>
+		<!-- RELEASE is custom define (not MSBuild).
+       Mod.cs uses it to format Mod.Version as a 4-part string.
+       Stable keeps the original 3-part version (ToString(3)). -->
+		<DefineConstants>$(DefineConstants);USE_BURST;RELEASE</DefineConstants>
+		<WarningLevel>4</WarningLevel>
 	</PropertyGroup>
-	
+
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Stable|AnyCPU'">
-	  <DefineConstants>$(DefineConstants);USE_BURST</DefineConstants>
-	  <WarningLevel>4</WarningLevel>
+		<DefineConstants>$(DefineConstants);USE_BURST</DefineConstants>
+		<WarningLevel>4</WarningLevel>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-	  <DefineConstants>$(DefineConstants);ENABLE_PROFILER;IS_DEBUG;USE_BURST</DefineConstants>
-	  <WarningLevel>4</WarningLevel>
+		<DefineConstants>$(DefineConstants);ENABLE_PROFILER;IS_DEBUG;USE_BURST</DefineConstants>
+		<WarningLevel>4</WarningLevel>
 	</PropertyGroup>
-	
-	
-	<Target Name="CopyFiles" AfterTargets="DeployWIP">
+
+	<!-- Optional Debug helper: print toolchain-provided MSCORLIBPath -->
+	<Target Name="ShowMscorlibPath" BeforeTargets="Build" Condition="'$(Configuration)'=='Debug'">
+		<Message Importance="High" Text="MSCORLIBPath=$(MSCORLIBPath)" />
+	</Target>
+
+	<!-- UI Inputs for incremental build (kept intentionally broad, but limited to common files/folders) -->
+	<ItemGroup Condition="Exists('$(MoveItUiFullDir)\package.json')">
+		<MoveItUiInputs Include="$(MoveItUiFullDir)\package.json" />
+		<MoveItUiInputs Include="$(MoveItUiFullDir)\package-lock.json" Condition="Exists('$(MoveItUiFullDir)\package-lock.json')" />
+		<MoveItUiInputs Include="$(MoveItUiFullDir)\src\**\*.*" Condition="Exists('$(MoveItUiFullDir)\src')" />
+		<MoveItUiInputs Include="$(MoveItUiFullDir)\public\**\*.*" Condition="Exists('$(MoveItUiFullDir)\public')" />
+		<MoveItUiInputs Include="$(MoveItUiFullDir)\tsconfig.json" Condition="Exists('$(MoveItUiFullDir)\tsconfig.json')" />
+		<MoveItUiInputs Include="$(MoveItUiFullDir)\webpack.config.js" Condition="Exists('$(MoveItUiFullDir)\webpack.config.js')" />
+	</ItemGroup>
+
+	<!-- npm ci Only when lockfile changes (tracked via .stamp) -->
+	<Target Name="MoveItNpmInstallIfNeeded"
+			Condition="'$(RunMoveItUIBuild)'=='true' AND Exists('$(MoveItUiFullDir)\package.json') AND Exists('$(MoveItUiFullDir)\package-lock.json')"
+			Inputs="$(MoveItUiFullDir)\package-lock.json"
+			Outputs="$(MoveItNpmCiStamp)">
+		<Message Text="MOVE IT UI: npm ci (lockfile changed or first-time)..." Importance="high" />
+
+		<Exec Command="$(NpmCmd) ci" WorkingDirectory="$(MoveItUiFullDir)" IgnoreExitCode="true" Timeout="$(MoveItNpmCiTimeoutMs)">
+			<Output TaskParameter="ExitCode" PropertyName="MoveItNpmCiExit" />
+		</Exec>
+
+		<!-- Non-Debug configs: fail hard -->
+		<Error Condition="'$(Configuration)'!='Debug' AND '$(MoveItNpmCiExit)'!='0'" Text="MOVE IT UI: 'npm ci' failed (exit $(MoveItNpmCiExit)). Build aborted." />
+
+		<!-- Debug: warn -->
+		<Warning Condition="'$(Configuration)'=='Debug' AND '$(MoveItNpmCiExit)'!='0'" Text="MOVE IT UI: 'npm ci' failed (exit $(MoveItNpmCiExit)). Continuing (Debug)." />
+
+		<WriteLinesToFile Condition="'$(MoveItNpmCiExit)'=='0'" File="$(MoveItNpmCiStamp)" Lines="ok" Overwrite="true" />
+	</Target>
+
+	<!-- npm run build only when UI inputs changed (tracked via .ui.stamp) -->
+	<Target Name="MoveItUIBuild"
+			DependsOnTargets="MoveItNpmInstallIfNeeded"
+			Condition="'$(RunMoveItUIBuild)'=='true' AND Exists('$(MoveItUiFullDir)\package.json')"
+			Inputs="@(MoveItUiInputs)"
+			Outputs="$(MoveItNpmBuildStamp)">
+		<Message Text="MOVE IT UI: npm run build ($(Configuration))..." Importance="high" />
+
+		<Exec Command="$(NpmCmd) run build" WorkingDirectory="$(MoveItUiFullDir)" IgnoreExitCode="true" Timeout="$(MoveItNpmBuildTimeoutMs)">
+			<Output TaskParameter="ExitCode" PropertyName="MoveItNpmBuildExit" />
+		</Exec>
+
+		<!-- Non-Debug configs: fail hard -->
+		<Error Condition="'$(Configuration)'!='Debug' AND '$(MoveItNpmBuildExit)'!='0'" Text="MOVE IT UI: 'npm run build' failed (exit $(MoveItNpmBuildExit)). Build aborted." />
+
+		<!-- Debug: warn -->
+		<Warning Condition="'$(Configuration)'=='Debug' AND '$(MoveItNpmBuildExit)'!='0'" Text="MOVE IT UI: 'npm run build' failed (exit $(MoveItNpmBuildExit)). Continuing (Debug)." />
+
+		<WriteLinesToFile Condition="'$(MoveItNpmBuildExit)'=='0'" File="$(MoveItNpmBuildStamp)" Lines="ok" Overwrite="true" />
+	</Target>
+
+	<!-- Copy built UI into the deployed mod folder After toolchain deploy -->
+	<Target Name="CopyMoveItUIToDeploy"
+			AfterTargets="DeployWIP"
+			DependsOnTargets="MoveItUIBuild"
+			Condition="Exists('$(MSBuildProjectDirectory)\bin\UI')">
 		<ItemGroup>
 			<UIFiles Include="bin\UI\**\*.*" />
 		</ItemGroup>
-		
-		<Exec Command="npm run build --prefix ..\..\UI" />
-		
-		<Copy SourceFiles="@(UIFiles)" DestinationFiles="@(UIFiles->'$(DeployDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+
+		<Copy SourceFiles="@(UIFiles)" DestinationFiles="@(UIFiles->'$(DeployDir)\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
 	</Target>
 
 	<Target Name="SetupAttributes" BeforeTargets="BeforeBuild" Condition="'$(Configuration)' != 'Debug'">
@@ -57,121 +147,123 @@
 	</Target>
 
 	<ItemGroup>
-	  <Compile Remove="Extensions\**" />
-	  <EmbeddedResource Remove="Extensions\**" />
-	  <None Remove="Extensions\**" />
+		<Compile Remove="Extensions\**" />
+		<EmbeddedResource Remove="Extensions\**" />
+		<None Remove="Extensions\**" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Remove="l10n\de-DE.json" />
-	  <None Remove="l10n\en-US.json" />
-	  <None Remove="l10n\es-ES.json" />
-	  <None Remove="l10n\fr-FR.json" />
-	  <None Remove="l10n\ja-JP.json" />
-	  <None Remove="l10n\ko-KR.json" />
-	  <None Remove="l10n\nl-NL.json" />
-	  <None Remove="l10n\pl-PL.json" />
-	  <None Remove="l10n\pt-BR.json" />
-	  <None Remove="l10n\pt-PT.json" />
-	  <None Remove="l10n\ru-RU.json" />
-	  <None Remove="l10n\zh-HANS.json" />
-	  <None Remove="l10n\zh-HANT.json" />
+		<None Remove="l10n\de-DE.json" />
+		<None Remove="l10n\en-US.json" />
+		<None Remove="l10n\es-ES.json" />
+		<None Remove="l10n\fr-FR.json" />
+		<None Remove="l10n\ja-JP.json" />
+		<None Remove="l10n\ko-KR.json" />
+		<None Remove="l10n\nl-NL.json" />
+		<None Remove="l10n\pl-PL.json" />
+		<None Remove="l10n\pt-BR.json" />
+		<None Remove="l10n\pt-PT.json" />
+		<None Remove="l10n\ru-RU.json" />
+		<None Remove="l10n\zh-HANS.json" />
+		<None Remove="l10n\zh-HANT.json" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <EmbeddedResource Include="l10n\de-DE.json" />
-	  <EmbeddedResource Include="l10n\es-ES.json" />
-	  <EmbeddedResource Include="l10n\fr-FR.json" />
-	  <EmbeddedResource Include="l10n\ja-JP.json" />
-	  <EmbeddedResource Include="l10n\ko-KR.json">
-	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-	  </EmbeddedResource>
-	  <EmbeddedResource Include="l10n\pl-PL.json" />
-	  <EmbeddedResource Include="l10n\pt-BR.json" />
-	  <EmbeddedResource Include="l10n\ru-RU.json">
-	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-	  </EmbeddedResource>
-	  <EmbeddedResource Include="l10n\zh-HANS.json" />
-	  <EmbeddedResource Include="l10n\zh-HANT.json" />
+		<EmbeddedResource Include="l10n\de-DE.json" />
+		<EmbeddedResource Include="l10n\es-ES.json" />
+		<EmbeddedResource Include="l10n\fr-FR.json" />
+		<EmbeddedResource Include="l10n\ja-JP.json" />
+		<EmbeddedResource Include="l10n\ko-KR.json">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<EmbeddedResource Include="l10n\pl-PL.json" />
+		<EmbeddedResource Include="l10n\pt-BR.json" />
+		<EmbeddedResource Include="l10n\ru-RU.json">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<EmbeddedResource Include="l10n\zh-HANS.json" />
+		<EmbeddedResource Include="l10n\zh-HANT.json" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<Reference Include="Colossal.Collections">
-		  <HintPath>$(ManagedPath)\Colossal.Collections.dll</HintPath>
-		  <Private>False</Private>
+			<HintPath>$(ManagedPath)\Colossal.Collections.dll</HintPath>
+			<Private>False</Private>
 		</Reference>
 		<Reference Include="Colossal.Core">
-		  <HintPath>$(ManagedPath)\Colossal.Core.dll</HintPath>
-		  <Private>False</Private>
+			<HintPath>$(ManagedPath)\Colossal.Core.dll</HintPath>
+			<Private>False</Private>
 		</Reference>
 		<Reference Include="Colossal.IO.AssetDatabase">
-		  <HintPath>$(ManagedPath)\Colossal.IO.AssetDatabase.dll</HintPath>
-		  <Private>False</Private>
+			<HintPath>$(ManagedPath)\Colossal.IO.AssetDatabase.dll</HintPath>
+			<Private>False</Private>
 		</Reference>
 		<Reference Include="Colossal.Localization">
-		  <HintPath>$(ManagedPath)\Colossal.Localization.dll</HintPath>
-		  <Private>False</Private>
+			<HintPath>$(ManagedPath)\Colossal.Localization.dll</HintPath>
+			<Private>False</Private>
 		</Reference>
 		<Reference Include="Colossal.Logging">
-		  <HintPath>$(ManagedPath)\Colossal.Logging.dll</HintPath>
-		  <Private>False</Private>
+			<HintPath>$(ManagedPath)\Colossal.Logging.dll</HintPath>
+			<Private>False</Private>
 		</Reference>
 		<Reference Include="Colossal.Mathematics">
-		  <HintPath>$(ManagedPath)\Colossal.Mathematics.dll</HintPath>
-		  <Private>False</Private>
+			<HintPath>$(ManagedPath)\Colossal.Mathematics.dll</HintPath>
+			<Private>False</Private>
 		</Reference>
 		<Reference Include="Colossal.PSI.Common">
-		  <HintPath>$(ManagedPath)\Colossal.PSI.Common.dll</HintPath>
-		  <Private>False</Private>
+			<HintPath>$(ManagedPath)\Colossal.PSI.Common.dll</HintPath>
+			<Private>False</Private>
 		</Reference>
 		<Reference Include="Colossal.UI">
-		  <HintPath>$(ManagedPath)\Colossal.UI.dll</HintPath>
-		  <Private>False</Private>
+			<HintPath>$(ManagedPath)\Colossal.UI.dll</HintPath>
+			<Private>False</Private>
 		</Reference>
 		<Reference Include="Colossal.UI.Binding">
-		  <HintPath>$(ManagedPath)\Colossal.UI.Binding.dll</HintPath>
-		  <Private>False</Private>
+			<HintPath>$(ManagedPath)\Colossal.UI.Binding.dll</HintPath>
+			<Private>False</Private>
 		</Reference>
 		<Reference Include="Game">
-		  <HintPath>$(ManagedPath)\Game.dll</HintPath>
-		  <Private>False</Private>
+			<HintPath>$(ManagedPath)\Game.dll</HintPath>
+			<Private>False</Private>
 		</Reference>
 		<Reference Include="Newtonsoft.Json">
-		  <HintPath>$(ManagedPath)\Newtonsoft.Json.dll</HintPath>
-		  <Private>False</Private>
+			<HintPath>$(ManagedPath)\Newtonsoft.Json.dll</HintPath>
+			<Private>False</Private>
 		</Reference>
 		<Reference Include="Unity.Burst">
-		  <HintPath>$(ManagedPath)\Unity.Burst.dll</HintPath>
-		  <Private>False</Private>
+			<HintPath>$(ManagedPath)\Unity.Burst.dll</HintPath>
+			<Private>False</Private>
 		</Reference>
 		<Reference Include="Unity.Collections">
-		  <HintPath>$(ManagedPath)\Unity.Collections.dll</HintPath>
-		  <Private>False</Private>
+			<HintPath>$(ManagedPath)\Unity.Collections.dll</HintPath>
+			<Private>False</Private>
 		</Reference>
 		<Reference Include="Unity.Entities">
-		  <HintPath>$(ManagedPath)\Unity.Entities.dll</HintPath>
-		  <Private>False</Private>
+			<HintPath>$(ManagedPath)\Unity.Entities.dll</HintPath>
+			<Private>False</Private>
 		</Reference>
 		<Reference Include="Unity.InputSystem">
-		  <HintPath>$(ManagedPath)\Unity.InputSystem.dll</HintPath>
-		  <Private>False</Private>
+			<HintPath>$(ManagedPath)\Unity.InputSystem.dll</HintPath>
+			<Private>False</Private>
 		</Reference>
 		<Reference Include="Unity.Mathematics">
-		  <HintPath>$(ManagedPath)\Unity.Mathematics.dll</HintPath>
-		  <Private>False</Private>
+			<HintPath>$(ManagedPath)\Unity.Mathematics.dll</HintPath>
+			<Private>False</Private>
 		</Reference>
 		<Reference Include="UnityEngine">
-		  <HintPath>$(ManagedPath)\UnityEngine.dll</HintPath>
-		  <Private>False</Private>
+			<HintPath>$(ManagedPath)\UnityEngine.dll</HintPath>
+			<Private>False</Private>
 		</Reference>
 		<Reference Include="UnityEngine.CoreModule">
-		  <HintPath>$(ManagedPath)\UnityEngine.CoreModule.dll</HintPath>
-		  <Private>False</Private>
+			<HintPath>$(ManagedPath)\UnityEngine.CoreModule.dll</HintPath>
+			<Private>False</Private>
 		</Reference>
 		<Reference Include="UnityEngine.IMGUIModule">
-		  <HintPath>$(ManagedPath)\UnityEngine.IMGUIModule.dll</HintPath>
-		  <Private>False</Private>
+			<HintPath>$(ManagedPath)\UnityEngine.IMGUIModule.dll</HintPath>
+			<Private>False</Private>
 		</Reference>
+
+		<!-- Keep: removing this causes CS0518 / missing predefined types in this project -->
 		<Reference Include="mscorlib">
 			<Private>False</Private>
 			<HintPath>$(ManagedPath)\mscorlib.dll</HintPath>
@@ -179,9 +271,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Reference Update="C:\Program Files %28x86%29\Steam\steamapps\common\Cities Skylines II\Cities2_Data\Managed\mscorlib.dll">
-		  <Private>False</Private>
-		</Reference>
 		<Reference Update="System">
 			<Private>False</Private>
 		</Reference>
@@ -199,55 +288,40 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="System.IO.Compression" Version="4.3.0" />
+		<PackageReference Include="System.IO.Compression" Version="4.3.0" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Update="lang\pt-PT.json">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="LICENSE.txt">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="UnofficialLocales\nl-NL.json">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	</ItemGroup>
-  
-	<ItemGroup>
-	  <Reference Update="System.Drawing">
-	    <Private>False</Private>
-	  </Reference>
+		<None Update="lang\pt-PT.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="LICENSE.txt">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="UnofficialLocales\nl-NL.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Reference Update="System.IO.Compression.FileSystem">
-	    <Private>False</Private>
-	  </Reference>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Reference Update="System.Numerics">
-	    <Private>False</Private>
-	  </Reference>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Reference Update="System.Runtime.Serialization">
-	    <Private>False</Private>
-	  </Reference>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Reference Update="System.Xml">
-	    <Private>False</Private>
-	  </Reference>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Reference Update="System.Xml.Linq">
-	    <Private>False</Private>
-	  </Reference>
+		<Reference Update="System.Drawing">
+			<Private>False</Private>
+		</Reference>
+		<Reference Update="System.IO.Compression.FileSystem">
+			<Private>False</Private>
+		</Reference>
+		<Reference Update="System.Numerics">
+			<Private>False</Private>
+		</Reference>
+		<Reference Update="System.Runtime.Serialization">
+			<Private>False</Private>
+		</Reference>
+		<Reference Update="System.Xml">
+			<Private>False</Private>
+		</Reference>
+		<Reference Update="System.Xml.Linq">
+			<Private>False</Private>
+		</Reference>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -282,5 +356,4 @@
 			<DependentUpon>MIT_OverlaySystem.cs</DependentUpon>
 		</Compile>
 	</ItemGroup>
-	
 </Project>
