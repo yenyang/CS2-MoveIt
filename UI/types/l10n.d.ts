@@ -24,6 +24,7 @@ declare module "cs2/l10n" {
   	FloatThreeFractions = "floatThreeFractions",
   	Percentage = "percentage",
   	PercentageSingleFraction = "percentageSingleFraction",
+  	PercentagePrecise = "percentagePrecise",
   	Angle = "angle",
   	Length = "length",
   	Area = "area",
@@ -46,10 +47,12 @@ declare module "cs2/l10n" {
   	BodiesPerMonth = "bodiesPerMonth",
   	XP = "xp",
   	Temperature = "temperature",
+  	TemperaturePrecise = "temperaturePrecise",
   	NetElevation = "netElevation",
   	ScreenFrequency = "screenFrequency",
   	Height = "height",
-  	Custom = "custom"
+  	Custom = "custom",
+  	DurationSeconds = "durationSeconds"
   }
   export enum LocElementType {
   	Bounds = "Game.UI.Localization.LocalizedBounds",
