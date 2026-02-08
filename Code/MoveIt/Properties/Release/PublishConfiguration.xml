@@ -95,11 +95,12 @@ Save often, save different.
 * Undo / Redo is mostly broken right now.
 * Overlays are not perfect and will have some issues.
 * Snapping is broken / not implemented.
+* Don't move, delete, or copy utility structures such as water pumps because one of their utilty nodes is not handled correctly yet.
 
 ## Credits:
-Original Author: Quboid
-
 Current Author: Yenyang
+Original Author: Quboid
+Code Review and Contributions: Honu
 
 Big thanks to SamSamTS, Krzychu124, T.D.W., Klyte45, REV0, BadPeanut, Sully, Algernon, CanadianMoosePlays!
 
