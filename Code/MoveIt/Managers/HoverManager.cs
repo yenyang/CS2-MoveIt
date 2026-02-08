@@ -1,4 +1,4 @@
-﻿using Colossal.Mathematics;
+using Colossal.Mathematics;
 using Game.Tools;
 using MoveIt.Moveables;
 using MoveIt.Overlays.DebugOverlays;
@@ -268,7 +268,9 @@ namespace MoveIt.Managers
 
             holder.Definition = new(true);
 
-            if (_MIT.IsValid(to))
+            if (_MIT.IsValid(to) &&
+                !_MIT.Copying &&
+                !_MIT.Deleting)
             {
                 _MIT.StartWorkflow(Workflow.SelectingIndividual);
                 holder.Set(to);

@@ -7,15 +7,13 @@ Supported (current):
 - Trees, props, decals
 - Network nodes
 - Network segment curves
-
-> Note: **Standalone Surfaces may not work currently.**
+- Standalone Surfaces
 
 ---
 
 ## Ways to Help
 
 - If you want to help in some way, but too busy, then send coffee; it's much appreciated: donations linked on PDX [PayPal](https://www.paypal.com/paypalme/YenyangsMods) or [Buy Me A Coffee](https://buymeacoffee.com/yenyang_mods). <br>
-Or just come to the forum to say hi! [Move It (Alpha) Forum](https://forum.paradoxplaza.com/forum/threads/move-it-unstable.1691126/).
 - Collaborators: submit new code with github Pull-requests
 - Testers: test + break the mod and give reports/logs
 - Translators: see below, use crowdin.
@@ -56,6 +54,9 @@ This is an **ALPHA** build under active development by **Yenyang**, continued **
 | Align to Object Height | `Ctrl + H` |
 | Rotate at Center | `Alt + A` |
 | Rotate in-Place | `Shift + A` |
+| Copy | `Ctrl + C` |
+| Delete | `Del` |
+| Toggle Follow Terrain | `Alt + T` |
 
 > Some shortcuts can be rebound in Options → Hotkeys.
 
@@ -196,6 +197,7 @@ Save often. Save different.
 - Undo/Redo is mostly broken.
 - Overlays may have imperfections.
 - Snapping is broken / not implemented.
+- Don't move, delete, or copy utility structures such as water pumps because one of their utilty nodes is not handled correctly yet.
 
 ---
 
@@ -203,6 +205,7 @@ Save often. Save different.
 
 - **Current Author:** Yenyang
 - **Original Author:** Quboid  
+- Code Review and Contributions: Honu
 
 Thanks to: SamSamTS, Krzychu124, T.D.W., Klyte45, REV0, BadPeanut, Sully, Algernon, CanadianMoosePlays!
 

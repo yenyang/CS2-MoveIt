@@ -1,4 +1,5 @@
-﻿using Game.Simulation;
+using Game.Input;
+using Game.Simulation;
 using MoveIt.Actions.Transform;
 using MoveIt.Input;
 using MoveIt.Tool;
@@ -16,6 +17,7 @@ namespace MoveIt.Managers
         private readonly QKey_Binding _Key_MoveUp2;
         private readonly InputButton _ApplyAction;
         private readonly InputButton _SecondaryAction;
+        private readonly QKey_Binding _Key_Delete;
 
         private long _KeyTime;
 
@@ -80,6 +82,12 @@ namespace MoveIt.Managers
                 _MIT.CompleteWorkflow(Workflow.Elevate);
             }
 
+            if (_MIT.m_Workflow[(int)Workflow.Delete] == WorkflowProgression.InProgress &&
+                _Key_Delete.m_Action.WasReleasedThisFrame())
+            {
+                _MIT.CompleteWorkflow(Workflow.Delete);
+            }
+
             return false;
         }
 
@@ -89,9 +97,12 @@ namespace MoveIt.Managers
             _Key_MoveUp = _MIT.m_InputSystem.GetBinding(Inputs.KEY_MOVEUP);
             _Key_MoveDown2 = _MIT.m_InputSystem.GetBinding(Inputs.KEY_MOVEDOWN2);
             _Key_MoveUp2 = _MIT.m_InputSystem.GetBinding(Inputs.KEY_MOVEUP2);
+            _Key_Delete = _MIT.m_InputSystem.GetBinding(Inputs.KEY_DELETE);
 
             _ApplyAction = new ApplyButton(_MIT.m_InputSystem.MouseApply);
             _SecondaryAction = new SecondaryButton(_MIT.m_InputSystem.MouseCancel);
+
+            
         }
 
         internal void OnToolEnable()

@@ -1,4 +1,4 @@
-﻿// <copyright>
+// <copyright>
 // Copyright (c) Yenyang. MIT License See LICENSE.txt
 // Forked with permission from Quboid's CS2-MoveIt project.
 // </copyright>
@@ -83,6 +83,18 @@ namespace MoveIt.Settings
                 { m_Settings.GetOptionLabelLocaleID(nameof(Settings.Key_FiltersToggle)), "Toggle Filters" },
                 { m_Settings.GetOptionDescLocaleID(nameof(Settings.Key_FiltersToggle)), "Open or close the Filters foldout menu, enabling or disabling filters" },
                 { m_Settings.GetBindingKeyLocaleID(nameof(Settings.Key_FiltersToggle)), "\"Toggle Filters\"" },
+
+                { m_Settings.GetOptionLabelLocaleID(nameof(Settings.Key_Copy)), "Copy" },
+                { m_Settings.GetOptionDescLocaleID(nameof(Settings.Key_Copy)), "Move It Tool will make copies of selected entities." },
+                { m_Settings.GetBindingKeyLocaleID(nameof(Settings.Key_Copy)), "\"Copy\"" },
+
+                { m_Settings.GetOptionLabelLocaleID(nameof(Settings.Key_Delete)), "Delete" },
+                { m_Settings.GetOptionDescLocaleID(nameof(Settings.Key_Delete)), "Immediately deletes all selected entities." },
+                { m_Settings.GetBindingKeyLocaleID(nameof(Settings.Key_Delete)), "\"Delete\"" },
+
+                { m_Settings.GetOptionLabelLocaleID(nameof(Settings.Key_FollowTerrain)), "Toggle Follow Terrain" },
+                { m_Settings.GetOptionDescLocaleID(nameof(Settings.Key_FollowTerrain)), "Toggles whether the tool is Following Terrain or not. When active, objects moved and copied will be placed relative to terrain height. When inactive, objects moved and copied will stay in a horizontal plane from their original location." },
+                { m_Settings.GetBindingKeyLocaleID(nameof(Settings.Key_FollowTerrain)), "\"Toggle Follow Terrain\"" },
 
                 { m_Settings.GetOptionGroupLocaleID(Settings.groupMovement), $"Movement" },
 

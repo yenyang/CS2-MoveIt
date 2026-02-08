@@ -1,4 +1,4 @@
-﻿// <copyright>
+// <copyright>
 // Copyright (c) Yenyang. MIT License See LICENSE.txt
 // Forked with permission from Quboid's CS2-MoveIt project.
 // </copyright>
@@ -135,9 +135,11 @@ namespace MoveIt.Tool
 
         internal void RotationStart()
         {
-            StartWorkflow(Workflow.Rotate);
             if (MITState == MITStates.ApplyButtonHeld) return;           
             MITState = MITStates.SecondaryButtonHeld;
+            StartWorkflow(Workflow.Rotate);
+            m_ClickPositionAbs = m_PointerPos;
+            _Selection.CalculateCenter();
         }
 
         private void TransformStart()

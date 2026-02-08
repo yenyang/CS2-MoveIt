@@ -1,2 +1,3 @@
-﻿# Patch v0.6.1.3
-* Stand-a-lone surfaces now support previews.
+﻿# Patch v0.6.1.4
+* Added keybinds for Delete, Copy, and Toggle Follow Terrain.
+* Now prevents Single Selection process from starting while Copying and Deleting.
