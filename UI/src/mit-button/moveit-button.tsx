@@ -4,7 +4,7 @@ import { bindValue, trigger, useValue } from "cs2/api";
 import { game, tool, Theme } from "cs2/bindings";
 import { getModule, ModuleRegistryExtend } from "cs2/modding";
 import { VanillaComponentResolver } from "classes/VanillaComponentResolver";
-import { MIT_ToolEnabled$, MIT_HideMoveItIcon$ } from "bindings";
+import { MIT_ToolEnabled$, MIT_HideMoveItIcon$, MIT_LegacyUI$ } from "bindings";
 //import { LocalizedString, useLocalization } from "cs2/l10n";
 import mod from "../../mod.json";
 
@@ -18,9 +18,15 @@ const ToolBarTheme: Theme | any = getModule(
     "classes"
 );
 
+const ModernToolBarButtonTheme : Theme | any = getModule(
+    "game-ui/game/components/toolbar/components/feature-button/toolbar-feature-button-new.module.scss",
+    "classes"
+)
+
 import iconOff from "../img/MoveIt_Off.svg";
 import iconActive from "../img/MoveIt_Active.svg";
 import styles from "./moveit-button.module.scss";
+import classNames from "classnames";
 
 function toggle_ToolEnabled()
 {
@@ -33,6 +39,7 @@ export const MoveItButton : ModuleRegistryExtend = (Component) =>
     return (props) => {
         const toolEnabled = useValue(MIT_ToolEnabled$);
         const hideIcon = useValue(MIT_HideMoveItIcon$);
+        const legacyUI = useValue(MIT_LegacyUI$);
         const { children, ...otherProps } = props || {};
 
         if (hideIcon) return(<><Component {...otherProps}></Component></>);
@@ -47,7 +54,7 @@ export const MoveItButton : ModuleRegistryExtend = (Component) =>
                 <Button 
                     id="MoveItIcon"
                     src={moveItIconSrc} 
-                    className ={ToolBarButtonTheme.button + " " + styles.MoveItIcon} 
+                    className ={legacyUI? classNames(ToolBarButtonTheme.button,styles.MoveItIcon) : classNames(ModernToolBarButtonTheme.button, styles.PointerEventAuto)} 
                     variant="icon"
                     focusKey={VanillaComponentResolver.instance.FOCUS_DISABLED}
                     selected={toolEnabled}

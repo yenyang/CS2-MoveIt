@@ -11,3 +11,8 @@
     width: var(--size);
     height: var(--size);
 }
+
+.PointerEventAuto {
+    pointer-events: auto;
+    // order: 5;
+}
