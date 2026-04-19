@@ -11,6 +11,7 @@ export const MIT_DebugPanelContents$    = bindValue<string>(mod.id,     'MIT_Deb
 export const MIT_HideMoveItIcon$        = bindValue<boolean>(mod.id,    'MIT_HideMoveItIcon', false);
 export const MIT_ShowRebindConfirm$     = bindValue<boolean>(mod.id,    'MIT_ShowRebindConfirm', false);
 export const MIT_BindingConflicts$     = bindValue<BindingConflicts>(mod.id,     'MIT_BindingConflicts', {conflicts: []});
+export const MIT_LegacyUI$ = bindValue<boolean>("options", "useLegacyInterface");
 
 
 export function ButtonPressed(section : string, id : string)
