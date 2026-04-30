@@ -84,7 +84,14 @@ namespace MoveIt
             }
             else if (manager.HasComponent<Game.Objects.Plant>(e))
             {
-                return Identity.Plant;
+                if (manager.HasComponent<Game.Objects.Pillar>(e))
+                {
+                    return Identity.Prop;
+                }
+                else
+                {
+                    return Identity.Plant;
+                }
             }
             else if (manager.HasComponent<Game.Buildings.Extension>(e))
             {
@@ -143,3 +150,4 @@ namespace MoveIt
         }
     }
 }
+
