@@ -84,7 +84,15 @@ namespace MoveIt
             }
             else if (manager.HasComponent<Game.Objects.Plant>(e))
             {
-                return Identity.Plant;
+                // Some people are taking advantage of the combination of plant and pillar components and do not want them to be treated as plants for this filter.
+                if (manager.HasComponent<Game.Objects.Pillar>(e))
+                {
+                    return Identity.Prop;
+                }
+                else
+                {
+                    return Identity.Plant;
+                }
             }
             else if (manager.HasComponent<Game.Buildings.Extension>(e))
             {

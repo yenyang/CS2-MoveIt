@@ -105,7 +105,7 @@ Translators: Pingwin_PL and karmel68 (Polish), elGendo87 (Spanish), ti4goc (Port
   <!--Link to the forum post where the mod can be discussed-->
   <ForumLink Value="https://forum.paradoxplaza.com/forum/threads/move-it-unstable.1691126/" />
   <!--Version of the mod-->
-  <ModVersion Value="0.5.13.1" />
+  <ModVersion Value="0.5.15" />
   <!--Recommended version of the base game to use the mod-->
   <GameVersion Value="1.5.*" />
   <!--Dependency for the mod, can be set multiple-->
