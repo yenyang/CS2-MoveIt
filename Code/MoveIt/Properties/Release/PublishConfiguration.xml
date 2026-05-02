@@ -105,16 +105,15 @@ Translators: Pingwin_PL and karmel68 (Polish), elGendo87 (Spanish), ti4goc (Port
   <!--Link to the forum post where the mod can be discussed-->
   <ForumLink Value="https://forum.paradoxplaza.com/forum/threads/move-it-unstable.1691126/" />
   <!--Version of the mod-->
-  <ModVersion Value="0.5.15" />
+  <ModVersion Value="0.5.15.1" />
   <!--Recommended version of the base game to use the mod-->
   <GameVersion Value="1.5.*" />
   <!--Dependency for the mod, can be set multiple-->
   <Dependency Id="74417" DisplayName="Unified Icon Library" Version="1.0.13" />
   <!--Change log for new version. Single line or multi line. Supports minimal markdown subset-->
-  <ChangeLog># Patch v0.5.13.1
-* Added a default to ui binding for Binding Conflicts.
-* Some attempted fixes to reduce likelyhood of binding timing issues potentially resulting in UI breaking.
-* Fix not translating some key bind conflicts in the pop-up panel.</ChangeLog>
+  <ChangeLog># Patch v0.5.15.1
+* Objects with both Plant and Pillar components will be treated as Props with regards to filters. Requested by DX.
+* Brings Beta version to parity with stable branch with UI updates related to game v1.5.7f1.</ChangeLog>
   <!--External link. supported types are discord, github, youtube, twitch, x, paypal, patreon-->
   <ExternalLink Type="discord" Url="https://discord.gg/nURB9MQ" />
   <ExternalLink Type="paypal" Url="https://www.paypal.me/QuboidCSL1" />

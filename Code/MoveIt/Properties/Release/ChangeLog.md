@@ -1,4 +1,3 @@
-﻿# Patch v0.5.13.1
-* Added a default to ui binding for Binding Conflicts.
-* Some attempted fixes to reduce likelyhood of binding timing issues potentially resulting in UI breaking.
-* Fix not translating some key bind conflicts in the pop-up panel.
+﻿# Patch v0.5.15.1
+* Objects with both Plant and Pillar components will be treated as Props with regards to filters. Requested by DX.
+* Brings Beta version to parity with stable branch with UI updates related to game v1.5.7f1.
