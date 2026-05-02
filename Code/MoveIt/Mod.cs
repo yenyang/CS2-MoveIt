@@ -45,7 +45,9 @@ namespace MoveIt
 
         public void OnLoad(UpdateSystem updateSystem)
         {
+#if VERBOSE
             if (IS_BETA) QLog.Init(true);
+#endif
 
             Settings = new Settings.Settings(this);
             Settings.RegisterKeyBindings();
