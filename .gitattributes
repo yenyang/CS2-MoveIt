@@ -1,25 +1,26 @@
 * text=auto
 
-# Windows-style line endings for VS project files and C#
-*.sln      text eol=lf
-*.csproj   text eol=lf
-*.props    text eol=lf
-*.targets  text eol=lf
-*.cs       text eol=lf
-# optional: LF renders nicer on GitHub
-*.md       text eol=lf
-*.json text eol=lf
+# Visual Studio / C# (CRLF)
+*.sln      text eol=crlf
+*.csproj   text eol=crlf
+*.props    text eol=crlf
+*.targets  text eol=crlf
+*.cs       text eol=crlf
+*.ps1      text eol=crlf
 
-# Scripts
+# Publishing metadata edited/rewritten by MSBuild (CRLF avoids XmlPoke mixed-EOL)
+*.xml      text eol=crlf
+*.md       text eol=crlf
+
+# Data files (LF is fine)
+*.json     text eol=lf
+
+# Shell scripts (LF)
 *.sh       text eol=lf
 *.bash     text eol=lf
-*.ps1      text eol=lf
 
 # Binaries
 *.png binary
 *.jpg binary
 *.svg binary
 *.ico binary
-
-# PublishConfiguration.xml: keep LF to avoid safecrlf/autocrlf fights
-*.xml eol=lf
