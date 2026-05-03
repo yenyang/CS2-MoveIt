@@ -18,7 +18,7 @@
 		<!-- Single source of truth for version:
 		     - Used by PDX publishing (SetupAttributes target)
 		     - Used by Mod.Version via Assembly.GetName().Version -->
-		<Version>0.6.1.4</Version>
+		<Version>0.6.1.5</Version>
 		<AssemblyVersion>$(Version)</AssemblyVersion>
 		<FileVersion>$(Version)</FileVersion>
 

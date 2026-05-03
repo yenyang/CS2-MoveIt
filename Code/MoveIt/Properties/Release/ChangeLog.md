@@ -1,3 +1,3 @@
-﻿# Patch v0.6.1.4
-* Added keybinds for Delete, Copy, and Toggle Follow Terrain.
-* Now prevents Single Selection process from starting while Copying and Deleting.
+﻿# Patch v0.6.1.5
+* Objects with both Plant and Pillar components will be treated as Props with regards to filters. Requested by DX.
+* Brings Alpha version to parity with stable branch with UI updates related to game v1.5.7f1.
