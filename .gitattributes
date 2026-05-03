@@ -22,4 +22,4 @@
 *.ico binary
 
 # PublishConfiguration.xml: keep LF to avoid safecrlf/autocrlf fights
-*.xml eol=crlf
+*.xml eol=lf
