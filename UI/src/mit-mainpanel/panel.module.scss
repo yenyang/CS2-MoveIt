@@ -5,9 +5,11 @@
 .header {
     display: flex;
     flex-direction: row;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: center;
     height: 20rem;
+    width: 210rem;
+    text-align: center;
     text-transform: none;
 }
 
