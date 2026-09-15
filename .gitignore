@@ -399,3 +399,9 @@ FodyWeavers.xsd
 /Code/MoveIt/Library
 /Code/MoveIt/Properties/affinity/ThumbnailAlpha.af
 /Code/MoveIt/Properties/affinity/ThumbnailBeta.af
+/Code/MoveIt/Properties/PublishProfiles/PublishNewMod.pubxml.user
+/Code/MoveIt/Properties/PublishProfiles/PublishNewReleaseVersion.pubxml.user
+/Code/MoveIt/Properties/PublishProfiles/PublishNewStableVersion.pubxml.user
+/Code/MoveIt/Properties/PublishProfiles/PublishNewVersion.pubxml.user
+/Code/MoveIt/Properties/PublishProfiles/UpdateCurrentVersion.pubxml.user
+/Code/MoveIt/Properties/PublishProfiles/UpdatePublishedConfiguration.pubxml.user
