@@ -192,6 +192,12 @@
 	<ItemGroup>
 		<None Include="$(ModPropsFile)" Link="Properties\Mod.props" />
 		<None Include="$(ModTargetsFile)" Link="Properties\Mod.targets" />
+		<None Include="Properties\PublishProfiles\PublishNewMod.pubxml.user" />
+		<None Include="Properties\PublishProfiles\PublishNewReleaseVersion.pubxml.user" />
+		<None Include="Properties\PublishProfiles\PublishNewStableVersion.pubxml.user" />
+		<None Include="Properties\PublishProfiles\PublishNewVersion.pubxml.user" />
+		<None Include="Properties\PublishProfiles\UpdateCurrentVersion.pubxml.user" />
+		<None Include="Properties\PublishProfiles\UpdatePublishedConfiguration.pubxml.user" />
 	</ItemGroup>
 
 	<ItemGroup>
