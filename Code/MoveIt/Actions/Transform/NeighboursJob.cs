@@ -21,36 +21,50 @@ namespace MoveIt.Actions.Transform
         {
             Neighbour neighbour = m_Neighbours[index];
             RefRW<Curve> component = gnCurve.GetRefRW(neighbour.m_Entity);
-
-            Bezier4x3 initial = neighbour.m_InitialCurve;
-            Bezier4x3 offset = new(0f, initial.b - initial.a, initial.c - initial.a, initial.d - initial.a);
-            float3 tValB = new(
-                offset.d.x == 0 ? 0.333f : (offset.b.x / offset.d.x),
-                offset.d.y == 0 ? 0.333f : (offset.b.y / offset.d.y),
-                offset.d.z == 0 ? 0.333f : (offset.b.z / offset.d.z));
-            float3 tValC = new(
-                offset.d.x == 0 ? 0.667f : (offset.c.x / offset.d.x),
-                offset.d.y == 0 ? 0.667f : (offset.c.y / offset.d.y),
-                offset.d.z == 0 ? 0.667f : (offset.c.z / offset.d.z));
-            Bezier4x3 tValues = new(0f, tValB, tValC, 1f);
             Bezier4x3 curve = component.ValueRO.m_Bezier;
 
-            Bezier4x3 newCurve = new(
-                curve.a,
-                math.lerp(curve.a, curve.d, tValB),
-                math.lerp(curve.a, curve.d, tValC),
-                curve.d
-                );
+            component.ValueRW.m_Bezier = Reshape(neighbour.m_InitialCurve, curve.a, curve.d);
+        }
 
-            //QLog.Debug($"NeighbourJob for {neighbour.m_Entity.DX()}" +
-            //    $"\n   Initial:{initial.a.DX(),-25} | {initial.b.DX(),-25} | {initial.c.DX(),-25} | {initial.d.DX(),-25}" +
-            //    $"\n     Curve:{curve.a.DX(),-25} | {curve.b.DX(),-25} | {curve.c.DX(),-25} | {curve.d.DX(),-25}" +
-            //    $"\n  NewCurve:{newCurve.a.DX(),-25} | {newCurve.b.DX(),-25} | {newCurve.c.DX(),-25} | {newCurve.d.DX(),-25}" +
-            //    $"\n    Offset:                          | {offset.b.DX(),-25} | {offset.c.DX(),-25}" +
-            //    $"\n   tValues:                          | {tValues.b.DX(),-25} | {tValues.c.DX(),-25}" +
-            //    $"");
+        /// <summary>
+        /// Fit the old curve to the new ends, keeping its shape
+        /// </summary>
+        internal static Bezier4x3 Reshape(Bezier4x3 initial, float3 newStart, float3 newEnd)
+        {
+            float2 oldChord = initial.d.xz - initial.a.xz;
+            float2 newChord = newEnd.xz - newStart.xz;
+            float lengthSq = math.lengthsq(oldChord);
 
-            component.ValueRW.m_Bezier = newCurve;
+            // Ends under 10 cm apart seen from above, so just move each handle with its end
+            if (lengthSq < 0.01f || math.lengthsq(newChord) < 0.01f)
+            {
+                return new(
+                    newStart,
+                    initial.b + newStart - initial.a,
+                    initial.c + newEnd - initial.d,
+                    newEnd);
+            }
+
+            // How much the road turns and stretches seen from above
+            float2 turn = new float2(
+                math.dot(newChord, oldChord),
+                oldChord.x * newChord.y - oldChord.y * newChord.x) / lengthSq;
+            float rise = (newEnd.y - newStart.y) - (initial.d.y - initial.a.y);
+
+            // The handles take a third and two thirds of the height change, like the road tool
+            return new(
+                newStart,
+                newStart + MoveHandle(initial.b - initial.a, turn, rise / 3f),
+                newStart + MoveHandle(initial.c - initial.a, turn, rise * 2f / 3f),
+                newEnd);
+        }
+
+        private static float3 MoveHandle(float3 offset, float2 turn, float rise)
+        {
+            return new(
+                turn.x * offset.x - turn.y * offset.z,
+                offset.y + rise,
+                turn.y * offset.x + turn.x * offset.z);
         }
     }
 }
